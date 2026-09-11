@@ -25,10 +25,8 @@ import {
   MapPin,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Play,
   Pause,
-  Sliders,
 } from 'lucide-react';
 import './App.css';
 
@@ -594,8 +592,7 @@ export default function App() {
               Sistem Ekosistem Fabrikasi &amp; <span className="text-gradient-lime">K3 Terintegrasi</span>
             </h2>
             <p className="section-desc-lead">
-              Empat pilar alur operasional terintegrasi yang menjembatani peralatan fisik industri
-              dengan transparansi platform digital bagi para inovator perangkat keras.
+              Layanan awal untuk belajar, membuat prototipe sederhana, dan tumbuh bersama komunitas.
             </p>
           </div>
 
@@ -605,7 +602,7 @@ export default function App() {
               <div className="card-icon-bubble"><Users size={20} /></div>
               <h3>Tier Membership</h3>
               <p>
-                Diferensiasi hak akses fleksibel dari Walk-in harian (Pay-as-you-go), Student Tier bersubsidi akademik, Pro Maker kuota fleksibel, hingga Team/Startup shared quota.
+                Pilih akses harian atau membership ringan sesuai kebutuhanmu saat ini.
               </p>
               <div className="card-footer-tag">BR-01 // OTP WhatsApp &amp; Email</div>
             </div>
@@ -615,7 +612,7 @@ export default function App() {
               <div className="card-icon-bubble"><ShieldCheck size={20} /></div>
               <h3>Digital Safety Badging</h3>
               <p>
-                Gerbang keselamatan bertingkat (Level 1 Hijau, Level 2 Kuning, Level 3 Merah). Booking mesin berisiko hanya terbuka jika akun memiliki sertifikasi digital K3 aktif.
+                Panduan penggunaan alat dasar dan pendampingan untuk 3D printing.
               </p>
               <div className="card-footer-tag">BR-02 // Safety Induction Matrix</div>
             </div>
@@ -625,7 +622,7 @@ export default function App() {
               <div className="card-icon-bubble"><Clock size={20} /></div>
               <h3>Reservasi &amp; Anti-Ghosting</h3>
               <p>
-                Alokasi presisi slot 30 menit dengan limit harian anti-monopoli. Wajib scan QR Check-in di lokasi maks 15 menit; hangus otomatis dengan penalti jika terlambat.
+                Pesan slot, datang tepat waktu, dan mulai berkarya.
               </p>
               <div className="card-footer-tag">BR-03 // 15-Min Grace Period</div>
             </div>
@@ -635,7 +632,7 @@ export default function App() {
               <div className="card-icon-bubble"><CreditCard size={20} /></div>
               <h3>Integrated Material Billing</h3>
               <p>
-                Konsumsi bahan habis pakai (filamen per gram, akrilik per dimensi) ditimbang digital di kasir lapangan dan didebit instan via QRIS, Virtual Account, atau deposit kredit.
+                Bahan cetak 3D dihitung sesuai pemakaian.
               </p>
               <div className="card-footer-tag">BR-04 &amp; BR-06 // Auto-Debit &amp; WA Invoice</div>
             </div>
@@ -784,16 +781,17 @@ export default function App() {
                 <span className="safety-level-pill pill-green">
                   <Shield size={13} /> LEVEL 1 : HIJAU (AMAN)
                 </span>
-                <h3>Meja Bebas &amp; Prototyping</h3>
+                <h3>Alat Elektronika Dasar</h3>
                 <p className="req-text">
-                  Akses langsung terbuka untuk seluruh anggota terdaftar tanpa perlu lisensi praktikum khusus.
+                  Gunakan bersama Lab Assistant untuk memastikan alat dipakai dengan benar.
                 </p>
                 <div className="machines-under-level">
                   <div className="machines-under-level-title">Peralatan Tercover:</div>
                   <div className="machine-tag-list">
                     <span className="machine-mini-badge">Hakko Solder Station</span>
-                    <span className="machine-mini-badge">Meja IoT &amp; ESP32</span>
-                    <span className="machine-mini-badge">Rigol Oscilloscope</span>
+                    <span className="machine-mini-badge">Power Supply Sunshine Pro</span>
+                    <span className="machine-mini-badge">Multimeter UNI-T</span>
+                    <span className="machine-mini-badge">Perkakas Elektronika</span>
                   </div>
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#4ade80', fontFamily: 'var(--font-code)' }}>
@@ -806,15 +804,14 @@ export default function App() {
                 <span className="safety-level-pill pill-yellow">
                   <AlertTriangle size={13} /> LEVEL 2 : KUNING (MODERAT)
                 </span>
-                <h3>Mesin Fabrikasi Ringan</h3>
+                <h3>3D Printing</h3>
                 <p className="req-text">
-                  Wajib menyelesaikan <em>Safety Induction Digital</em> dan kuis dasar operasional sebelum slot kalender dapat dibuka.
+                  Bambu Lab A1 mini digunakan dengan pendampingan Lab Assistant.
                 </p>
                 <div className="machines-under-level">
                   <div className="machines-under-level-title">Peralatan Tercover:</div>
                   <div className="machine-tag-list">
-                    <span className="machine-mini-badge">Bambu Lab X1-Carbon</span>
-                    <span className="machine-mini-badge">Desktop Vinyl Cutter</span>
+                    <span className="machine-mini-badge">Bambu Lab A1 mini</span>
                   </div>
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#fbbf24', fontFamily: 'var(--font-code)' }}>
@@ -827,20 +824,20 @@ export default function App() {
                 <span className="safety-level-pill pill-red">
                   <ShieldAlert size={13} /> LEVEL 3 : MERAH (RISIKO TINGGI)
                 </span>
-                <h3>Peralatan Industri Berat</h3>
+                <h3>Pengembangan Fasilitas</h3>
                 <p className="req-text">
-                  Wajib sertifikasi penuh dengan demonstrasi tatap muka yang divalidasi langsung oleh Lab Assistant.
+                  Alat lanjutan seperti hot air station, logic analyzer, dan mikroskop SMD belum tersedia.
                 </p>
                 <div className="machines-under-level">
                   <div className="machines-under-level-title">Peralatan Tercover:</div>
                   <div className="machine-tag-list">
-                    <span className="machine-mini-badge">ThunderLaser 100W</span>
-                    <span className="machine-mini-badge">Shapeoko CNC Router</span>
-                    <span className="machine-mini-badge">Elegoo Resin SLA</span>
+                    <span className="machine-mini-badge">Hot Air Rework Station</span>
+                    <span className="machine-mini-badge">Logic Analyzer</span>
+                    <span className="machine-mini-badge">Mikroskop SMD</span>
                   </div>
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#f87171', fontFamily: 'var(--font-code)' }}>
-                  SYARAT: Ujian Offline Lab Specialist
+                  ROADMAP: BELUM TERSEDIA
                 </div>
               </div>
             </div>
@@ -848,8 +845,8 @@ export default function App() {
             {/* Action Bar */}
             <div className="safety-action-box">
               <div className="safety-action-text">
-                <h4>Status Sertifikasi Anda: Level {Math.max(...userProfile.badges)} K3 Verified</h4>
-                <p>Anda memenuhi syarat untuk mengoperasikan mesin Level 1 &amp; Level 2. Ingin membuka lisensi Level 3?</p>
+                <h4>Status Anda: Akses Alat Dasar</h4>
+                <p>Ikuti panduan singkat sebelum memakai alat elektronik atau 3D printer.</p>
               </div>
               <button
                 type="button"
@@ -857,7 +854,7 @@ export default function App() {
                 onClick={() => setIsQuizModalOpen(true)}
               >
                 <Award size={16} />
-                <span>Ikuti Ujian Lencana K3</span>
+                <span>Mulai Panduan Alat</span>
               </button>
             </div>
           </div>
@@ -875,8 +872,7 @@ export default function App() {
               Pilih Paket <span className="text-gradient-lime">Kreativitasmu</span>
             </h2>
             <p className="section-desc-lead">
-              Mulai dari akses kasual tanpa komitmen bulanan hingga paket korporat berskala tim,
-              lengkap dengan transparansi benefit dan kuota mesin.
+              Harga dibuat ringan karena fasilitas masih berkembang. Sewa alat dihitung terpisah.
             </p>
 
             <div style={{ marginTop: '18px', display: 'inline-flex', gap: '6px', background: 'rgba(255,255,255,0.04)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
@@ -925,14 +921,14 @@ export default function App() {
               <h3 className="tier-name">Student Tier</h3>
               <p className="tier-target">Khusus mahasiswa &amp; peneliti</p>
               <div className="tier-price-row">
-                <span className="tier-price-amount">Rp 150k</span>
+                <span className="tier-price-amount">Rp 49k</span>
                 <span className="tier-price-period">/ bulan</span>
               </div>
               <ul className="tier-features-list">
-                <li><Check size={14} /> Diskon 40% sewa seluruh mesin</li>
-                <li><Check size={14} /> Kuota 5 jam mesin FDM 3D Printer</li>
-                <li><Check size={14} /> Akses Meja Solder &amp; Osiloskop</li>
-                <li><Check size={14} /> Workshop pembinaan mingguan</li>
+                <li><Check size={14} /> Diskon 10% sewa Bambu Lab A1 mini</li>
+                <li><Check size={14} /> Akses alat elektronik dasar</li>
+                <li><Check size={14} /> Harga workshop member</li>
+                <li><Check size={14} /> Pendampingan dasar</li>
                 <li><Check size={14} /> Verifikasi kartu mahasiswa (KTM)</li>
               </ul>
               <button type="button" className="btn-outline-cyan" onClick={() => handleOpenBooking()}>
@@ -944,17 +940,17 @@ export default function App() {
             <div className="pricing-card featured-tier">
               <span className="popular-ribbon">POPULER</span>
               <h3 className="tier-name">Pro Maker</h3>
-              <p className="tier-target">Untuk kreator &amp; hardware startup</p>
+              <p className="tier-target">Untuk kreator yang aktif berkarya</p>
               <div className="tier-price-row">
-                <span className="tier-price-amount" style={{ color: 'var(--accent-lime)' }}>Rp 500k</span>
+                <span className="tier-price-amount" style={{ color: 'var(--accent-lime)' }}>Rp 99k</span>
                 <span className="tier-price-period">/ bulan</span>
               </div>
               <ul className="tier-features-list">
-                <li><Check size={14} /> Kuota 20 jam mesin fleksibel</li>
-                <li><Check size={14} /> Antrean prioritas reservasi slot</li>
-                <li><Check size={14} /> Loker penyimpanan komponen</li>
-                <li><Check size={14} /> Diskon 15% bahan konsumabel</li>
-                <li><Check size={14} /> Gratis Workshop Level 3 K3</li>
+                <li><Check size={14} /> Prioritas reservasi Bambu Lab A1 mini</li>
+                <li><Check size={14} /> Diskon 15% bahan PLA</li>
+                <li><Check size={14} /> Harga workshop member</li>
+                <li><Check size={14} /> Akses komunitas makers</li>
+                <li><Check size={14} /> Update roadmap fasilitas</li>
               </ul>
               <button type="button" className="btn-primary-lime" onClick={() => handleOpenBooking()}>
                 Pilih Pro Maker
@@ -964,17 +960,17 @@ export default function App() {
             {/* Team / Startup */}
             <div className="pricing-card">
               <h3 className="tier-name">Team / Startup</h3>
-              <p className="tier-target">Lab tim &amp; R&amp;D korporat</p>
+              <p className="tier-target">Untuk tim kecil dan proyek bersama</p>
               <div className="tier-price-row">
-                <span className="tier-price-amount">Rp 1.8M</span>
-                <span className="tier-price-period">/ bulan (5 Akun)</span>
+                <span className="tier-price-amount">Hubungi kami</span>
+                <span className="tier-price-period">/ kebutuhan tim</span>
               </div>
               <ul className="tier-features-list">
-                <li><Check size={14} /> Kuota bersama 60 jam mesin</li>
-                <li><Check size={14} /> Rak inventaris lab terdedikasi</li>
-                <li><Check size={14} /> Akses pintu fisik RFID 24/7</li>
-                <li><Check size={14} /> B2B sub-contracting dashboard</li>
-                <li><Check size={14} /> Bantuan teknis Fab Specialist</li>
+                <li><Check size={14} /> Sesi penggunaan untuk tim</li>
+                <li><Check size={14} /> Pendampingan proyek dasar</li>
+                <li><Check size={14} /> Kelas privat sesuai jadwal</li>
+                <li><Check size={14} /> Penawaran sesuai kebutuhan</li>
+                <li><Check size={14} /> Fasilitas lanjutan masih roadmap</li>
               </ul>
               <button type="button" className="btn-secondary-clean" onClick={() => handleOpenBooking()}>
                 Hubungi Kami
