@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import {
   Cpu,
   Zap,
-  Hammer,
   Calendar,
   Wrench,
   Gauge,
   Printer,
-  Flame,
   Activity,
   Shield,
   ShieldCheck,
@@ -16,148 +14,155 @@ import {
   AlertTriangle,
   ArrowRight,
   X,
-  RotateCcw,
   Clock,
   CreditCard,
   QrCode,
   Award,
-  Sparkles,
-  Layers,
   Users,
   Boxes,
-  ChevronRight,
   TrendingUp,
   Check,
   MapPin,
-  HelpCircle
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  Play,
+  Pause,
+  Sliders,
 } from 'lucide-react';
 import './App.css';
 
-// SVG Brand Logo for IDN STEM Creative Hub / IDN Makerspace
 const BrandLogo = ({ size = 32 }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 100 100"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <circle cx="50" cy="50" r="42" stroke="#a3ff12" strokeWidth="3" strokeDasharray="8 6" opacity="0.9" />
-    <circle cx="50" cy="50" r="28" stroke="#00d2ee" strokeWidth="2" opacity="0.8" />
-    <path
-      d="M34 32 V68 L48 50 L62 68 V32 M72 32 H62 V68 H72"
-      stroke="#ffffff"
-      strokeWidth="3.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <circle cx="50" cy="50" r="4" fill="#a3ff12" />
-    <circle cx="34" cy="32" r="3" fill="#00d2ee" />
-    <circle cx="66" cy="32" r="3" fill="#a3ff12" />
-  </svg>
+  <span className="brand-raster-mark" style={{ width: size, height: size }} aria-label="IDN Makerspace">M</span>
 );
 
-// Machines Dataset according to BRD-IDNMS-2026-V1 & Stitch
-const MACHINES_DATA = [
+// Hero Showcase Slider Data (Atmospheric Makerspace Zones)
+const HERO_SLIDES = [
   {
-    id: 'laser-100w',
-    name: 'ThunderLaser Nova 51 CO2 (100W)',
-    category: 'laser',
-    level: 3,
-    levelName: 'Level 3 : Merah (Risiko Tinggi)',
-    status: 'inuse',
-    statusLabel: 'Sedang Dipakai',
-    hoursLogged: 164,
-    hoursLimit: 200,
-    area: '1300 x 900 mm',
-    speed: '1000 mm/s',
-    materials: 'Akrilik, Balsa, MDF, Kulit',
-    hourlyRate: 65000,
-    icon: Flame
+    id: '3dprint',
+    tag: 'ZONA 01 // FABRIKASI 3D PRINTING',
+    title: 'Precision 3D Rapid Prototyping',
+    subtitle: 'Bambu Lab Multi-Color & Engineering Filaments',
+    desc: 'Cetak prototipe fisik presisi tinggi dengan Bambu Lab FDM & Resin SLA 8K, didukung pelacak jam operasional nozzle otomatis.',
+    image: '/images/slide-3dprint.jpg',
+    statBadge: 'Toleransi ±0.08mm',
+    kpi: '3 Unit Ready'
   },
   {
-    id: '3d-bambu-x1c',
-    name: 'Bambu Lab X1-Carbon Combo (AMS)',
+    id: 'laser',
+    tag: 'ZONA 02 // SUBTRACTIVE CUTTING',
+    title: 'Laser Cutting & Precision CNC',
+    subtitle: 'High Precision Sheet Cutting & Engraving',
+    desc: 'Pemotongan lembaran akrilik, kayu balsa, dan engraving presisi tinggi dengan proteksi ventilasi gas dan emergency stop.',
+    image: '/images/slide-laser.jpg',
+    statBadge: 'Tebal s/d 12mm',
+    kpi: 'Siap Pakai'
+  },
+  {
+    id: 'iot',
+    tag: 'ZONA 03 // ELEKTRONIKA & IOT',
+    title: 'Electronics Workbench & Testing',
+    subtitle: 'Hakko Soldering & Digital Oscilloscope',
+    desc: 'Meja solder suhu presisi, catu daya variabel, osiloskop digital, dan uji mikrokontroler. Akses bebas Level 1 K3.',
+    image: '/images/slide-iot.jpg',
+    statBadge: 'Akses Bebas Lv.1',
+    kpi: 'Meja Bebas'
+  },
+  {
+    id: 'community',
+    tag: 'ZONA 04 // STEM INNOVATION HUB',
+    title: 'Kolaborasi & Inkubasi Hardware',
+    subtitle: 'Komunitas & Riset Rekayasa',
+    desc: 'Ruang interaksi antar mahasiswa, pembuat lepas, dan mentor industri untuk memvalidasi prototipe produk jadi.',
+    image: '/images/slide-community.jpg',
+    statBadge: '250+ Anggota',
+    kpi: 'Workshop Mingguan'
+  }
+];
+
+// Layanan yang saat ini tersedia di IDN Makerspace
+const MACHINES_DATA = [
+  {
+    id: '3d-bambu-a1-mini',
+    name: 'Bambu Lab A1 mini',
     category: '3dprint',
     level: 2,
-    levelName: 'Level 2 : Kuning (Moderat)',
+    levelName: 'Level 2 : Dengan Pendampingan',
     status: 'available',
     statusLabel: 'Tersedia',
-    hoursLogged: 92,
-    hoursLimit: 300,
-    area: '256 x 256 x 256 mm',
-    speed: '500 mm/s (Auto-Bed LiDAR)',
-    materials: 'PLA, PETG, TPU, Carbon Fiber',
-    hourlyRate: 35000,
+    hoursLogged: 42, hoursLimit: 300,
+    area: '180 x 180 x 180 mm', speed: 'Cetak PLA', materials: 'PLA', hourlyRate: 25000,
     icon: Printer
   },
   {
-    id: 'cnc-router-3axis',
-    name: 'Shapeoko Pro CNC Router (2.2kW)',
-    category: 'laser',
-    level: 3,
-    levelName: 'Level 3 : Merah (Risiko Tinggi)',
-    status: 'available',
-    statusLabel: 'Tersedia',
-    hoursLogged: 58,
-    hoursLimit: 150,
-    area: '838 x 838 x 100 mm',
-    speed: '24,000 RPM Spindle',
-    materials: 'Kayu Keras, Aluminium, Akrilik',
-    hourlyRate: 75000,
-    icon: Wrench
-  },
-  {
-    id: 'sla-resin-saturn',
-    name: 'Elegoo Saturn 4 Ultra 12K Resin',
-    category: '3dprint',
-    level: 3,
-    levelName: 'Level 3 : Merah (Risiko Tinggi)',
-    status: 'available',
-    statusLabel: 'Tersedia',
-    hoursLogged: 34,
-    hoursLimit: 120,
-    area: '218 x 122 x 220 mm',
-    speed: '150 mm/h Tilt Release',
-    materials: 'Standard & Tough 3D Resin',
-    hourlyRate: 45000,
-    icon: Boxes
-  },
-  {
-    id: 'pcb-solder-station',
-    name: 'Hakko FX-888D & ESD Workbench',
-    category: 'iot',
-    level: 1,
-    levelName: 'Level 1 : Hijau (Akses Bebas)',
-    status: 'available',
-    statusLabel: 'Akses Bebas',
-    hoursLogged: 310,
-    hoursLimit: 1000,
-    area: 'Meja ESD Lab Elektronika',
-    speed: 'Suhu 50°C - 480°C Presisi',
-    materials: 'SMD, THT, Wire, Lead-Free',
-    hourlyRate: 15000,
+    id: 'power-supply-sunshine-pro', name: 'Power Supply Sunshine Pro', category: 'iot', level: 1,
+    levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
+    hoursLogged: 18, hoursLimit: 500, area: 'Meja Elektronika', speed: 'Catu daya variabel', materials: 'Rangkaian elektronik', hourlyRate: 10000,
     icon: Zap
   },
   {
-    id: 'iot-oscilloscope-bench',
-    name: 'Rigol DS1054Z 4-Ch Oscilloscope',
-    category: 'iot',
-    level: 1,
-    levelName: 'Level 1 : Hijau (Akses Bebas)',
-    status: 'available',
-    statusLabel: 'Akses Bebas',
-    hoursLogged: 140,
-    hoursLimit: 800,
-    area: 'Meja IoT Bench #02',
-    speed: '50MHz 4 Channel 1GSa/s',
-    materials: 'ESP32, STM32, Logic Analyzer',
-    hourlyRate: 15000,
+    id: 'solder-digital', name: 'Solder Digital', category: 'iot', level: 1,
+    levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
+    hoursLogged: 67, hoursLimit: 600, area: 'Meja Elektronika', speed: 'Suhu terkontrol', materials: 'Komponen elektronik', hourlyRate: 10000,
+    icon: Boxes
+  },
+  {
+    id: 'timbangan-digital', name: 'Timbangan Digital', category: 'iot', level: 1,
+    levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
+    hoursLogged: 12, hoursLimit: 1000, area: 'Meja Persiapan', speed: 'Pengukuran bahan', materials: 'Filamen & komponen', hourlyRate: 0,
+    icon: Gauge
+  },
+  {
+    id: 'multimeter-unit', name: 'Multimeter UNI-T', category: 'iot', level: 1,
+    levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
+    hoursLogged: 23, hoursLimit: 800, area: 'Meja Elektronika', speed: 'Ukur tegangan & arus', materials: 'Proyek elektronik', hourlyRate: 10000,
     icon: Cpu
+  },
+  {
+    id: 'toolkit-elektronika', name: 'Perkakas Elektronika', category: 'iot', level: 1,
+    levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
+    hoursLogged: 31, hoursLimit: 1000, area: 'Meja Elektronika', speed: 'Toolkit perakitan', materials: 'Komponen elektronik', hourlyRate: 0,
+    icon: Wrench
+  },
+  {
+    id: 'jangka-sorong-digital', name: 'Jangka Sorong Digital', category: 'iot', level: 1,
+    levelName: 'Level 1 : Akses Dasar', status: 'inuse', statusLabel: 'Sedang Dipakai',
+    hoursLogged: 8, hoursLimit: 500, area: 'Meja Persiapan', speed: 'Pengukuran presisi', materials: 'Komponen & prototipe', hourlyRate: 5000,
+    icon: Gauge
   }
 ];
 
 export default function App() {
+  // Hero Slider State
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isSliderPaused, setIsSliderPaused] = useState(false);
+
+  // Live Grace Period Countdown (BR-03 Anti-Ghosting)
+  const [graceSeconds, setGraceSeconds] = useState(14 * 60 + 59);
+
+  // Auto-advance hero slider
+  useEffect(() => {
+    if (isSliderPaused) return;
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % HERO_SLIDES.length);
+    }, 5500);
+    return () => clearInterval(timer);
+  }, [isSliderPaused]);
+
+  // Anti-ghosting timer counting down 1s every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setGraceSeconds(prev => (prev > 0 ? prev - 1 : 14 * 60 + 59));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatGraceTime = (sec) => {
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
   // Live Telemetry Stream
   const [telemetry, setTelemetry] = useState({
     roomTemp: 24.6,
@@ -205,7 +210,7 @@ export default function App() {
   // Booking Wizard Modal State
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [bookingStep, setBookingStep] = useState(1);
-  const [selectedMachine, setSelectedMachine] = useState(MACHINES_DATA[1]);
+  const [selectedMachine, setSelectedMachine] = useState(MACHINES_DATA[0]);
   const [selectedDate, setSelectedDate] = useState('2026-09-12');
   const [selectedSlot, setSelectedSlot] = useState('14:00 - 14:30');
   const [estimatedFilament, setEstimatedFilament] = useState(60);
@@ -293,6 +298,13 @@ export default function App() {
 
   return (
     <div className="app-root">
+      {/* Subtle Ambient Glow Aura */}
+      <div className="ambient-aura-wrapper" aria-hidden="true">
+        <div className="ambient-orb ambient-orb-lime"></div>
+        <div className="ambient-orb ambient-orb-cyan"></div>
+        <div className="ambient-orb ambient-orb-purple"></div>
+      </div>
+
       {/* ========================================================
           HEADER NAVIGATION (CLEAN, FOCUSED)
           ======================================================== */}
@@ -343,14 +355,31 @@ export default function App() {
       </header>
 
       {/* ========================================================
-          HERO SECTION: WHERE IDEAS TAKE SHAPE
+          HERO SECTION: DYNAMIC BACKGROUND SLIDER & ATMOSPHERIC AESTHETIC
           ======================================================== */}
       <section className="hero-section">
+        {/* Dynamic Background Slider with Ken Burns & Smooth Crossfade */}
+        <div
+          className="hero-slider-backdrop"
+          onMouseEnter={() => setIsSliderPaused(true)}
+          onMouseLeave={() => setIsSliderPaused(false)}
+        >
+          {HERO_SLIDES.map((slide, idx) => (
+            <div
+              key={slide.id}
+              className={`hero-slide-bg ${idx === currentSlide ? 'active' : ''}`}
+              style={{ backgroundImage: `url(${slide.image})` }}
+              aria-hidden={idx !== currentSlide}
+            />
+          ))}
+          <div className="hero-slider-overlay" />
+        </div>
+
         <div className="container hero-grid">
           <div>
             <div className="hero-chip-badge">
               <span className="pulse-dot"></span>
-              <span>IDN STEM CREATIVE HUB // FABLAB PLATFORM</span>
+              <span>{HERO_SLIDES[currentSlide].tag}</span>
             </div>
 
             <h1 className="hero-main-title">
@@ -359,9 +388,8 @@ export default function App() {
             </h1>
 
             <p className="hero-subtitle">
-              Satu ekosistem terpadu yang mengintegrasikan laboratorium fabrikasi perangkat keras
-              (3D Printing, PCB Prototyping, CNC Milling, Laser Cutting, IoT) dengan sertifikasi
-              K3 digital, penjadwalan presisi anti-ghosting, dan billing material instan.
+              Satu ekosistem terpadu laboratorium fabrikasi fisik (3D Printing, Laser Cutting, IoT)
+              dengan sertifikasi K3 digital, reservasi presisi anti-ghosting, dan billing material instan.
             </p>
 
             <div className="hero-actions-row">
@@ -394,7 +422,7 @@ export default function App() {
                 <Check size={14} color="var(--accent-lime)" /> Standar K3 Terakreditasi
               </span>
               <span className="hero-check-item">
-                <Check size={14} color="var(--accent-lime)" /> QRIS Dinamis &amp; VA Bank
+                <Check size={14} color="var(--accent-lime)" /> QRIS &amp; Virtual Account
               </span>
               <span className="hero-check-item">
                 <Check size={14} color="var(--accent-lime)" /> Timbangan Digital Bahan
@@ -402,7 +430,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Clean Telemetry Widget */}
+          {/* Clean Telemetry Widget with Live Equalizer */}
           <div>
             <div className="telemetry-console-card">
               <div className="console-header-bar">
@@ -412,21 +440,33 @@ export default function App() {
                   <span className="dot-green"></span>
                 </div>
                 <span className="console-tag-title">LIVE TELEMETRY // JONGGOL HUB</span>
-                <span style={{ fontFamily: 'var(--font-code)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
-                  ONLINE
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div className="oscilloscope-bars">
+                    <span className="eq-bar"></span>
+                    <span className="eq-bar"></span>
+                    <span className="eq-bar"></span>
+                    <span className="eq-bar"></span>
+                    <span className="eq-bar"></span>
+                    <span className="eq-bar"></span>
+                    <span className="eq-bar"></span>
+                    <span className="eq-bar"></span>
+                  </div>
+                  <span style={{ fontFamily: 'var(--font-code)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
+                    ONLINE
+                  </span>
+                </div>
               </div>
 
               <div className="telemetry-content-padding">
                 <div className="telemetry-status-row">
                   <div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>ZONA FABRIKASI</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>ZONA AKTIF TERPILIH</span>
                     <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--text-white)' }}>
-                      Main Workshop Room
+                      {HERO_SLIDES[currentSlide].title}
                     </span>
                   </div>
                   <span className="status-badge-active">
-                    <span className="pulse-dot"></span> LIVE RUNNING
+                    <span className="pulse-dot"></span> {HERO_SLIDES[currentSlide].kpi}
                   </span>
                 </div>
 
@@ -456,6 +496,53 @@ export default function App() {
                   <strong>PEMBERITAHUAN K3:</strong> Check-in QR diwajibkan maksimal 15 menit setelah waktu pemesanan dimulai untuk menghindari pembatalan otomatis (BR-03 Anti-Ghosting).
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Slider Interactive Controls Bar */}
+        <div className="container" style={{ marginTop: '30px' }}>
+          <div className="hero-slider-controls">
+            <div className="slider-tabs-group">
+              {HERO_SLIDES.map((slide, idx) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  className={`slider-tab-btn ${idx === currentSlide ? 'active' : ''}`}
+                  onClick={() => setCurrentSlide(idx)}
+                >
+                  <span className="slider-tab-tag">0{idx + 1} // SHOWCASE</span>
+                  <span>{slide.title.split(' ')[0]} {slide.title.split(' ')[1]}</span>
+                  {idx === currentSlide && <span className="slider-progress-bar"></span>}
+                </button>
+              ))}
+            </div>
+
+            <div className="slider-nav-arrows">
+              <button
+                type="button"
+                className="slider-arrow-btn"
+                onClick={() => setCurrentSlide(prev => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1))}
+                title="Slide sebelumnya"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                type="button"
+                className="slider-arrow-btn"
+                onClick={() => setIsSliderPaused(prev => !prev)}
+                title={isSliderPaused ? "Putar otomatis" : "Jeda slider"}
+              >
+                {isSliderPaused ? <Play size={14} /> : <Pause size={14} />}
+              </button>
+              <button
+                type="button"
+                className="slider-arrow-btn"
+                onClick={() => setCurrentSlide(prev => (prev + 1) % HERO_SLIDES.length)}
+                title="Slide berikutnya"
+              >
+                <ChevronRight size={16} />
+              </button>
             </div>
           </div>
         </div>
@@ -567,8 +654,7 @@ export default function App() {
               Fasilitas &amp; <span className="text-gradient-lime">Peralatan Canggih</span>
             </h2>
             <p className="section-desc-lead">
-              Pantau ketersediaan waktu nyata serta jam operasional mesin presisi tinggi.
-              Sistem secara otomatis mengunci mesin untuk inspeksi berkala saat jam batas tercapai (BR-05).
+              Pilih alat yang tersedia, cek tarifnya, lalu pesan slot penggunaan.
             </p>
           </div>
 
@@ -586,21 +672,14 @@ export default function App() {
               className={`lab-tab-btn ${activeMachineFilter === '3dprint' ? 'active' : ''}`}
               onClick={() => setActiveMachineFilter('3dprint')}
             >
-              3D Printing &amp; SLA
-            </button>
-            <button
-              type="button"
-              className={`lab-tab-btn ${activeMachineFilter === 'laser' ? 'active' : ''}`}
-              onClick={() => setActiveMachineFilter('laser')}
-            >
-              Laser Cutting &amp; CNC
+              3D Printing
             </button>
             <button
               type="button"
               className={`lab-tab-btn ${activeMachineFilter === 'iot' ? 'active' : ''}`}
               onClick={() => setActiveMachineFilter('iot')}
             >
-              Elektronika &amp; Meja IoT
+              Elektronika &amp; Perkakas
             </button>
           </div>
 
@@ -1088,49 +1167,48 @@ export default function App() {
               Program &amp; <span className="text-gradient-lime">Workshop Kreatif</span>
             </h2>
             <p className="section-desc-lead">
-              Tingkatkan keahlian rekayasa fisik bersama engineer industri berpengalaman.
-              Selesaikan modul untuk membuka lencana K3 permanen di profil digital Anda.
+              Mulai dari dasar bersama mentor Makerspace. Tidak perlu pengalaman sebelumnya.
             </p>
           </div>
 
           <div className="workshop-grid">
             <div className="workshop-card">
               <div className="workshop-meta-bar">
-                <span>INTENSIF // 6 JAM</span>
-                <span>RP 250.000</span>
+                <span>HANDS-ON // 6 JAM</span>
+                <span>RP 150.000</span>
               </div>
-              <h3>Laser Cutting &amp; Vector CAD Masterclass</h3>
-              <p>Optimasi file DXF/SVG, focal lens, pemotongan akrilik presisi tanpa hangus, dan protokol darurat api.</p>
+              <h3>IoT untuk Pemula</h3>
+              <p>Buat proyek sensor sederhana dengan microcontroller dan komponen dasar.</p>
               <div className="workshop-badge-earned">
-                <Award size={13} /> Dapatkan Badge Level 3 K3
-              </div>
-            </div>
-
-            <div className="workshop-card">
-              <div className="workshop-meta-bar">
-                <span>HANDS-ON // 8 JAM</span>
-                <span>RP 350.000</span>
-              </div>
-              <h3>PCB Design, SMD Soldering &amp; IoT</h3>
-              <p>Skematik KiCAD, etching PCB dua sisi, teknik penyolderan komponen SMD, dan firmware microcontroller.</p>
-              <div className="workshop-badge-earned">
-                <Award size={13} /> Dapatkan Badge IoT Specialist
+                <Award size={13} /> Dapatkan Badge IoT Dasar
               </div>
             </div>
 
             <div className="workshop-card">
               <div className="workshop-meta-bar">
                 <span>PRAKTIK // 4 JAM</span>
-                <span>RP 150.000</span>
+                <span>RP 100.000</span>
               </div>
-              <h3>High-Speed 3D Printing &amp; Slicer Setup</h3>
-              <p>Optimasi Bambu Studio, parameter infill struktural kuat, multi-color AMS, dan filamen komposit karbon.</p>
+              <h3>Elektronika Dasar</h3>
+              <p>Kenali komponen, pakai multimeter, dan belajar solder dengan aman.</p>
               <div className="workshop-badge-earned">
-                <Award size={13} /> Dapatkan Badge Level 2 K3
+                <Award size={13} /> Dapatkan Badge Elektronika Dasar
               </div>
             </div>
 
             <div className="workshop-card">
+              <div className="workshop-meta-bar">
+                <span>INTENSIF // 6 JAM</span>
+                <span>RP 150.000</span>
+              </div>
+              <h3>Pemrograman Web Dasar</h3>
+              <p>Buat halaman web pertama dengan HTML, CSS, dan JavaScript.</p>
+              <div className="workshop-badge-earned">
+                <Award size={13} /> Dapatkan Badge Web Dasar
+              </div>
+            </div>
+
+            <div className="workshop-card" style={{ display: 'none' }}>
               <div className="workshop-meta-bar">
                 <span>ADVANCED // 10 JAM</span>
                 <span>RP 450.000</span>
@@ -1184,7 +1262,7 @@ export default function App() {
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent-amber)', letterSpacing: '0.08em' }}>
                 LIVE GRACE PERIOD COUNTDOWN
               </span>
-              <div className="ghosting-timer-digits">14:59</div>
+              <div className="ghosting-timer-digits">{formatGraceTime(graceSeconds)}</div>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', maxWidth: '280px', margin: '0 auto' }}>
                 Waktu toleransi kedatangan di lokasi sebelum mesin dialihkan otomatis ke antrean walk-in.
               </p>
@@ -1523,52 +1601,50 @@ export default function App() {
                 </div>
               </div>
               <p style={{ color: 'var(--text-secondary)', lineHeight: 1.5, fontSize: '0.82rem' }}>
-                Laboratorium fabrikasi perangkat keras fisik dan sistem ekosistem digital di Indonesia
-                dengan integrasi standar keselamatan K3, kalender anti-ghosting, dan billing material instan.
+                Ruang belajar dan membuat untuk 3D printing, elektronika, IoT, dan pemrograman web.
               </p>
               <div style={{ marginTop: '12px', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
-                OPERASIONAL NORMAL // SLA 99.8%
+                STATUS LAB // BUKA HARI INI
               </div>
             </div>
 
             <div className="footer-col">
               <h4>Fasilitas Lab</h4>
               <ul className="footer-links-list">
-                <li><a href="#the-lab">ThunderLaser CO2 100W</a></li>
-                <li><a href="#the-lab">Bambu Lab X1-Carbon</a></li>
-                <li><a href="#the-lab">Shapeoko CNC Router</a></li>
-                <li><a href="#the-lab">Elegoo Saturn SLA Resin</a></li>
-                <li><a href="#the-lab">Meja Solder &amp; Osiloskop</a></li>
+                <li><a href="#the-lab">Bambu Lab A1 mini</a></li>
+                <li><a href="#the-lab">Solder Digital</a></li>
+                <li><a href="#the-lab">Power Supply Sunshine Pro</a></li>
+                <li><a href="#the-lab">Multimeter UNI-T</a></li>
+                <li><a href="#the-lab">Perkakas Elektronika</a></li>
               </ul>
             </div>
 
             <div className="footer-col">
-              <h4>Ekosistem Digital</h4>
+              <h4>Informasi</h4>
               <ul className="footer-links-list">
-                <li><a href="#k3-safety">Matriks Lisensi K3</a></li>
-                <li><a href="#pricing">Tiering Keanggotaan</a></li>
-                <li><a href="#materials">Kalkulator Material</a></li>
-                <li><a href="#workshops">Jadwal Workshop</a></li>
+                <li><a href="#pricing">Keanggotaan</a></li>
+                <li><a href="#workshops">Workshop</a></li>
+                <li><a href="#materials">Estimasi Bahan</a></li>
                 <li><a href="#faq">Pertanyaan Umum</a></li>
               </ul>
             </div>
 
             <div className="footer-col">
-              <h4>Lokasi Garasi</h4>
+              <h4>Lokasi &amp; Jam</h4>
               <p style={{ fontSize: '0.8rem', lineHeight: 1.5, color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 <MapPin size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                IDN STEM Hub Garasi, Jl. Raya Jonggol - Dayeuh, Bogor, Jawa Barat.
+                IDN Makerspace, Jl. Raya Jonggol - Dayeuh, Bogor, Jawa Barat.
               </p>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                Operasional: Senin – Sabtu <br />
-                08:00 – 22:00 WIB
+                Senin – Sabtu <br />
+                08:00 – 17:00 WIB
               </p>
             </div>
           </div>
 
           <div className="footer-copyright-bar">
-            <span>© 2026 IDN Makerspace Operations. Sesuai BRD-IDNMS-2026-V1 &amp; Google Stitch Design.</span>
-            <span>ENKRIPSI TLS 1.3 / AES-256 (UU PDP COMPLIANT)</span>
+            <span>© 2026 IDN Makerspace. Semua hak dilindungi.</span>
+            <span>PRIVASI &amp; KEAMANAN DATA</span>
           </div>
         </div>
       </footer>
@@ -1920,27 +1996,7 @@ export default function App() {
                       TIKET: {generatedTicket.id} | {generatedTicket.date} ({generatedTicket.slot})
                     </div>
 
-                    <div className="qr-placeholder-box">
-                      <svg width="130" height="130" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="140" height="140" fill="white" />
-                        <rect x="10" y="10" width="40" height="40" fill="black" />
-                        <rect x="18" y="18" width="24" height="24" fill="white" />
-                        <rect x="24" y="24" width="12" height="12" fill="black" />
-                        <rect x="90" y="10" width="40" height="40" fill="black" />
-                        <rect x="98" y="18" width="24" height="24" fill="white" />
-                        <rect x="104" y="24" width="12" height="12" fill="black" />
-                        <rect x="10" y="90" width="40" height="40" fill="black" />
-                        <rect x="18" y="98" width="24" height="24" fill="white" />
-                        <rect x="24" y="104" width="12" height="12" fill="black" />
-                        <rect x="60" y="20" width="20" height="10" fill="black" />
-                        <rect x="60" y="40" width="10" height="20" fill="black" />
-                        <rect x="80" y="70" width="20" height="20" fill="black" />
-                        <rect x="60" y="90" width="20" height="20" fill="black" />
-                        <rect x="90" y="100" width="30" height="10" fill="black" />
-                        <rect x="110" y="60" width="20" height="20" fill="black" />
-                        <rect x="40" y="70" width="10" height="10" fill="black" />
-                      </svg>
-                    </div>
+                    <div className="qr-placeholder-box qr-raster-pattern" aria-label="Kode QR booking" />
 
                     <div style={{ fontFamily: 'var(--font-code)', fontSize: '0.78rem', color: isCheckedIn ? '#4ade80' : 'var(--accent-amber)', marginBottom: '14px' }}>
                       {isCheckedIn

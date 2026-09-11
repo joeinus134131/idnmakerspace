@@ -54,6 +54,35 @@
   --transition-smooth: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Raster-friendly CSS marks: no SVG asset requests on the landing page. */
+.brand-raster-mark {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 2px solid var(--accent-lime);
+  border-radius: 50%;
+  color: var(--text-white);
+  background: radial-gradient(circle, rgba(0, 210, 238, 0.35), transparent 62%);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.62rem;
+  box-shadow: inset 0 0 0 5px rgba(163, 255, 18, 0.08);
+}
+
+.qr-raster-pattern {
+  width: 130px;
+  height: 130px;
+  background-color: #fff;
+  background-image:
+    linear-gradient(90deg, #000 10px, transparent 10px),
+    linear-gradient(#000 10px, transparent 10px),
+    repeating-linear-gradient(90deg, transparent 0 16px, #000 16px 24px, transparent 24px 32px),
+    repeating-linear-gradient(0deg, transparent 0 20px, #000 20px 30px, transparent 30px 40px);
+  background-size: 40px 40px, 40px 40px, 64px 64px, 70px 70px;
+  background-position: 10px 10px, 10px 10px, 54px 48px, 38px 58px;
+  border: 7px solid #fff;
+}
+
 /* Container */
 .container {
   width: 100%;
@@ -268,13 +297,112 @@ body {
 /* ==========================================================================
    HERO SECTION (WHERE IDEAS TAKE SHAPE)
    ========================================================================== */
+/* ==========================================================================
+   AMBIENT GLOW AURA (SUBTLE, EYE-FRIENDLY MODERN DEPTH)
+   ========================================================================== */
+.ambient-aura-wrapper {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.14;
+  animation: floatAura 18s ease-in-out infinite alternate;
+}
+
+.ambient-orb-lime {
+  width: 540px;
+  height: 540px;
+  background: radial-gradient(circle, #a3ff12 0%, rgba(163, 255, 18, 0) 70%);
+  top: -80px;
+  left: -80px;
+}
+
+.ambient-orb-cyan {
+  width: 580px;
+  height: 580px;
+  background: radial-gradient(circle, #00d2ee 0%, rgba(0, 210, 238, 0) 70%);
+  top: 25%;
+  right: -120px;
+  animation-duration: 22s;
+  animation-delay: -5s;
+}
+
+.ambient-orb-purple {
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, #8b5cf6 0%, rgba(139, 92, 246, 0) 70%);
+  bottom: 12%;
+  left: 10%;
+  animation-duration: 26s;
+  animation-delay: -10s;
+  opacity: 0.09;
+}
+
+@keyframes floatAura {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(35px, 50px) scale(1.06); }
+  100% { transform: translate(-25px, 25px) scale(0.96); }
+}
+
+/* ==========================================================================
+   HERO SECTION (DYNAMIC BACKGROUND SLIDER & ATMOSPHERIC AESTHETIC)
+   ========================================================================== */
 .hero-section {
-  padding: 70px 0 45px;
+  position: relative;
+  padding: 75px 0 55px;
+  min-height: 640px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.hero-slider-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.hero-slide-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.06);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.hero-slide-bg.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hero-slider-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(90deg, rgba(10, 12, 16, 0.96) 0%, rgba(10, 12, 16, 0.88) 42%, rgba(10, 12, 16, 0.65) 75%, rgba(10, 12, 16, 0.9) 100%),
+    linear-gradient(180deg, rgba(10, 12, 16, 0.4) 0%, transparent 35%, rgba(10, 12, 16, 0.98) 100%);
+  pointer-events: none;
 }
 
 .hero-grid {
+  position: relative;
+  z-index: 3;
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1.22fr 0.78fr;
   gap: 48px;
   align-items: center;
 }
@@ -290,15 +418,16 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--accent-lime-soft);
-  border: 1px solid rgba(163, 255, 18, 0.22);
-  padding: 5px 12px;
+  background: rgba(163, 255, 18, 0.08);
+  border: 1px solid rgba(163, 255, 18, 0.25);
+  padding: 6px 14px;
   border-radius: var(--radius-full);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   color: var(--accent-lime);
   margin-bottom: 20px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(8px);
 }
 
 .pulse-dot {
@@ -318,9 +447,9 @@ body {
 
 .hero-main-title {
   font-family: var(--font-heading);
-  font-size: 3.5rem;
+  font-size: 3.6rem;
   font-weight: 800;
-  line-height: 1.06;
+  line-height: 1.05;
   letter-spacing: -0.04em;
   color: var(--text-white);
   margin-bottom: 20px;
@@ -342,8 +471,8 @@ body {
   font-size: 1.05rem;
   line-height: 1.65;
   color: var(--text-secondary);
-  margin-bottom: 30px;
-  max-width: 620px;
+  margin-bottom: 28px;
+  max-width: 600px;
 }
 
 .hero-actions-row {
@@ -351,13 +480,13 @@ body {
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .hero-checklist-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 18px;
   font-size: 0.82rem;
   color: var(--text-secondary);
 }
@@ -366,11 +495,152 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Hero Slider Controls Bar */
+.hero-slider-controls {
+  position: relative;
+  z-index: 3;
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: rgba(17, 20, 28, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.slider-tabs-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.slider-tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.slider-tab-btn:hover {
+  color: var(--text-white);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.slider-tab-btn.active {
+  color: var(--text-white);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(163, 255, 18, 0.3);
+}
+
+.slider-tab-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--accent-lime);
+  margin-bottom: 2px;
+  letter-spacing: 0.06em;
+}
+
+.slider-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--accent-lime);
+  width: 0%;
+}
+
+.slider-tab-btn.active .slider-progress-bar {
+  animation: slideProgressBar 5.5s linear infinite;
+}
+
+@keyframes slideProgressBar {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.slider-nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slider-arrow-btn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.slider-arrow-btn:hover {
+  background: rgba(163, 255, 18, 0.15);
+  border-color: var(--accent-lime);
+  color: var(--accent-lime);
+}
+
+/* Oscilloscope Equalizer Waveform */
+.oscilloscope-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+  padding: 1px;
+}
+
+.eq-bar {
+  width: 3px;
+  background: var(--accent-lime);
+  border-radius: 2px;
+  animation: eqBounce 1.2s ease-in-out infinite alternate;
+}
+
+.eq-bar:nth-child(1) { height: 40%; animation-delay: 0.1s; }
+.eq-bar:nth-child(2) { height: 75%; animation-delay: 0.3s; }
+.eq-bar:nth-child(3) { height: 50%; animation-delay: 0.05s; }
+.eq-bar:nth-child(4) { height: 95%; animation-delay: 0.4s; }
+.eq-bar:nth-child(5) { height: 60%; animation-delay: 0.25s; }
+.eq-bar:nth-child(6) { height: 85%; animation-delay: 0.15s; }
+.eq-bar:nth-child(7) { height: 45%; animation-delay: 0.35s; }
+.eq-bar:nth-child(8) { height: 65%; animation-delay: 0.2s; }
+
+@keyframes eqBounce {
+  0% { transform: scaleY(0.3); opacity: 0.6; }
+  100% { transform: scaleY(1); opacity: 1; }
 }
 
 /* Telemetry Card (Clean Industrialism) */
 .telemetry-console-card {
-  background: var(--bg-surface-card);
+  background: rgba(21, 25, 36, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
@@ -383,7 +653,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 12px 18px;
-  background: rgba(10, 12, 16, 0.4);
+  background: rgba(10, 12, 16, 0.6);
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -1411,6 +1681,23 @@ body {
   color: var(--accent-amber);
   line-height: 1;
   margin: 10px 0;
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+  animation: timerPulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes timerPulse {
+  0% { text-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+  100% { text-shadow: 0 0 24px rgba(245, 158, 11, 0.55); }
+}
+
+.ecosystem-card, .machine-card-detailed, .pricing-card, .safety-card, .workshop-card, .stat-box-modern {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s, box-shadow 0.28s;
+}
+
+.ecosystem-card:hover, .machine-card-detailed:hover, .pricing-card:hover, .workshop-card:hover, .stat-box-modern:hover {
+  transform: translateY(-4px);
+  border-color: rgba(163, 255, 18, 0.3);
+  box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.7), 0 0 20px -5px rgba(163, 255, 18, 0.12);
 }
 
 /* ==========================================================================
