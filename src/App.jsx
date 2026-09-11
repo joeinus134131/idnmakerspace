@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Cpu,
   Zap,
@@ -9,1764 +9,776 @@ import {
   Printer,
   Flame,
   Activity,
-  Coffee,
-  CheckCircle,
+  Shield,
+  ShieldCheck,
+  ShieldAlert,
+  CheckCircle2,
+  AlertTriangle,
   ArrowRight,
   X,
   RotateCcw,
-  Play,
-  Shield,
-  Wind
+  Clock,
+  CreditCard,
+  QrCode,
+  Award,
+  Sparkles,
+  Layers,
+  Users,
+  Boxes,
+  ChevronRight,
+  TrendingUp,
+  Check,
+  MapPin,
+  HelpCircle
 } from 'lucide-react';
 import './App.css';
 
-// Custom SVG Brand Logo for IDN Maker Space
-const BrandLogo = ({ size = 32, glow = true }) => (
+// SVG Brand Logo for IDN STEM Creative Hub / IDN Makerspace
+const BrandLogo = ({ size = 32 }) => (
   <svg
     width={size}
     height={size}
     viewBox="0 0 100 100"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ filter: glow ? 'drop-shadow(0 0 8px rgba(255, 93, 34, 0.4))' : 'none' }}
   >
-    <circle cx="50" cy="50" r="38" stroke="url(#logo-grad-orange)" strokeWidth="4" strokeDasharray="6 4" />
-    <circle cx="50" cy="50" r="22" stroke="url(#logo-grad-teal)" strokeWidth="2" />
-    <path d="M35 35 V65 L45 50 L55 65 V35 M65 35 H55 V65 H65" stroke="var(--text-white)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-    <circle cx="50" cy="50" r="3" fill="var(--accent-teal)" />
-    <circle cx="35" cy="35" r="2" fill="var(--accent-orange)" />
-    <circle cx="65" cy="35" r="2" fill="var(--accent-orange)" />
-
-    <defs>
-      <linearGradient id="logo-grad-orange" x1="0" y1="0" x2="100" y2="100">
-        <stop offset="0%" stopColor="#ff5d22" />
-        <stop offset="100%" stopColor="#ff8c32" />
-      </linearGradient>
-      <linearGradient id="logo-grad-teal" x1="0" y1="0" x2="100" y2="100">
-        <stop offset="0%" stopColor="#00f5d4" />
-        <stop offset="100%" stopColor="#00b4d8" />
-      </linearGradient>
-    </defs>
+    <circle cx="50" cy="50" r="42" stroke="#a3ff12" strokeWidth="3" strokeDasharray="8 6" opacity="0.9" />
+    <circle cx="50" cy="50" r="28" stroke="#00d2ee" strokeWidth="2" opacity="0.8" />
+    <path
+      d="M34 32 V68 L48 50 L62 68 V32 M72 32 H62 V68 H72"
+      stroke="#ffffff"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="50" cy="50" r="4" fill="#a3ff12" />
+    <circle cx="34" cy="32" r="3" fill="#00d2ee" />
+    <circle cx="66" cy="32" r="3" fill="#a3ff12" />
   </svg>
 );
 
-// Custom Analog Rotary Mechanical Knob
-const RotaryKnob = ({ value, onChange, min, max, label, color = 'var(--accent-teal)' }) => {
-  const percentage = ((value - min) / (max - min)) * 100;
-  const rotationAngle = -135 + (percentage / 100) * 270;
+// Machines Dataset according to BRD-IDNMS-2026-V1 & Stitch
+const MACHINES_DATA = [
+  {
+    id: 'laser-100w',
+    name: 'ThunderLaser Nova 51 CO2 (100W)',
+    category: 'laser',
+    level: 3,
+    levelName: 'Level 3 : Merah (Risiko Tinggi)',
+    status: 'inuse',
+    statusLabel: 'Sedang Dipakai',
+    hoursLogged: 164,
+    hoursLimit: 200,
+    area: '1300 x 900 mm',
+    speed: '1000 mm/s',
+    materials: 'Akrilik, Balsa, MDF, Kulit',
+    hourlyRate: 65000,
+    icon: Flame
+  },
+  {
+    id: '3d-bambu-x1c',
+    name: 'Bambu Lab X1-Carbon Combo (AMS)',
+    category: '3dprint',
+    level: 2,
+    levelName: 'Level 2 : Kuning (Moderat)',
+    status: 'available',
+    statusLabel: 'Tersedia',
+    hoursLogged: 92,
+    hoursLimit: 300,
+    area: '256 x 256 x 256 mm',
+    speed: '500 mm/s (Auto-Bed LiDAR)',
+    materials: 'PLA, PETG, TPU, Carbon Fiber',
+    hourlyRate: 35000,
+    icon: Printer
+  },
+  {
+    id: 'cnc-router-3axis',
+    name: 'Shapeoko Pro CNC Router (2.2kW)',
+    category: 'laser',
+    level: 3,
+    levelName: 'Level 3 : Merah (Risiko Tinggi)',
+    status: 'available',
+    statusLabel: 'Tersedia',
+    hoursLogged: 58,
+    hoursLimit: 150,
+    area: '838 x 838 x 100 mm',
+    speed: '24,000 RPM Spindle',
+    materials: 'Kayu Keras, Aluminium, Akrilik',
+    hourlyRate: 75000,
+    icon: Wrench
+  },
+  {
+    id: 'sla-resin-saturn',
+    name: 'Elegoo Saturn 4 Ultra 12K Resin',
+    category: '3dprint',
+    level: 3,
+    levelName: 'Level 3 : Merah (Risiko Tinggi)',
+    status: 'available',
+    statusLabel: 'Tersedia',
+    hoursLogged: 34,
+    hoursLimit: 120,
+    area: '218 x 122 x 220 mm',
+    speed: '150 mm/h Tilt Release',
+    materials: 'Standard & Tough 3D Resin',
+    hourlyRate: 45000,
+    icon: Boxes
+  },
+  {
+    id: 'pcb-solder-station',
+    name: 'Hakko FX-888D & ESD Workbench',
+    category: 'iot',
+    level: 1,
+    levelName: 'Level 1 : Hijau (Akses Bebas)',
+    status: 'available',
+    statusLabel: 'Akses Bebas',
+    hoursLogged: 310,
+    hoursLimit: 1000,
+    area: 'Meja ESD Lab Elektronika',
+    speed: 'Suhu 50°C - 480°C Presisi',
+    materials: 'SMD, THT, Wire, Lead-Free',
+    hourlyRate: 15000,
+    icon: Zap
+  },
+  {
+    id: 'iot-oscilloscope-bench',
+    name: 'Rigol DS1054Z 4-Ch Oscilloscope',
+    category: 'iot',
+    level: 1,
+    levelName: 'Level 1 : Hijau (Akses Bebas)',
+    status: 'available',
+    statusLabel: 'Akses Bebas',
+    hoursLogged: 140,
+    hoursLimit: 800,
+    area: 'Meja IoT Bench #02',
+    speed: '50MHz 4 Channel 1GSa/s',
+    materials: 'ESP32, STM32, Logic Analyzer',
+    hourlyRate: 15000,
+    icon: Cpu
+  }
+];
 
-  return (
-    <div className="rotary-knob-component">
-      <div className="knob-ring">
-        <svg className="knob-svg-ring" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(36, 44, 59, 0.3)" strokeWidth="6" />
-          <circle
-            cx="50"
-            cy="50"
-            r="42"
-            fill="none"
-            stroke={color}
-            strokeWidth="6"
-            strokeDasharray="264"
-            strokeDashoffset={264 - (percentage / 100) * 198}
-            transform="rotate(135 50 50)"
-            style={{ transition: 'stroke-dashoffset 0.12s ease' }}
-          />
-        </svg>
-
-        <div
-          className="knob-cap"
-          style={{
-            transform: `rotate(${rotationAngle}deg)`
-          }}
-        >
-          <div className="knob-notch" style={{ color: color }}></div>
-        </div>
-      </div>
-
-      <div className="knob-controls-row">
-        <button
-          type="button"
-          className="knob-adjust-btn"
-          onClick={() => onChange(Math.max(min, value - 1))}
-        >
-          -
-        </button>
-        <span className="knob-digital-readout" style={{ color: color }}>
-          {value}<span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>{label}</span>
-        </span>
-        <button
-          type="button"
-          className="knob-adjust-btn"
-          onClick={() => onChange(Math.min(max, value + 1))}
-        >
-          +
-        </button>
-      </div>
-
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={value}
-        onChange={(e) => onChange(parseInt(e.target.value))}
-        className="dial-slider"
-        style={{ marginTop: '4px', width: '100%', opacity: 0.4 }}
-      />
-    </div>
-  );
-};
-
-// Generate a unique ticket ID outside App component to maintain pure rendering
-const generateTicketId = () => {
-  return `IDN-MKS-${Math.floor(100000 + Math.random() * 900000)}`;
-};
-
-function App() {
-  /* ========================================================
-     STATE: TELEMETRY (DYNAMIC TOCK)
-     ======================================================== */
+export default function App() {
+  // Live Telemetry Stream
   const [telemetry, setTelemetry] = useState({
-    roomTemp: 24.8,
+    roomTemp: 24.6,
     humidity: 52,
-    lasersActive: 0,
-    powerDraw: 1.2, // kW
-    makersCount: 14,
-    espressoPulled: 28,
-    filamentSpent: 1240, // meters
-    decibelLevel: 58
+    powerDraw: 2.85,
+    activeMakers: 18,
+    activeMachines: 6
   });
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTelemetry(prev => {
-        // Random slight fluctuations for realism
-        const isLaserOn = workbenchState.includes('laser');
-        const isPrinterOn = workbenchState.includes('printer');
-        const isSolderOn = workbenchState.includes('solder');
-        const isOscOn = workbenchState.includes('oscilloscope');
-
-        let powerCalc = 0.8; // base idle
-        if (isLaserOn) powerCalc += 2.4;
-        if (isPrinterOn) powerCalc += 0.6;
-        if (isSolderOn) powerCalc += 0.3;
-        if (isOscOn) powerCalc += 0.15;
-
-        return {
-          roomTemp: parseFloat((24.0 + Math.random() * 1.5).toFixed(1)),
-          humidity: Math.floor(50 + Math.random() * 5),
-          lasersActive: isLaserOn ? 1 : 0,
-          powerDraw: parseFloat((powerCalc + Math.random() * 0.1).toFixed(2)),
-          makersCount: Math.floor(12 + Math.random() * 6),
-          espressoPulled: prev.espressoPulled + (Math.random() > 0.85 ? 1 : 0),
-          filamentSpent: prev.filamentSpent + (isPrinterOn ? 1 : 0),
-          decibelLevel: Math.floor(55 + Math.random() * (isLaserOn ? 15 : 6))
-        };
+      setTelemetry({
+        roomTemp: parseFloat((24.2 + Math.random() * 0.8).toFixed(1)),
+        humidity: Math.floor(51 + Math.random() * 3),
+        powerDraw: parseFloat((2.6 + Math.random() * 0.5).toFixed(2)),
+        activeMakers: Math.floor(16 + Math.random() * 5),
+        activeMachines: Math.floor(5 + Math.random() * 2)
       });
-    }, 1500);
-
+    }, 2500);
     return () => clearInterval(interval);
   }, []);
 
-  /* ========================================================
-     STATE: INTERACTIVE STEM WORKBENCH
-     ======================================================== */
-  const [workbenchState, setWorkbenchState] = useState(['oscilloscope', 'solder']); // default active tools
-
-  // Oscilloscope controls
-  const [oscilloscopeFreq, setOscilloscopeFreq] = useState(30);
-  const [oscilloscopeAmp, setOscilloscopeAmp] = useState(25);
-  const canvasRef = useRef(null);
-
-  // 3D Printer Simulator metrics
-  const [printProgress, setPrintProgress] = useState(45);
-  const [printX, setPrintX] = useState(80);
-
-  // Laser Cutter CNC metrics
-  const [laserProgress, setLaserProgress] = useState(15);
-
-  // Soldering Station heat dial
-  const [solderTemp, setSolderTemp] = useState(350);
-
-  // Switch Toggles
-  const toggleTool = (toolId) => {
-    setWorkbenchState(prev =>
-      prev.includes(toolId) ? prev.filter(t => t !== toolId) : [...prev, toolId]
-    );
-  };
-
-  // Oscilloscope HTML5 Canvas Rendering Loop
-  useEffect(() => {
-    if (!workbenchState.includes('oscilloscope')) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animationId;
-    let offset = 0;
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Grid lines
-      ctx.strokeStyle = 'rgba(36, 44, 59, 0.4)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < canvas.width; x += 20) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += 20) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-
-      // Axis lines
-      ctx.strokeStyle = 'rgba(36, 44, 59, 0.8)';
-      ctx.beginPath();
-      ctx.moveTo(0, canvas.height / 2);
-      ctx.lineTo(canvas.width, canvas.height / 2);
-      ctx.moveTo(canvas.width / 2, 0);
-      ctx.lineTo(canvas.width / 2, canvas.height);
-      ctx.stroke();
-
-      // Glowing Sine Wave
-      ctx.strokeStyle = '#00f5d4';
-      ctx.lineWidth = 2.5;
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = '#00f5d4';
-      ctx.beginPath();
-
-      for (let x = 0; x < canvas.width; x++) {
-        // Sine wave formula mapped to states
-        const y = canvas.height / 2 + Math.sin(x * (oscilloscopeFreq / 250) + offset) * oscilloscopeAmp;
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      ctx.shadowBlur = 0; // reset glow
-
-      offset += 0.08;
-      animationId = requestAnimationFrame(draw);
-    };
-
-    draw();
-    return () => cancelAnimationFrame(animationId);
-  }, [workbenchState, oscilloscopeFreq, oscilloscopeAmp]);
-
-  // 3D Printer Motion Loop
-  useEffect(() => {
-    if (!workbenchState.includes('printer')) return;
-    const interval = setInterval(() => {
-      setPrintProgress(prev => (prev >= 100 ? 0 : prev + 1));
-      setPrintX(() => Math.floor(40 + Math.random() * 120));
-    }, 800);
-
-    return () => clearInterval(interval);
-  }, [workbenchState]);
-
-  // Laser CNC Cutter Motion Loop
-  useEffect(() => {
-    if (!workbenchState.includes('laser')) return;
-    const interval = setInterval(() => {
-      setLaserProgress(prev => (prev >= 100 ? 0 : prev + 2));
-    }, 400);
-
-    return () => clearInterval(interval);
-  }, [workbenchState]);
-
-  // Calculations for total workbench power grid capacity
-  const activeCount = workbenchState.length;
-  const powerPercentage = Math.min((activeCount / 4) * 100, 100);
-
-  /* ========================================================
-     STATE: INTERACTIVE CODE SANDBOX
-     ======================================================== */
-  const projectsPreset = [
-    {
-      id: 'iot',
-      title: 'Smart IoT Hydroponics Hub',
-      subtitle: 'Monitoring air/soil conditions & pumping nutrients automatically.',
-      difficulty: 'MENENGAH',
-      cost: 'Rp 350.000',
-      time: '3-4 Jam',
-      tools: ['ESP32 microchip', 'Solder Iron', 'DHT22 Sensor', 'Water Pump'],
-      code: `// IDN Maker Space IoT Sandbox
-#include <WiFi.h>
-#include <DHT.h>
-
-#define DHTPIN 4
-#define PUMPPIN 12
-#define SOILPIN 34
-
-DHT dht(DHTPIN, DHT22);
-
-void setup() {
-  Serial.begin(115200);
-  dht.begin();
-  pinMode(PUMPPIN, OUTPUT);
-}
-
-void loop() {
-  float hum = dht.readHumidity();
-  float temp = dht.readTemperature();
-  int soilVal = analogRead(SOILPIN);
-  
-  Serial.printf("Temp: %.1fC | Moisture: %d\\n", temp, soilVal);
-  
-  if (soilVal > 3000) { 
-    Serial.println("Soil dry! Activating pump...");
-    digitalWrite(PUMPPIN, HIGH);
-    delay(2000);
-    digitalWrite(PUMPPIN, LOW);
-  }
-  delay(5000);
-}`,
-      schematicSvg: (
-        <svg className="blueprint-svg" viewBox="0 0 200 120">
-          <rect width="100%" height="100%" fill="none" />
-          {/* Microcontroller */}
-          <rect x="20" y="30" width="50" height="60" rx="4" fill="none" stroke="#00b4d8" strokeWidth="1.5" />
-          <text x="45" y="65" fill="#00b4d8" fontSize="8" textAnchor="middle" fontFamily="Share Tech Mono">ESP32</text>
-          {/* Pin leads */}
-          <line x1="70" y1="50" x2="110" y2="50" stroke="#00b4d8" strokeWidth="1.5" strokeDasharray="3,3" />
-          <line x1="70" y1="70" x2="110" y2="70" stroke="#00b4d8" strokeWidth="1.5" />
-          {/* Sensor block */}
-          <rect x="110" y="35" width="40" height="30" rx="3" fill="none" stroke="#00f5d4" strokeWidth="1.5" />
-          <text x="130" y="52" fill="#00f5d4" fontSize="7" textAnchor="middle" fontFamily="Share Tech Mono">DHT22</text>
-          {/* Actuator block */}
-          <rect x="110" y="75" width="40" height="30" rx="3" fill="none" stroke="#ffb703" strokeWidth="1.5" />
-          <text x="130" y="92" fill="#ffb703" fontSize="6.5" textAnchor="middle" fontFamily="Share Tech Mono">RELAY PUMP</text>
-        </svg>
-      )
-    },
-    {
-      id: 'robotics',
-      title: 'Hexapod Robotic Crawler',
-      subtitle: 'Walking multi-legged mechanical body reacting to ultrasonic radar.',
-      difficulty: 'MAHIR',
-      cost: 'Rp 750.000',
-      time: '6-8 Jam',
-      tools: ['Arduino Uno', '12x Servos', 'HC-SR04 Radar', 'Acrylic Chassis'],
-      code: `// IDN Maker Space Robotics Sandbox
-#include <Servo.h>
-
-Servo legServo[12];
-const int triggerPin = 9;
-const int echoPin = 8;
-
-void setup() {
-  Serial.begin(9600);
-  pinMode(triggerPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-  
-  // Attach all 12 legs
-  for (int i=0; i<12; i++) {
-    legServo[i].attach(i + 2);
-  }
-}
-
-void loop() {
-  long duration, distance;
-  digitalWrite(triggerPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(triggerPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(triggerPin, LOW);
-  
-  duration = pulseIn(echoPin, HIGH);
-  distance = (duration/2) / 29.1;
-  
-  if (distance < 15) {
-    Serial.println("Obstacle! Evading left...");
-    walkBackward();
-    turnLeft();
-  } else {
-    walkForward();
-  }
-  delay(100);
-}`,
-      schematicSvg: (
-        <svg className="blueprint-svg" viewBox="0 0 200 120">
-          <rect width="100%" height="100%" fill="none" />
-          {/* Main Core */}
-          <rect x="30" y="40" width="50" height="40" rx="4" fill="none" stroke="#00b4d8" strokeWidth="1.5" />
-          <text x="55" y="63" fill="#00b4d8" fontSize="8" textAnchor="middle" fontFamily="Share Tech Mono">UNO R3</text>
-          {/* Leg linkages */}
-          <line x1="55" y1="40" x2="35" y2="15" stroke="#ff5d22" strokeWidth="1.5" />
-          <line x1="55" y1="40" x2="75" y2="15" stroke="#ff5d22" strokeWidth="1.5" />
-          <line x1="55" y1="80" x2="35" y2="105" stroke="#ff5d22" strokeWidth="1.5" />
-          <line x1="55" y1="80" x2="75" y2="105" stroke="#ff5d22" strokeWidth="1.5" />
-          {/* Ultrasonic module */}
-          <rect x="110" y="45" width="40" height="30" rx="10" fill="none" stroke="#00f5d4" strokeWidth="1.5" />
-          <circle cx="120" cy="60" r="6" stroke="#00f5d4" strokeWidth="1" fill="none" />
-          <circle cx="140" cy="60" r="6" stroke="#00f5d4" strokeWidth="1" fill="none" />
-          <text x="130" y="86" fill="#00f5d4" fontSize="6" textAnchor="middle" fontFamily="Share Tech Mono">RADAR</text>
-        </svg>
-      )
-    },
-    {
-      id: 'laser-clock',
-      title: 'Laser-Cut Mechanical Gearbox',
-      subtitle: 'Designing interlocking acrylic cogwheels and pendulum levers.',
-      difficulty: 'PEMULA',
-      cost: 'Rp 180.000',
-      time: '1-2 Jam',
-      tools: ['2D CAD Software', 'Laser Cutter CNC', '3mm Acrylic Sheets'],
-      code: `<!-- Inkscape Vector Blueprint File -->
-<svg width="210mm" height="297mm" viewBox="0 0 210 297">
-  <!-- Gear cogwheel path definition -->
-  <g id="gear-cogwheel" stroke="#ff5d22" stroke-width="0.1" fill="none">
-    <circle cx="105" cy="148" r="50" />
-    <!-- 24 interlocking mechanical teeth -->
-    <path d="M 105 93 L 102 98 L 98 98 L 95 93 Z" />
-    <path d="M 105 203 L 108 198 L 112 198 L 115 203 Z" />
-    <!-- central axle node -->
-    <circle cx="105" cy="148" r="4.5" />
-  </g>
-</svg>`,
-      schematicSvg: (
-        <svg className="blueprint-svg" viewBox="0 0 200 120">
-          <rect width="100%" height="100%" fill="none" />
-          {/* Main Gears */}
-          <circle cx="70" cy="60" r="30" stroke="#00f5d4" strokeWidth="1.5" fill="none" strokeDasharray="3,3" />
-          <circle cx="70" cy="60" r="6" stroke="#00f5d4" strokeWidth="1.5" fill="none" />
-
-          <circle cx="120" cy="60" r="20" stroke="#ffb703" strokeWidth="1.5" fill="none" strokeDasharray="3,3" />
-          <circle cx="120" cy="60" r="4" stroke="#ffb703" strokeWidth="1.5" fill="none" />
-
-          <line x1="70" y1="60" x2="120" y2="60" stroke="#00b4d8" strokeWidth="1" strokeDasharray="4,4" />
-        </svg>
-      )
-    }
-  ];
-
-  const [activeProjectId, setActiveProjectId] = useState('iot');
-  const [compilingState, setCompilingState] = useState('idle'); // 'idle' | 'compiling' | 'success'
-  const [sandboxLogs, setSandboxLogs] = useState([
-    { type: 'system', text: 'SYSTEM DEPLOYED. Waiting for user action...' }
-  ]);
-
-  const activeProject = projectsPreset.find(p => p.id === activeProjectId);
-
-  const startCompilation = () => {
-    if (compilingState === 'compiling') return;
-    setCompilingState('compiling');
-    setSandboxLogs([
-      { type: 'system', text: 'Initializing GCC-ARM Compiler toolchain...' },
-      { type: 'info', text: 'Scanning local target hardware over port /dev/ttyUSB0...' }
-    ]);
-
-    setTimeout(() => {
-      setSandboxLogs(prev => [
-        ...prev,
-        { type: 'info', text: `Analyzing source syntax: compiled successfully without memory overflow.` },
-        { type: 'warning', text: 'Baudrate sync negotiation: using standard 115200.' }
-      ]);
-    }, 800);
-
-    setTimeout(() => {
-      setSandboxLogs(prev => [
-        ...prev,
-        { type: 'success', text: 'Flashing sectors: 100% written [512KB written successfully]' },
-        { type: 'success', text: 'BOOT OK. Hardware microchip operational!' }
-      ]);
-      setCompilingState('success');
-    }, 1800);
-  };
-
-  const resetSandbox = () => {
-    setCompilingState('idle');
-    setSandboxLogs([{ type: 'system', text: 'Sandbox reset. Waiting for upload...' }]);
-  };
-
-  /* ========================================================
-     STATE: LAB BOOKING & WORKBENCH SCHEDULER
-     ======================================================== */
-  const benchOptions = [
-    { id: 'electro', name: 'Electronics & IoT Hub', icon: <Cpu />, baseRate: 25000 },
-    { id: 'fab', name: 'Heavy CNC & Fab Bed', icon: <Wrench />, baseRate: 45000 },
-    { id: 'printer', name: '3D Printer Rack', icon: <Printer />, baseRate: 30000 },
-    { id: 'hand', name: 'Handcraft & Wood Station', icon: <Hammer />, baseRate: 20000 }
-  ];
-
-  const accessoryOptions = [
-    { id: 'caliper', name: 'Digital Calipers', rate: 5000 },
-    { id: 'multimeter', name: 'Digital Multimeter', rate: 10000 },
-    { id: 'soldering', name: 'Soldering Aid Kit', rate: 15000 },
-    { id: 'goggles', name: 'Safety Goggles', rate: 0 }
-  ];
-
-  const [bookingForm, setBookingForm] = useState({
-    name: '',
-    email: '',
-    date: '2026-05-20',
-    time: '14:00',
-    duration: 2,
-    benchId: 'electro',
-    accessories: ['goggles']
+  // User Profile / Safety Clearance State
+  const [userProfile, setUserProfile] = useState({
+    name: 'Fatih Pratama',
+    role: 'Maker Member',
+    creditsBalance: 175000,
+    badges: [1, 2] // Has Level 1 & Level 2 verified
   });
 
-  const [bookingSuccess, setBookingSuccess] = useState(false);
+  // Machine Filter Tab
+  const [activeMachineFilter, setActiveMachineFilter] = useState('all');
+
+  // Stakeholder Portal Tab
+  const [activeStakeholder, setActiveStakeholder] = useState('makers');
+
+  // Material Calculator State (BR-06)
+  const [calcMaterial, setCalcMaterial] = useState('pla');
+  const [calcAmount, setCalcAmount] = useState(120);
+  const [calcMachineHours, setCalcMachineHours] = useState(2);
+
+  // Pricing Interval Toggle
+  const [pricingCycle, setPricingCycle] = useState('monthly');
+
+  // Booking Wizard Modal State
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [bookingStep, setBookingStep] = useState(1);
+  const [selectedMachine, setSelectedMachine] = useState(MACHINES_DATA[1]);
+  const [selectedDate, setSelectedDate] = useState('2026-09-12');
+  const [selectedSlot, setSelectedSlot] = useState('14:00 - 14:30');
+  const [estimatedFilament, setEstimatedFilament] = useState(60);
+  const [agreedAntiGhosting, setAgreedAntiGhosting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('qris');
   const [generatedTicket, setGeneratedTicket] = useState(null);
+  const [isCheckedIn, setIsCheckedIn] = useState(false);
 
-  const toggleAccessory = (accId) => {
-    setBookingForm(prev => {
-      const isSelected = prev.accessories.includes(accId);
-      const newAccs = isSelected
-        ? prev.accessories.filter(id => id !== accId)
-        : [...prev.accessories, accId];
-      return { ...prev, accessories: newAccs };
-    });
-  };
+  // K3 Induction Quiz Modal State
+  const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
 
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-    if (!bookingForm.name || !bookingForm.email) {
-      alert("Harap lengkapi nama dan email Anda.");
-      return;
-    }
+  // Filtered Machines
+  const filteredMachines = MACHINES_DATA.filter(m => {
+    if (activeMachineFilter === 'all') return true;
+    return m.category === activeMachineFilter;
+  });
 
-    const selectedBench = benchOptions.find(b => b.id === bookingForm.benchId);
-    const selectedAccObjects = accessoryOptions.filter(a => bookingForm.accessories.includes(a.id));
+  // Calculate Material Cost
+  const calculateMaterialCost = () => {
+    let materialUnitCost = 0;
+    if (calcMaterial === 'pla') materialUnitCost = 350; // per gram
+    if (calcMaterial === 'petg') materialUnitCost = 450; // per gram
+    if (calcMaterial === 'acrylic') materialUnitCost = 18; // per cm2
+    if (calcMaterial === 'balsa') materialUnitCost = 12; // per cm2
+    if (calcMaterial === 'resin') materialUnitCost = 850; // per ml
 
-    // Math
-    const baseTotal = selectedBench.baseRate * bookingForm.duration;
-    const accTotal = selectedAccObjects.reduce((acc, item) => acc + (item.rate * bookingForm.duration), 0);
-    const finalTotal = baseTotal + accTotal;
+    const materialSubtotal = calcAmount * materialUnitCost;
+    const machineSubtotal = calcMachineHours * 35000;
+    const totalCost = materialSubtotal + machineSubtotal;
 
-    const ticket = {
-      id: generateTicketId(),
-      name: bookingForm.name,
-      email: bookingForm.email,
-      date: bookingForm.date,
-      time: bookingForm.time,
-      duration: bookingForm.duration,
-      bench: selectedBench.name,
-      accessories: selectedAccObjects.map(a => a.name).join(', ') || 'None',
-      total: finalTotal
+    return {
+      materialSubtotal,
+      machineSubtotal,
+      totalCost
     };
-
-    setGeneratedTicket(ticket);
-    setBookingSuccess(true);
   };
 
-  /* ========================================================
-     STATE: DIAGNOSTICS CLI faq
-     ======================================================== */
-  const faqPresets = [
-    { cmd: 'help', desc: 'Daftar perintah diagnostic.' },
-    { cmd: 'faq', desc: 'Pertanyaan paling populer.' },
-    { cmd: 'pricing', desc: 'Tarif sewa alat/ruang.' },
-    { cmd: 'location', desc: 'Peta & jam operasional.' },
-    { cmd: 'status', desc: 'Diagnostics status lab.' }
-  ];
+  const currentCalc = calculateMaterialCost();
 
-  const [terminalHistory, setTerminalHistory] = useState([
-    { type: 'input', text: 'diagnostic --init' },
-    {
-      type: 'output', text: `IDN Maker Space CLI Diagnostics [v1.0.4]
-Atmosfer Garage Maker & Experiential Engineering.
-Ketik [help] untuk melihat opsi perintah diagnostic.` }
-  ]);
-
-  const [setTerminalInput] = useState('');
-
-  const executeTerminalCommand = (cmdText) => {
-    const cleanCmd = cmdText.trim().toLowerCase();
-    let responseText = '';
-
-    if (cleanCmd === 'help') {
-      responseText = `Tersedia perintah berikut:
- - faq      : Daftar pertanyaan yang sering diajukan.
- - pricing  : Rincian biaya penggunaan tools & space.
- - location : Alamat fisik garasi & jam operasional.
- - status   : Status telemetry & antrian alat.
- - clear    : Membersihkan layar terminal.`;
-    } else if (cleanCmd === 'faq') {
-      responseText = `Q: Siapa yang bisa berkunjung?
-A: Siapa saja! Kami menyambut maker, mahasiswa, anak-anak, hobis, dan engineer profesional.
-
-Q: Apakah saya harus membawa alat sendiri?
-A: Tidak perlu! Kami menyediakan full tools: solder, multimeter, CNC, 3D printer, tang, dll.
-
-Q: Apakah ada tutor/mentor pendamping?
-A: Ya, Lab Engineer kami selalu standby di garasi untuk membantu mendampingi eksperimen Anda secara cuma-cuma.`;
-    } else if (cleanCmd === 'pricing') {
-      responseText = `Daftar tarif pemakaian fasilitas per jam:
- - Workbench Elektronik & IoT   : Rp 25.000 / jam
- - Heavy Fabrication & CNC Bed  : Rp 45.000 / jam
- - FDM 3D Printer (Filament Inc): Rp 30.000 / jam
- - Handcraft & Wood Station      : Rp 20.000 / jam
- * Semua penyewaan sudah termasuk alat pelindung diri (goggles/sarung tangan) & bantuan asisten lab.`;
-    } else if (cleanCmd === 'location') {
-      responseText = `Koordinat Garasi IDN Maker Space:
-Alamat : Jl. Silicon Garage No. 42, BSD City, Tangerang
-Jam    : Senin - Minggu | 09:00 - 21:00 WIB
-Kontak : garage@idnmakerspace.id | +62 812-3456-7890`;
-    } else if (cleanCmd === 'status') {
-      const isLaserOn = workbenchState.includes('laser');
-      const isPrinterOn = workbenchState.includes('printer');
-      responseText = `SYSTEM COMPONENT STATUS:
- [POWER OVERALL] : ${telemetry.powerDraw} kW
- [TEMPERATURE]   : ${telemetry.roomTemp}°C
- [LASER CUTTER]  : ${isLaserOn ? 'OPERATIONAL (RUNNING)' : 'STANDBY'}
- [3D PRINTERS]   : ${isPrinterOn ? 'ACTIVE (PRINTING)' : 'STANDBY'}
- [IOT BENCH]     : OPERATIONAL (OK)
- [COFFEE BAR]    : BEANS AT 88% - ESPRESSO ENGINE ACTIVE`;
-    } else if (cleanCmd === 'clear') {
-      setTerminalHistory([]);
-      setTerminalInput('');
-      return;
-    } else {
-      responseText = `Perintah '${cleanCmd}' tidak ditemukan. Ketik [help] untuk daftar perintah.`;
+  // Handle Start Booking
+  const handleOpenBooking = (machine = null) => {
+    if (machine) {
+      setSelectedMachine(machine);
     }
-
-    setTerminalHistory(prev => [
-      ...prev,
-      { type: 'input', text: cmdText },
-      { type: 'output', text: responseText }
-    ]);
-    setTerminalInput('');
+    setBookingStep(1);
+    setIsCheckedIn(false);
+    setGeneratedTicket(null);
+    setIsBookingModalOpen(true);
   };
 
-  /* ========================================================
-     STATE: EXPERIMENT BLUEPRINT MODAL
-     ======================================================== */
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedGalleryProject, setSelectedGalleryProject] = useState(null);
+  // Complete Booking & Generate Pass
+  const handleFinishBooking = () => {
+    const ticketId = `IDN-TKT-${Math.floor(100000 + Math.random() * 900000)}`;
+    setGeneratedTicket({
+      id: ticketId,
+      machine: selectedMachine.name,
+      slot: selectedSlot,
+      date: selectedDate,
+      cost: selectedMachine.hourlyRate + estimatedFilament * 350
+    });
+    setBookingStep(6);
+  };
 
-  const galleryProjects = [
-    {
-      id: 'mirror',
-      title: 'Dodecahedron Infinity Mirror',
-      tags: ['Laser Cutting', 'LED IoT', 'Electronics'],
-      maker: 'Daffa (16, Pelajar SMA)',
-      desc: 'Cermin infinity 3D berbentuk dodekahedron dengan LED beralamat (WS2812B) yang sinkron dengan detak suara musik ruangan.',
-      bom: ['12x Kaca Satu Arah', 'Chassis Acrylic 3mm (Laser Cut)', 'ESP8266 Microcontroller', 'WS2812B LED strip (60 LED/m)', 'Sound Sensor Module'],
-      steps: [
-        'Melakukan cutting 12 keping rangka pentagon menggunakan CNC Laser Cutter di space.',
-        'Menyusun kerangka pentagon dengan kaca satu arah membentuk dodekahedron.',
-        'Memasang baris LED strip beralamat WS2812B di sepanjang rusuk bagian dalam.',
-        'Menyolder jalur input tegangan & pin data mikro ESP8266 pada strip.',
-        'Mengupload source code FastLED berfitur deteksi ketukan suara ambient garasi.'
-      ]
-    },
-    {
-      id: 'maze',
-      title: 'Autonomous Maze Solver Robot',
-      tags: ['Robotics', '3D Printing', 'Arduino'],
-      maker: 'Rian (24, Hobiis / Driver Ojol)',
-      desc: 'Robot beroda mikro yang mampu memetakan jalur labirin secara mandiri dan mencari jalan keluar tercepat dalam waktu di bawah 12 detik.',
-      bom: ['Chassis Roda (3D Printed)', 'Arduino Nano R3', '3x Sensor Ultrasonic HC-SR04', 'L298D Motor Driver', '2x DC Gearbox Motors', 'Li-Po 7.4V Battery'],
-      steps: [
-        'Mendesain casing robot di Fusion360 dan mencetaknya menggunakan FDM 3D Printer lab.',
-        'Merakit sensor ultrasonik di bagian depan, kiri, dan kanan robot.',
-        'Menyolder jalur motor DC ke driver motor L298D agar dapat berbelok presisi.',
-        'Memprogram algoritma navigasi Left-Hand Rule pada editor Arduino.',
-        'Melakukan kalibrasi kecepatan motor saat mendeteksi dinding penghalang.'
-      ]
-    },
-    {
-      id: 'keyb',
-      title: 'Custom Ergonomic Mechanical Keyboard',
-      tags: ['Woodwork', 'PCB Soldering', 'Handcraft'],
-      maker: 'Mutiara (29, UI/UX Designer)',
-      desc: 'Keyboard mekanikal ergonomis terpisah (split keyboard) dengan casing kayu walnut premium berdesain lengkung alami jari tangan.',
-      bom: ['Casing Kayu Walnut (CNC Router & Polish)', 'Split PCB (Pro Micro Core)', '64x Cherry MX Brown Switches', 'Solder Lead & Flux', 'Dioda 1N4148 & Keycaps'],
-      steps: [
-        'Memotong papan kayu walnut mentah menggunakan mesin CNC Router sesuai file CAD.',
-        'Melakukan sanding halus & coating kayu walnut di Handcraft Workbench.',
-        'Menyolder 64 buah dioda penyearah & switch tombol pada sepasang PCB.',
-        'Merakit Pro Micro controller sebagai keyboard logic decoder.',
-        'Mengonfigurasi layout keymap menggunakan QMK firmware compiler.'
-      ]
+  // Handle Quiz Submission
+  const handleQuizSubmit = (e) => {
+    e.preventDefault();
+    let score = 0;
+    if (quizAnswers.q1 === 'b') score += 1;
+    if (quizAnswers.q2 === 'c') score += 1;
+    if (quizAnswers.q3 === 'a') score += 1;
+
+    setQuizScore(score);
+    setQuizSubmitted(true);
+
+    if (score === 3) {
+      setUserProfile(prev => ({
+        ...prev,
+        badges: prev.badges.includes(3) ? prev.badges : [...prev.badges, 3]
+      }));
     }
-  ];
-
-  const openProjectModal = (proj) => {
-    setSelectedGalleryProject(proj);
-    setModalOpen(true);
   };
 
   return (
-    <>
+    <div className="app-root">
       {/* ========================================================
-         NAVIGATION HEADER (GLASSMORPHISM)
-         ======================================================== */}
+          HEADER NAVIGATION (CLEAN, FOCUSED)
+          ======================================================== */}
       <header className="header-nav">
         <div className="container nav-container">
-          <div className="nav-logo">
-            <BrandLogo size={36} />
-            <span>IDN <span className="text-gradient-orange">MAKER SPACE</span></span>
-          </div>
+          <a href="#" className="nav-logo-group">
+            <BrandLogo size={32} />
+            <div className="nav-logo-text">
+              <span className="nav-brand-title">
+                IDN <span className="highlight-lime">MAKER SPACE</span>
+              </span>
+              <span className="nav-brand-sub">STEM CREATIVE HUB</span>
+            </div>
+          </a>
 
           <nav>
             <ul className="nav-links">
-              <li><a href="#workbench" className="nav-link">Workbench</a></li>
-              <li><a href="#toolbox" className="nav-link">STEM Toolbox</a></li>
-              <li><a href="#sandbox" className="nav-link">Sandbox</a></li>
-              <li><a href="#booking" className="nav-link">Booking</a></li>
-              <li><a href="#gallery" className="nav-link">Experiments</a></li>
-              <li><a href="#faq" className="nav-link">Diagnostics</a></li>
+              <li><a href="#the-lab" className="nav-link">Fasilitas Mesin</a></li>
+              <li><a href="#k3-safety" className="nav-link">Sistem K3</a></li>
+              <li><a href="#pricing" className="nav-link">Keanggotaan</a></li>
+              <li><a href="#materials" className="nav-link">Kalkulator Bahan</a></li>
+              <li><a href="#workshops" className="nav-link">Workshop</a></li>
+              <li><a href="#faq" className="nav-link">FAQ</a></li>
             </ul>
           </nav>
 
-          <div>
-            <a href="#booking" className="btn-secondary" style={{ padding: '8px 18px', fontSize: '0.8rem' }}>
-              Sewa Workbench
-            </a>
+          <div className="nav-actions">
+            <button
+              type="button"
+              className="badge-pill-btn"
+              onClick={() => setIsQuizModalOpen(true)}
+              title="Cek lencana keselamatan K3 Anda"
+            >
+              <Award size={14} />
+              <span>Lv.{Math.max(...userProfile.badges)} K3</span>
+            </button>
+
+            <button
+              type="button"
+              className="btn-primary-lime"
+              onClick={() => handleOpenBooking()}
+            >
+              <Calendar size={15} />
+              <span>Reservasi Mesin</span>
+            </button>
           </div>
         </div>
       </header>
 
       {/* ========================================================
-         HERO SECTION (ENGINEERING TELEMETRY DETAILED OVERLAY)
-         ======================================================== */}
+          HERO SECTION: WHERE IDEAS TAKE SHAPE
+          ======================================================== */}
       <section className="hero-section">
         <div className="container hero-grid">
           <div>
-            <div className="hero-badge">
-              <span className="ping"></span>
-              <span>IDN MAKER SPACE // GARASI EKSPERIMEN AKTIF</span>
+            <div className="hero-chip-badge">
+              <span className="pulse-dot"></span>
+              <span>IDN STEM CREATIVE HUB // FABLAB PLATFORM</span>
             </div>
 
-            <h1 className="hero-title">
-              GARASI <span className="text-gradient-orange">EKSPERIMEN</span> & STEM PLAYGROUND.
+            <h1 className="hero-main-title">
+              WHERE IDEAS <br />
+              <span className="text-gradient-lime">TAKE SHAPE.</span>
             </h1>
 
             <p className="hero-subtitle">
-              Satu-satunya ruang kreatif publik dengan atmosfer garasi engineering otentik. Akses 3D Printer, Laser Cutter, Lab Robotika, hingga mesin perkayuan untuk mewujudkan ide gila Anda.
+              Satu ekosistem terpadu yang mengintegrasikan laboratorium fabrikasi perangkat keras
+              (3D Printing, PCB Prototyping, CNC Milling, Laser Cutting, IoT) dengan sertifikasi
+              K3 digital, penjadwalan presisi anti-ghosting, dan billing material instan.
             </p>
 
-            <div className="hero-actions">
-              <a href="#booking" className="btn-primary">
-                <Calendar size={18} /> Booking Workbench
+            <div className="hero-actions-row">
+              <button
+                type="button"
+                className="btn-primary-lime"
+                onClick={() => handleOpenBooking()}
+              >
+                <Calendar size={16} />
+                <span>Mulai Reservasi Mesin</span>
+              </button>
+
+              <a href="#the-lab" className="btn-secondary-clean">
+                <Wrench size={16} />
+                <span>Katalog Mesin</span>
               </a>
-              <a href="#workbench" className="btn-secondary">
-                <Wrench size={18} /> Jelajahi Lab
-              </a>
+
+              <button
+                type="button"
+                className="btn-outline-cyan"
+                onClick={() => setIsQuizModalOpen(true)}
+              >
+                <ShieldCheck size={16} />
+                <span>Uji Lisensi K3</span>
+              </button>
             </div>
 
-            {/* Live micro-telemetry cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-              <div style={{ borderLeft: '3px solid var(--accent-orange)', paddingLeft: '12px' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>POWER DIBUTUHKAN</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: 'var(--text-white)', fontFamily: 'var(--font-mono)' }}>
-                  {telemetry.powerDraw} <span style={{ fontSize: '0.9rem', color: 'var(--accent-orange)' }}>kW</span>
-                </div>
-              </div>
-              <div style={{ borderLeft: '3px solid var(--accent-teal)', paddingLeft: '12px' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>MAKERS AKTIF</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: 'var(--text-white)', fontFamily: 'var(--font-mono)' }}>
-                  {telemetry.makersCount} <span style={{ fontSize: '0.9rem', color: 'var(--accent-teal)' }}>Orang</span>
-                </div>
-              </div>
-              <div style={{ borderLeft: '3px solid var(--accent-blue)', paddingLeft: '12px' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>KEBISINGAN RUANG</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: 'var(--text-white)', fontFamily: 'var(--font-mono)' }}>
-                  {telemetry.decibelLevel} <span style={{ fontSize: '0.9rem', color: 'var(--accent-blue)' }}>dB</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* High-tech Telemetry terminal HUD panel */}
-          <div className="telemetry-panel">
-            <div className="terminal-header">
-              <div className="terminal-dots">
-                <span className="terminal-dot red"></span>
-                <span className="terminal-dot yellow"></span>
-                <span className="terminal-dot green"></span>
-              </div>
-              <span className="terminal-title">SYSTEM_TELEMETRY.LOG</span>
-            </div>
-
-            <div className="telemetry-row">
-              <span className="telemetry-label">[SYSTEM STATUS]</span>
-              <span className="telemetry-value status-badge active">
-                <span className="indicator"></span> LIVE RUNNING
+            <div className="hero-checklist-row">
+              <span className="hero-check-item">
+                <Check size={14} color="var(--accent-lime)" /> Standar K3 Terakreditasi
+              </span>
+              <span className="hero-check-item">
+                <Check size={14} color="var(--accent-lime)" /> QRIS Dinamis &amp; VA Bank
+              </span>
+              <span className="hero-check-item">
+                <Check size={14} color="var(--accent-lime)" /> Timbangan Digital Bahan
               </span>
             </div>
-
-            <div className="telemetry-row">
-              <span className="telemetry-label">[SUHU GARASI]</span>
-              <span className="telemetry-value">{telemetry.roomTemp} °C</span>
-            </div>
-
-            <div className="telemetry-row">
-              <span className="telemetry-label">[KELEMBABAN]</span>
-              <span className="telemetry-value warning">{telemetry.humidity} %</span>
-            </div>
-
-            <div className="telemetry-row">
-              <span className="telemetry-label">[LASER CNC AKTIF]</span>
-              <span className="telemetry-value danger">{telemetry.lasersActive} Mesin</span>
-            </div>
-
-            <div className="telemetry-row">
-              <span className="telemetry-label">[ESPRESSO DIKONSUMSI]</span>
-              <span className="telemetry-value" style={{ color: 'var(--accent-amber)' }}>{telemetry.espressoPulled} Cups</span>
-            </div>
-
-            <div className="telemetry-row">
-              <span className="telemetry-label">[FILAMENT SPECS]</span>
-              <span className="telemetry-value">{telemetry.filamentSpent} m spent</span>
-            </div>
-
-            <div style={{ marginTop: '16px', background: 'rgba(36, 44, 59, 0.3)', padding: '10px', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-              <span className="text-gradient-orange" style={{ fontWeight: 'bold' }}>INFO:</span> Silakan pesan workbench di bawah untuk mulai menggunakan modul-modul hardware secara langsung.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================
-         INTERACTIVE WORKBENCH SIMULATOR (THE SHOWSTOPPER)
-         ======================================================== */}
-      <section id="workbench" className="workbench-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-tag">// INTERACTIVE STEM WORKSPACE</span>
-            <h2 className="section-title">Uji Coba <span className="text-gradient-orange">Alat STEM</span> Garasi Kami</h2>
-            <p className="section-subtitle">
-              Nyalakan tombol instrumen di panel kontrol di bawah ini untuk melihat cara kerja simulasi mesin laboratorium kami secara interaktif.
-            </p>
           </div>
 
-          <div className="workbench-wrapper">
-            {/* Control switchboard panel */}
-            <div className="workbench-control-panel">
-              <div className="panel-section-title">
-                <Gauge size={16} /> Saklar Instrumen
-              </div>
-
-              <div className="workbench-switches">
-                {/* Switch 1: Oscilloscope */}
-                <div
-                  className={`switch-item ${workbenchState.includes('oscilloscope') ? 'active' : ''}`}
-                  onClick={() => toggleTool('oscilloscope')}
-                >
-                  <div className="switch-label-group">
-                    <Activity className="switch-icon" size={20} />
-                    <div>
-                      <div className="switch-name">Oscilloscope</div>
-                      <div className="switch-desc">Sinyal Gelombang</div>
-                    </div>
-                  </div>
-                  <button className="toggle-btn"></button>
+          {/* Clean Telemetry Widget */}
+          <div>
+            <div className="telemetry-console-card">
+              <div className="console-header-bar">
+                <div className="console-window-dots">
+                  <span className="dot-red"></span>
+                  <span className="dot-yellow"></span>
+                  <span className="dot-green"></span>
                 </div>
-
-                {/* Switch 2: 3D Printer */}
-                <div
-                  className={`switch-item ${workbenchState.includes('printer') ? 'active' : ''}`}
-                  onClick={() => toggleTool('printer')}
-                >
-                  <div className="switch-label-group">
-                    <Printer className="switch-icon" size={20} />
-                    <div>
-                      <div className="switch-name">3D Printer FDM</div>
-                      <div className="switch-desc">Pembuat Casing 3D</div>
-                    </div>
-                  </div>
-                  <button className="toggle-btn"></button>
-                </div>
-
-                {/* Switch 3: Laser Cutter CNC */}
-                <div
-                  className={`switch-item ${workbenchState.includes('laser') ? 'active' : ''}`}
-                  onClick={() => toggleTool('laser')}
-                >
-                  <div className="switch-label-group">
-                    <Flame className="switch-icon" size={20} />
-                    <div>
-                      <div className="switch-name">CNC Laser Cutter</div>
-                      <div className="switch-desc">Pemotong Acrylic & Plywood</div>
-                    </div>
-                  </div>
-                  <button className="toggle-btn"></button>
-                </div>
-
-                {/* Switch 4: Soldering Iron */}
-                <div
-                  className={`switch-item ${workbenchState.includes('solder') ? 'active' : ''}`}
-                  onClick={() => toggleTool('solder')}
-                >
-                  <div className="switch-label-group">
-                    <Zap className="switch-icon" size={20} />
-                    <div>
-                      <div className="switch-name">Solder Station</div>
-                      <div className="switch-desc">Penyolderan Rangkaian</div>
-                    </div>
-                  </div>
-                  <button className="toggle-btn"></button>
-                </div>
-              </div>
-
-              {/* Power Capacity Grid readout */}
-              <div className="power-grid-meter">
-                <div className="meter-labels">
-                  <span>TOTAL BEBAN KELISTRIKAN</span>
-                  <span className={activeCount === 4 ? 'danger' : activeCount >= 2 ? 'warning' : ''}>
-                    {(activeCount * 0.75).toFixed(2)} kW / 3.0 kW
-                  </span>
-                </div>
-                <div className="meter-bar-container">
-                  <div
-                    className="meter-bar"
-                    style={{
-                      width: `${powerPercentage}%`,
-                      background: activeCount === 4 ? 'var(--accent-orange)' : activeCount >= 3 ? 'var(--accent-amber)' : 'var(--accent-teal)'
-                    }}
-                  ></div>
-                </div>
-                {activeCount === 4 && (
-                  <span className="power-warning">⚠️ BEBAN PUNCAK! Generator cadangan menyala.</span>
-                )}
-              </div>
-            </div>
-
-            {/* The physical grid desk containing responsive simulator nodes */}
-            <div className="desk-simulation">
-              <span className="desk-grid-label label-top-left">X-04 // WORKBENCH GRID</span>
-              <span className="desk-grid-label label-bottom-right">IDN_MAKER_SPACE</span>
-
-              {/* Node 1: Digital Oscilloscope Canvas */}
-              <div className={`desk-widget ${workbenchState.includes('oscilloscope') ? 'active' : ''}`}>
-                {!workbenchState.includes('oscilloscope') && (
-                  <div className="widget-overlay-inactive">
-                    <Activity size={32} />
-                    <span>Oscilloscope dimatikan</span>
-                  </div>
-                )}
-
-                <div className="widget-header">
-                  <div className="widget-title">
-                    <Activity size={16} className="text-gradient-teal" /> Digital Oscilloscope
-                  </div>
-                  <span className="widget-status">RUNNING</span>
-                </div>
-
-                <canvas ref={canvasRef} className="osc-canvas" width="280" height="120"></canvas>
-
-                <div className="osc-controls">
-                  <div className="control-dial-group">
-                    <div className="dial-label">FREQUENCY</div>
-                    <RotaryKnob
-                      value={oscilloscopeFreq}
-                      onChange={setOscilloscopeFreq}
-                      min={10}
-                      max={80}
-                      label="Hz"
-                      color="var(--accent-teal)"
-                    />
-                  </div>
-
-                  <div className="control-dial-group">
-                    <div className="dial-label">AMPLITUDE</div>
-                    <RotaryKnob
-                      value={oscilloscopeAmp}
-                      onChange={setOscilloscopeAmp}
-                      min={10}
-                      max={50}
-                      label="mV"
-                      color="var(--accent-teal)"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Node 2: 3D Printer SVG */}
-              <div className={`desk-widget ${workbenchState.includes('printer') ? 'active' : ''}`}>
-                {!workbenchState.includes('printer') && (
-                  <div className="widget-overlay-inactive">
-                    <Printer size={32} />
-                    <span>3D Printer dimatikan</span>
-                  </div>
-                )}
-
-                <div className="widget-header">
-                  <div className="widget-title">
-                    <Printer size={16} style={{ color: 'var(--accent-orange)' }} /> 3D Printer Bed (FDM)
-                  </div>
-                  <span className="widget-status" style={{ color: 'var(--accent-orange)' }}>PRINTING</span>
-                </div>
-
-                <svg className="print-bed-svg" viewBox="0 0 200 120">
-                  <rect width="100%" height="100%" fill="#080a0e" />
-
-                  {/* Grid lines in background */}
-                  <line x1="0" y1="100" x2="200" y2="100" stroke="#1f242e" strokeWidth="2" />
-
-                  {/* Print object (mock gears or robot building up) */}
-                  <rect x="70" y="80" width="60" height="20" rx="3" fill="#ff5d22" opacity="0.3" />
-                  <rect x="80" y="60" width="40" height="20" rx="3" fill="#ff5d22" opacity="0.6" style={{ display: printProgress > 30 ? 'block' : 'none' }} />
-                  <circle cx="100" cy="50" r="10" fill="#ff5d22" opacity="0.9" style={{ display: printProgress > 70 ? 'block' : 'none' }} />
-
-                  {/* Moving print nozzle */}
-                  <g transform={`translate(${printX}, ${90 - (printProgress / 100) * 40})`}>
-                    <line x1="0" y1="-20" x2="0" y2="0" stroke="#8d99ae" strokeWidth="2" />
-                    <polygon points="-6,0 6,0 0,8" fill="#ffb703" />
-                    <circle cx="0" cy="8" r="3" fill="#ff5d22" className="sparkle" />
-                  </g>
-                </svg>
-
-                <div className="printer-telemetry">
-                  <div className="printer-telemetry-item">
-                    <span>PROGRESS</span>
-                    <span style={{ color: 'var(--accent-orange)' }}>{printProgress}%</span>
-                  </div>
-                  <div className="printer-telemetry-item">
-                    <span>HOTEND</span>
-                    <span>215 °C</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Node 3: Laser Cutter CNC SVG */}
-              <div className={`desk-widget ${workbenchState.includes('laser') ? 'active' : ''}`}>
-                {!workbenchState.includes('laser') && (
-                  <div className="widget-overlay-inactive">
-                    <Flame size={32} />
-                    <span>CNC Laser dimatikan</span>
-                  </div>
-                )}
-
-                <div className="widget-header">
-                  <div className="widget-title">
-                    <Flame size={16} style={{ color: 'var(--accent-amber)' }} /> CNC Laser Engraver
-                  </div>
-                  <span className="widget-status" style={{ color: 'var(--accent-amber)' }}>CUTTING</span>
-                </div>
-
-                <svg className="print-bed-svg" viewBox="0 0 200 120">
-                  <rect width="100%" height="100%" fill="#080a0e" />
-
-                  {/* Blueprint plate */}
-                  <rect x="50" y="20" width="100" height="80" fill="none" stroke="#242c3b" strokeWidth="1" />
-
-                  {/* Engraving Path */}
-                  <circle cx="100" cy="60" r="25" fill="none" stroke="#ffb703" strokeWidth="1.5" strokeDasharray="160" strokeDashoffset={160 - (laserProgress / 100) * 160} />
-
-                  {/* Moving Laser nozzle */}
-                  {(() => {
-                    const angle = (laserProgress / 100) * Math.PI * 2;
-                    const lx = 100 + Math.cos(angle) * 25;
-                    const ly = 60 + Math.sin(angle) * 25;
-                    return (
-                      <g transform={`translate(${lx}, ${ly})`}>
-                        <circle cx="0" cy="0" r="4" fill="#ff5d22" className="sparkle" />
-                        <line x1="0" y1="-30" x2="0" y2="0" stroke="#ffb703" strokeWidth="1" opacity="0.7" />
-                        <circle cx="0" cy="0" r="10" fill="none" stroke="#ffb703" strokeWidth="1" opacity="0.3" className="sparkle" />
-                      </g>
-                    );
-                  })()}
-                </svg>
-
-                <div className="printer-telemetry">
-                  <div className="printer-telemetry-item">
-                    <span>ENGRAVING</span>
-                    <span style={{ color: 'var(--accent-amber)' }}>{laserProgress}%</span>
-                  </div>
-                  <div className="printer-telemetry-item">
-                    <span>CO2 LASER</span>
-                    <span>40 WATT</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Node 4: Soldering Station Display */}
-              <div className={`desk-widget ${workbenchState.includes('solder') ? 'active' : ''}`}>
-                {!workbenchState.includes('solder') && (
-                  <div className="widget-overlay-inactive">
-                    <Zap size={32} />
-                    <span>Solder Iron dimatikan</span>
-                  </div>
-                )}
-
-                <div className="widget-header">
-                  <div className="widget-title">
-                    <Zap size={16} style={{ color: '#ff3333' }} /> Soldering Temp Controller
-                  </div>
-                  <span className="widget-status" style={{ color: '#ff3333' }}>HOT</span>
-                </div>
-
-                <div className="soldering-display">
-                  <div className="solder-temp-box">
-                    {solderTemp}
-                  </div>
-                  <div className="solder-smoke-sim">
-                    {/* Animate rising steam particles */}
-                    <div className="smoke-cloud" style={{ animationDelay: '0s' }}></div>
-                    <div className="smoke-cloud" style={{ animationDelay: '0.6s' }}></div>
-                    <div className="smoke-cloud" style={{ animationDelay: '1.2s' }}></div>
-                    <div style={{ position: 'absolute', bottom: '6px', left: '10px', fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>SMOKE EXTRACTOR ACTIVE</div>
-                  </div>
-                </div>
-
-                <div className="control-dial-group" style={{ marginTop: '8px', alignItems: 'flex-start' }}>
-                  <div className="dial-label" style={{ marginBottom: '8px' }}>ATUR SUHU SOLDER</div>
-                  <RotaryKnob
-                    value={solderTemp}
-                    onChange={setSolderTemp}
-                    min={200}
-                    max={450}
-                    label="°C"
-                    color="#ff3333"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================
-         STEM TOOLBOX SECTION (DETAILED HARDWARE SPECS)
-         ======================================================== */}
-      <section id="toolbox" className="toolbox-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-tag">// LABORATORY SPECIFICATIONS</span>
-            <h2 className="section-title">Perpustakaan <span className="text-gradient-orange">STEM Tools</span> Publik</h2>
-            <p className="section-subtitle">
-              IDN Maker Space dilengkapi dengan deretan mesin industrial berkualitas premium yang siap dioperasikan kapan saja oleh publik.
-            </p>
-          </div>
-
-          <div className="toolbox-grid">
-            {/* Box 1: 3D Printing */}
-            <div className="tech-card orange-theme">
-              <Printer size={32} className="text-gradient-orange" style={{ marginBottom: '16px' }} />
-              <h3>3D Printing & CAD Lab</h3>
-              <p style={{ fontSize: '0.9rem', margin: '12px 0' }}>
-                Mencetak prototipe tiga dimensi secara presisi menggunakan aneka pilihan material filamen berkualitas tinggi.
-              </p>
-              <div>
-                <span className="tool-badge">PLA</span>
-                <span className="tool-badge">PETG</span>
-                <span className="tool-badge">ABS/ASA</span>
-                <span className="tool-badge">TPU (Flex)</span>
-              </div>
-              <div className="tool-spec-list">
-                <div className="tool-spec">
-                  <span>Model Printer</span>
-                  <span>Bambu Lab X1-Carbon</span>
-                </div>
-                <div className="tool-spec">
-                  <span>Volume Cetak</span>
-                  <span>256 x 256 x 256 mm</span>
-                </div>
-                <div className="tool-spec">
-                  <span>Suhu Maks Hotend</span>
-                  <span>300 °C</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Box 2: Laser Cutting & CNC */}
-            <div className="tech-card">
-              <Flame size={32} className="text-gradient-teal" style={{ marginBottom: '16px' }} />
-              <h3>CNC Laser Cutting & Router</h3>
-              <p style={{ fontSize: '0.9rem', margin: '12px 0' }}>
-                Memotong dan mengukir papan kayu, akrilik, kulit, hingga kertas karton tebal dengan presisi laser hingga 0.01 mm.
-              </p>
-              <div>
-                <span className="tool-badge">Acrylic 1-10mm</span>
-                <span className="tool-badge">Plywood</span>
-                <span className="tool-badge">MDF Board</span>
-                <span className="tool-badge">Leather CNC</span>
-              </div>
-              <div className="tool-spec-list">
-                <div className="tool-spec">
-                  <span>Tipe Mesin</span>
-                  <span>CO2 Laser Cutter 80W</span>
-                </div>
-                <div className="tool-spec">
-                  <span>Dimensi Bed</span>
-                  <span>900 x 600 mm</span>
-                </div>
-                <div className="tool-spec">
-                  <span>Kecepatan Ukir</span>
-                  <span>500 mm / detik</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Box 3: Electronics Lab */}
-            <div className="tech-card orange-theme">
-              <Cpu size={32} className="text-gradient-orange" style={{ marginBottom: '16px' }} />
-              <h3>Robotics & Electronics Station</h3>
-              <p style={{ fontSize: '0.9rem', margin: '12px 0' }}>
-                Merakit sensor, menyolder sirkuit PCB, dan menguji aneka modul mikrokontroler IoT dengan kelengkapan instrumen lengkap.
-              </p>
-              <div>
-                <span className="tool-badge">ESP32/ESP8266</span>
-                <span className="tool-badge">Arduino Core</span>
-                <span className="tool-badge">Raspberry Pi</span>
-                <span className="tool-badge">Sensor Kit</span>
-              </div>
-              <div className="tool-spec-list">
-                <div className="tool-spec">
-                  <span>Solder Station</span>
-                  <span>TS101 Smart Iron</span>
-                </div>
-                <div className="tool-spec">
-                  <span>Power Supply</span>
-                  <span>Digital Variable 30V 5A</span>
-                </div>
-                <div className="tool-spec">
-                  <span>Logic Analyzer</span>
-                  <span>8 Channel 24MHz</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================
-         INTERACTIVE BLUEPRINT SANDBOX & CODE EDITOR
-         ======================================================== */}
-      <section id="sandbox" className="sandbox-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-tag">// THE MAKER'S PLAYGROUND</span>
-            <h2 className="section-title">Laboratorium <span className="text-gradient-orange">Sandbox Proyek</span></h2>
-            <p className="section-subtitle">
-              Pilih cetak biru ide eksperimen di bawah ini, periksa rancangan kabel listriknya, compile programnya ke modul simulator, dan lihat reaksinya!
-            </p>
-          </div>
-
-          <div className="sandbox-wrapper">
-            {/* Project list switcher */}
-            <div className="project-select-panel">
-              {projectsPreset.map(proj => (
-                <div
-                  key={proj.id}
-                  className={`project-tab-btn ${activeProjectId === proj.id ? 'active' : ''}`}
-                  onClick={() => {
-                    setActiveProjectId(proj.id);
-                    resetSandbox();
-                  }}
-                >
-                  <div className="project-tab-info">
-                    <div className="project-tab-icon">
-                      {proj.id === 'iot' ? <Cpu size={24} /> : proj.id === 'robotics' ? <Wrench size={24} /> : <Printer size={24} />}
-                    </div>
-                    <div className="project-tab-meta">
-                      <h4>{proj.title}</h4>
-                      <p>{proj.subtitle}</p>
-                    </div>
-                  </div>
-                  <ArrowRight size={18} className="project-tab-arrow" style={{ opacity: activeProjectId === proj.id ? 1 : 0.4 }} />
-                </div>
-              ))}
-
-              {/* Selected Project Specs table */}
-              <div className="tech-card orange-theme" style={{ marginTop: '8px' }}>
-                <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', color: 'var(--text-white)', marginBottom: '12px' }}>Daftar Peralatan & Spesifikasi</h4>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
-                  {activeProject.tools.map((t, idx) => (
-                    <span key={idx} className="tool-badge" style={{ margin: 0 }}>{t}</span>
-                  ))}
-                </div>
-                <div className="project-spec-grid">
-                  <div className="project-spec-item">
-                    <span>EST. BIAYA</span>
-                    <span>{activeProject.cost}</span>
-                  </div>
-                  <div className="project-spec-item">
-                    <span>DURASI RAKIT</span>
-                    <span>{activeProject.time}</span>
-                  </div>
-                  <div className="project-spec-item">
-                    <span>DIKATEGORIKAN</span>
-                    <span style={{ color: activeProject.difficulty === 'MAHIR' ? 'var(--accent-orange)' : activeProject.difficulty === 'MENENGAH' ? 'var(--accent-amber)' : 'var(--accent-teal)' }}>
-                      {activeProject.difficulty}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Simulated interactive blueprint and terminal compiler panel */}
-            <div className="blueprint-card">
-              <div className="blueprint-header">
-                <span className="blueprint-logo">SCHEMATIC.BLUEPRINT // v2.6</span>
-                <span className="status-badge" style={{ border: 'none', background: 'none' }}>
-                  PROYEK: {activeProject.id.toUpperCase()}
+                <span className="console-tag-title">LIVE TELEMETRY // JONGGOL HUB</span>
+                <span style={{ fontFamily: 'var(--font-code)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
+                  ONLINE
                 </span>
               </div>
 
-              {/* Dynamic blueprint SVG preview */}
-              <div className="blueprint-screen">
-                {activeProject.schematicSvg}
-              </div>
-
-              {/* Simulated Code Compiler Console */}
-              <div className="ide-console">
-                {sandboxLogs.map((log, idx) => (
-                  <div key={idx} className={`ide-log-line ${log.type}`}>
-                    &gt; {log.text}
-                  </div>
-                ))}
-
-                {compilingState === 'compiling' && (
-                  <div className="compiling-overlay">
-                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-teal)', fontFamily: 'var(--font-mono)' }}>COMPILING CORE FIRMWARE...</span>
-                    <div className="loading-bar-outer">
-                      <div className="loading-bar-inner"></div>
-                    </div>
-                  </div>
-                )}
-
-                {compilingState === 'success' && (
-                  <div className="ide-log-line success" style={{ fontWeight: 'bold' }}>
-                    [SUCCESS] FIRMWARE UPLOADED TO HARDWARE CHIP BOARD. Robot operational.
-                  </div>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>
-                {compilingState !== 'success' ? (
-                  <button
-                    className="btn-teal"
-                    onClick={startCompilation}
-                    disabled={compilingState === 'compiling'}
-                    style={{ flex: 1, justifyContent: 'center' }}
-                  >
-                    <Play size={16} /> Compile &amp; Upload
-                  </button>
-                ) : (
-                  <button
-                    className="btn-secondary"
-                    onClick={resetSandbox}
-                    style={{ flex: 1, justifyContent: 'center', borderColor: 'var(--accent-orange)', color: 'var(--accent-orange)' }}
-                  >
-                    <RotateCcw size={16} /> Reset Hardware Sandbox
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================
-         LAB BOOKING & WORKBENCH SCHEDULER (FORM & INVOICE)
-         ======================================================== */}
-      <section id="booking" className="booking-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-tag">// SECURE RESERVATION</span>
-            <h2 className="section-title">Reservasi <span className="text-gradient-orange">STEM Workbench</span> Anda</h2>
-            <p className="section-subtitle">
-              Pilih stasiun kerja garasi, tentukan durasi sewa, tambahkan perlengkapan penunjang, dan reservasi tiket masuk Anda secara online instan.
-            </p>
-          </div>
-
-          <div className="booking-panel">
-            {!bookingSuccess ? (
-              <form onSubmit={handleBookingSubmit}>
-                {/* Step 1: Choose Workbench */}
-                <div className="booking-step-title">
-                  <span style={{ color: 'var(--accent-orange)', fontWeight: 'bold' }}>01.</span>
-                  PILIH STASIUN WORKBENCH GARASI
-                </div>
-
-                <div className="booking-benches-grid">
-                  {benchOptions.map(bench => (
-                    <div
-                      key={bench.id}
-                      className={`booking-bench-card ${bookingForm.benchId === bench.id ? 'active' : ''}`}
-                      onClick={() => setBookingForm(prev => ({ ...prev, benchId: bench.id }))}
-                    >
-                      <div className="booking-bench-icon">
-                        {bench.icon}
-                      </div>
-                      <div className="booking-bench-name">{bench.name}</div>
-                      <div className="booking-bench-rate">Rp {(bench.baseRate / 1000).toFixed(0)}K / Jam</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Step 2: Choose Accessories */}
-                <div className="booking-step-title">
-                  <span style={{ color: 'var(--accent-orange)', fontWeight: 'bold' }}>02.</span>
-                  AKSESORIS &amp; ALAT UKUR TAMBAHAN (OPSIONAL)
-                </div>
-
-                <div className="booking-accessories-list">
-                  {accessoryOptions.map(acc => {
-                    const isChecked = bookingForm.accessories.includes(acc.id);
-                    return (
-                      <div
-                        key={acc.id}
-                        className={`booking-accessory-item ${isChecked ? 'active' : ''}`}
-                        onClick={() => toggleAccessory(acc.id)}
-                      >
-                        <input
-                          type="checkbox"
-                          className="form-checkbox"
-                          checked={isChecked}
-                          readOnly
-                        />
-                        <span className="booking-accessory-label">
-                          {acc.name} {acc.rate > 0 ? `(+Rp ${acc.rate / 1000}K)` : '(Gratis)'}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Step 3: Date & Time Selector */}
-                <div className="booking-step-title">
-                  <span style={{ color: 'var(--accent-orange)', fontWeight: 'bold' }}>03.</span>
-                  JADWAL KEDATANGAN &amp; WAKTU
-                </div>
-
-                <div className="booking-schedule-row">
-                  <div className="form-group">
-                    <label className="form-label">TANGGAL EKSPERIMEN</label>
-                    <input
-                      type="date"
-                      className="form-input"
-                      value={bookingForm.date}
-                      onChange={(e) => setBookingForm(prev => ({ ...prev, date: e.target.value }))}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">JAM KEDATANGAN</label>
-                    <input
-                      type="time"
-                      className="form-input"
-                      value={bookingForm.time}
-                      onChange={(e) => setBookingForm(prev => ({ ...prev, time: e.target.value }))}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                    <label className="form-label">DURASI PENGGUNAAN WORKBENCH: <span style={{ color: 'var(--accent-orange)' }}>{bookingForm.duration} Jam</span></label>
-                    <input
-                      type="range"
-                      min="1"
-                      max="8"
-                      className="dial-slider"
-                      value={bookingForm.duration}
-                      onChange={(e) => setBookingForm(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
-                    />
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      <span>1 Jam</span>
-                      <span>4 Jam</span>
-                      <span>8 Jam (Maks)</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Step 4: Contact details */}
-                <div className="booking-step-title">
-                  <span style={{ color: 'var(--accent-orange)', fontWeight: 'bold' }}>04.</span>
-                  INFORMASI KONTAK PERSONAL MAKER
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
-                  <div className="form-group">
-                    <label className="form-label">NAMA LENGKAP MAKER</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="Contoh: Daffa Pratama"
-                      value={bookingForm.name}
-                      onChange={(e) => setBookingForm(prev => ({ ...prev, name: e.target.value }))}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">ALAMAT EMAIL</label>
-                    <input
-                      type="email"
-                      className="form-input"
-                      placeholder="Contoh: daffa@gmail.com"
-                      value={bookingForm.email}
-                      onChange={(e) => setBookingForm(prev => ({ ...prev, email: e.target.value }))}
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* Pricing Summary Box */}
-                <div className="booking-summary-box">
-                  <div className="booking-summary-row">
-                    <span>Workbench ({benchOptions.find(b => b.id === bookingForm.benchId).name})</span>
-                    <span>Rp {(benchOptions.find(b => b.id === bookingForm.benchId).baseRate * bookingForm.duration).toLocaleString('id-ID')}</span>
-                  </div>
-                  <div className="booking-summary-row">
-                    <span>Aksesoris Tambahan</span>
-                    <span>
-                      Rp {(accessoryOptions
-                        .filter(a => bookingForm.accessories.includes(a.id))
-                        .reduce((total, a) => total + (a.rate * bookingForm.duration), 0)
-                      ).toLocaleString('id-ID')}
+              <div className="telemetry-content-padding">
+                <div className="telemetry-status-row">
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>ZONA FABRIKASI</span>
+                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--text-white)' }}>
+                      Main Workshop Room
                     </span>
                   </div>
-                  <div className="booking-summary-row">
-                    <span>Total Estimasi Biaya (Bayar di Tempat)</span>
-                    <span>
-                      Rp {(
-                        (benchOptions.find(b => b.id === bookingForm.benchId).baseRate * bookingForm.duration) +
-                        (accessoryOptions
-                          .filter(a => bookingForm.accessories.includes(a.id))
-                          .reduce((total, a) => total + (a.rate * bookingForm.duration), 0)
-                        )
-                      ).toLocaleString('id-ID')}
-                    </span>
-                  </div>
-                </div>
-
-                <div style={{ textAlign: 'center' }}>
-                  <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '16px' }}>
-                    Konfirmasi Reservasi Workbench Garasi
-                  </button>
-                </div>
-              </form>
-            ) : (
-              /* High-fidelity Booking Invoice Ticket receipt */
-              <div style={{ textAlign: 'center', animation: 'spark-glow 0.8s ease' }}>
-                <div style={{ color: 'var(--accent-teal)', marginBottom: '16px' }}>
-                  <CheckCircle size={64} style={{ filter: 'drop-shadow(0 0 10px var(--accent-teal))' }} />
-                </div>
-                <h3 style={{ fontSize: '1.8rem', marginBottom: '12px' }}>RESERVASI WORKBENCH BERHASIL!</h3>
-                <p style={{ color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto 30px' }}>
-                  Silakan simpan invoice tiket sirkuit di bawah ini dan tunjukkan kepada asisten Lab Engineer kami saat tiba di garasi.
-                </p>
-
-                <div style={{ background: '#07090e', border: '2px dashed var(--accent-teal)', borderRadius: '12px', padding: '30px', maxWidth: '500px', margin: '0 auto 30px', textAlign: 'left', position: 'relative', overflow: 'hidden' }}>
-                  {/* Decorative circuit path */}
-                  <div style={{ position: 'absolute', top: 0, right: 0, width: '80px', height: '80px', opacity: 0.15, border: '4px solid var(--accent-teal)', borderRadius: '50%', transform: 'translate(30px, -30px)' }}></div>
-
-                  <div style={{ borderBottom: '1px solid #1f242e', paddingBottom: '12px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>IDN MAKER SPACE CIRCUIT TICKET</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', color: 'var(--accent-teal)', fontWeight: 'bold' }}>{generatedTicket.id}</span>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', fontSize: '0.85rem' }}>
-                    <div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '4px' }}>NAMA MAKER</div>
-                      <div style={{ color: 'var(--text-white)', fontWeight: 'bold' }}>{generatedTicket.name}</div>
-                    </div>
-                    <div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '4px' }}>STASIUN KERJA</div>
-                      <div style={{ color: 'var(--text-white)', fontWeight: 'bold' }}>{generatedTicket.bench}</div>
-                    </div>
-                    <div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '4px' }}>JADWAL RESEVASI</div>
-                      <div style={{ color: 'var(--text-white)', fontWeight: 'bold' }}>{generatedTicket.date} @ {generatedTicket.time}</div>
-                    </div>
-                    <div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '4px' }}>DURASI SEWA</div>
-                      <div style={{ color: 'var(--text-white)', fontWeight: 'bold' }}>{generatedTicket.duration} Jam</div>
-                    </div>
-                    <div style={{ gridColumn: 'span 2' }}>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '4px' }}>ALAT AKSESORIS</div>
-                      <div style={{ color: 'var(--text-white)', fontStyle: 'italic' }}>{generatedTicket.accessories}</div>
-                    </div>
-                  </div>
-
-                  <div style={{ borderTop: '1px dashed #1f242e', marginTop: '20px', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>TOTAL TAGIHAN (DI TEMPAT)</div>
-                      <div style={{ color: 'var(--accent-orange)', fontSize: '1.4rem', fontWeight: 'bold', fontFamily: 'var(--font-mono)' }}>
-                        Rp {generatedTicket.total.toLocaleString('id-ID')}
-                      </div>
-                    </div>
-                    {/* Simulated barcode */}
-                    <div style={{ display: 'flex', gap: '3px', background: 'var(--text-white)', padding: '6px 12px', borderRadius: '4px', border: '1px solid var(--accent-teal)', boxShadow: '0 0 10px rgba(0, 245, 212, 0.2)' }}>
-                      <div style={{ width: '2px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '4px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '1px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '3px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '1px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '4px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '2px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '1px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '3px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '1px', height: '24px', background: '#000' }}></div>
-                      <div style={{ width: '4px', height: '24px', background: '#000' }}></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ marginTop: '20px' }}>
-                  <button
-                    className="btn-secondary"
-                    onClick={() => {
-                      setBookingSuccess(false);
-                      setBookingForm({
-                        name: '',
-                        email: '',
-                        date: '2026-05-20',
-                        time: '14:00',
-                        duration: 2,
-                        benchId: 'electro',
-                        accessories: ['goggles']
-                      });
-                    }}
-                  >
-                    Buat Reservasi Baru
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================
-         PUBLIC EXPERIMENTS GALLERY (THE PROJECT PORTFOLIO)
-         ======================================================== */}
-      <section id="gallery" className="gallery-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-tag">// PUBLIC BUILD ARCHIVES</span>
-            <h2 className="section-title">Galeri <span className="text-gradient-orange">Karya Kreatif</span> Publik</h2>
-            <p className="section-subtitle">
-              Intip proyek buatan para pemula dan engineer yang lahir langsung dari workbench garasi laboratorium IDN Maker Space.
-            </p>
-          </div>
-
-          <div className="gallery-grid">
-            {galleryProjects.map((proj) => (
-              <div
-                key={proj.id}
-                className="tech-card project-card"
-                onClick={() => openProjectModal(proj)}
-              >
-                {/* Vector illustration representations of projects */}
-                <div className="project-card-image" style={{ background: 'linear-gradient(135deg, #161c28 0%, #0d1117 100%)', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
-                  {proj.id === 'mirror' && (
-                    <svg width="80" height="80" viewBox="0 0 100 100">
-                      {/* Dodecahedron pentagonal path */}
-                      <polygon points="50,5 95,38 78,90 22,90 5,38" fill="none" stroke="var(--accent-teal)" strokeWidth="1.5" />
-                      <polygon points="50,20 80,42 68,76 32,76 20,42" fill="none" stroke="var(--accent-blue)" strokeWidth="1" strokeDasharray="3,3" />
-                      <circle cx="50" cy="53" r="10" fill="none" stroke="var(--accent-orange)" strokeWidth="1" />
-                    </svg>
-                  )}
-                  {proj.id === 'maze' && (
-                    <svg width="80" height="80" viewBox="0 0 100 100">
-                      <rect x="25" y="25" width="50" height="50" rx="6" fill="none" stroke="var(--accent-orange)" strokeWidth="1.5" />
-                      {/* wheels */}
-                      <rect x="15" y="32" width="10" height="15" rx="2" fill="none" stroke="var(--text-secondary)" strokeWidth="1" />
-                      <rect x="75" y="32" width="10" height="15" rx="2" fill="none" stroke="var(--text-secondary)" strokeWidth="1" />
-                      <circle cx="50" cy="50" r="12" fill="none" stroke="var(--accent-teal)" strokeWidth="1" strokeDasharray="4,4" />
-                    </svg>
-                  )}
-                  {proj.id === 'keyb' && (
-                    <svg width="80" height="80" viewBox="0 0 100 100">
-                      {/* split board keycaps */}
-                      <rect x="10" y="30" width="35" height="40" rx="3" fill="none" stroke="var(--accent-blue)" strokeWidth="1.5" />
-                      <rect x="55" y="30" width="35" height="40" rx="3" fill="none" stroke="var(--accent-blue)" strokeWidth="1.5" />
-                      {/* tiny keys */}
-                      <rect x="15" y="36" width="6" height="6" fill="none" stroke="var(--accent-amber)" strokeWidth="1" />
-                      <rect x="24" y="36" width="6" height="6" fill="none" stroke="var(--accent-amber)" strokeWidth="1" />
-                      <rect x="33" y="36" width="6" height="6" fill="none" stroke="var(--accent-amber)" strokeWidth="1" />
-                      <rect x="61" y="36" width="6" height="6" fill="none" stroke="var(--accent-amber)" strokeWidth="1" />
-                      <rect x="70" y="36" width="6" height="6" fill="none" stroke="var(--accent-amber)" strokeWidth="1" />
-                      <rect x="79" y="36" width="6" height="6" fill="none" stroke="var(--accent-amber)" strokeWidth="1" />
-                    </svg>
-                  )}
-                </div>
-
-                <div className="project-card-tags">
-                  {proj.tags.map((t, i) => (
-                    <span key={i} className="tool-badge" style={{ margin: 0, padding: '2px 8px', fontSize: '0.7rem' }}>{t}</span>
-                  ))}
-                </div>
-
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>{proj.title}</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>{proj.desc}</p>
-
-                <div style={{ display: 'flex', justifyItems: 'center', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: 'var(--text-muted)', borderTop: '1px solid var(--border-color)', paddingTop: '12px' }}>
-                  <span>Maker: <strong>{proj.maker}</strong></span>
-                  <span style={{ color: 'var(--accent-teal)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Buka Cetak Biru <ArrowRight size={12} />
+                  <span className="status-badge-active">
+                    <span className="pulse-dot"></span> LIVE RUNNING
                   </span>
                 </div>
+
+                <div className="telemetry-metrics-grid">
+                  <div className="telemetry-metric-item">
+                    <div className="metric-label-mono"><Gauge size={13} /> Suhu Lab</div>
+                    <div className="metric-value-dynamic">{telemetry.roomTemp}<span className="metric-unit">°C</span></div>
+                  </div>
+
+                  <div className="telemetry-metric-item">
+                    <div className="metric-label-mono"><Activity size={13} /> Kelembaban</div>
+                    <div className="metric-value-dynamic">{telemetry.humidity}<span className="metric-unit">% RH</span></div>
+                  </div>
+
+                  <div className="telemetry-metric-item">
+                    <div className="metric-label-mono"><Zap size={13} /> Beban Daya</div>
+                    <div className="metric-value-dynamic">{telemetry.powerDraw}<span className="metric-unit">kW</span></div>
+                  </div>
+
+                  <div className="telemetry-metric-item">
+                    <div className="metric-label-mono"><Users size={13} /> Makers On-Site</div>
+                    <div className="metric-value-dynamic">{telemetry.activeMakers}<span className="metric-unit">Orang</span></div>
+                  </div>
+                </div>
+
+                <div className="console-alert-notice">
+                  <strong>PEMBERITAHUAN K3:</strong> Check-in QR diwajibkan maksimal 15 menit setelah waktu pemesanan dimulai untuk menghindari pembatalan otomatis (BR-03 Anti-Ghosting).
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ========================================================
-         FAQ & CLINICAL TELEMETRY DIAGNOSTICS TERMINAL
-         ======================================================== */}
-      <section id="faq" className="faq-section">
+          KPI STRATEGIC BANNER (CLEAN, INTEGRATED)
+          ======================================================== */}
+      <section className="stats-banner-strip">
         <div className="container">
-          <div className="section-header">
-            <span className="section-tag">// FAQ COMMAND LINE INTERFACE</span>
-            <h2 className="section-title">Diagnostics &amp; <span className="text-gradient-orange">FAQ Console</span></h2>
-            <p className="section-subtitle">
-              Klik tombol pintasan diagnostic di bawah terminal atau ketik perintah Anda untuk mendiagnosis informasi garasi IDN Maker Space secara realtime.
+          <div className="stats-card-container">
+            <div className="stats-grid-quad">
+              <div className="stat-box-modern">
+                <div className="stat-numeric-big">&gt;65<span className="highlight-stat">%</span></div>
+                <div className="stat-title-strong">Utilisasi Alat Optimal</div>
+                <div className="stat-sub-text">Meminimalkan waktu diam mesin investasi tinggi per kuartal.</div>
+              </div>
+
+              <div className="stat-box-modern">
+                <div className="stat-numeric-big">&lt;2<span className="highlight-stat">%</span></div>
+                <div className="stat-title-strong">Mitigasi Risiko K3</div>
+                <div className="stat-sub-text">Downtime akibat human-error ditekan lewat sertifikasi bertingkat.</div>
+              </div>
+
+              <div className="stat-box-modern">
+                <div className="stat-numeric-big">9 <span className="highlight-stat">Bulan</span></div>
+                <div className="stat-title-strong">Keberlanjutan Finansial</div>
+                <div className="stat-sub-text">Target break-even operational cost melalui ekosistem terpadu.</div>
+              </div>
+
+              <div className="stat-box-modern">
+                <div className="stat-numeric-big">&gt;45<span className="highlight-stat">%</span></div>
+                <div className="stat-title-strong">Retensi Komunitas</div>
+                <div className="stat-sub-text">Tingkat repeat-booking bulanan member dan startup rekayasa.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          4 ALUR OPERASIONAL TERINTEGRASI (THE CORE ECOSYSTEM)
+          ======================================================== */}
+      <section id="ecosystem" className="section-wrapper">
+        <div className="container">
+          <div className="section-header-centered">
+            <span className="section-kicker-tag">// ARSITEKTUR EKOSISTEM DIGITAL</span>
+            <h2 className="section-headline">
+              Sistem Ekosistem Fabrikasi &amp; <span className="text-gradient-lime">K3 Terintegrasi</span>
+            </h2>
+            <p className="section-desc-lead">
+              Empat pilar alur operasional terintegrasi yang menjembatani peralatan fisik industri
+              dengan transparansi platform digital bagi para inovator perangkat keras.
             </p>
           </div>
 
-          <div className="faq-terminal-card">
-            {/* Window header */}
-            <div className="terminal-header" style={{ background: '#0a0c10', padding: '12px 20px', borderBottom: '1px solid var(--border-color)', margin: 0 }}>
-              <div className="terminal-dots">
-                <span className="terminal-dot red"></span>
-                <span className="terminal-dot yellow"></span>
-                <span className="terminal-dot green"></span>
-              </div>
-              <span className="terminal-title">IDN_MAKER_SPACE_DIAGNOSTICS.SH</span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--accent-teal)', fontFamily: 'var(--font-mono)' }}>PORT_ACTIVE</span>
+          <div className="ecosystem-four-grid">
+            <div className="ecosystem-card">
+              <span className="card-step-badge">PILAR 01</span>
+              <div className="card-icon-bubble"><Users size={20} /></div>
+              <h3>Tier Membership</h3>
+              <p>
+                Diferensiasi hak akses fleksibel dari Walk-in harian (Pay-as-you-go), Student Tier bersubsidi akademik, Pro Maker kuota fleksibel, hingga Team/Startup shared quota.
+              </p>
+              <div className="card-footer-tag">BR-01 // OTP WhatsApp &amp; Email</div>
             </div>
 
-            {/* Terminal Body content */}
-            <div className="faq-terminal-body">
-              {terminalHistory.map((hist, idx) => (
-                <div key={idx}>
-                  {hist.type === 'input' ? (
-                    <div className="terminal-prompt-line">
-                      <span>guest@idnmakerspace:~$</span>
-                      <span className="terminal-input-simulate">{hist.text}</span>
+            <div className="ecosystem-card">
+              <span className="card-step-badge">PILAR 02</span>
+              <div className="card-icon-bubble"><ShieldCheck size={20} /></div>
+              <h3>Digital Safety Badging</h3>
+              <p>
+                Gerbang keselamatan bertingkat (Level 1 Hijau, Level 2 Kuning, Level 3 Merah). Booking mesin berisiko hanya terbuka jika akun memiliki sertifikasi digital K3 aktif.
+              </p>
+              <div className="card-footer-tag">BR-02 // Safety Induction Matrix</div>
+            </div>
+
+            <div className="ecosystem-card">
+              <span className="card-step-badge">PILAR 03</span>
+              <div className="card-icon-bubble"><Clock size={20} /></div>
+              <h3>Reservasi &amp; Anti-Ghosting</h3>
+              <p>
+                Alokasi presisi slot 30 menit dengan limit harian anti-monopoli. Wajib scan QR Check-in di lokasi maks 15 menit; hangus otomatis dengan penalti jika terlambat.
+              </p>
+              <div className="card-footer-tag">BR-03 // 15-Min Grace Period</div>
+            </div>
+
+            <div className="ecosystem-card">
+              <span className="card-step-badge">PILAR 04</span>
+              <div className="card-icon-bubble"><CreditCard size={20} /></div>
+              <h3>Integrated Material Billing</h3>
+              <p>
+                Konsumsi bahan habis pakai (filamen per gram, akrilik per dimensi) ditimbang digital di kasir lapangan dan didebit instan via QRIS, Virtual Account, atau deposit kredit.
+              </p>
+              <div className="card-footer-tag">BR-04 &amp; BR-06 // Auto-Debit &amp; WA Invoice</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          FASILITAS MESIN (THE LAB & HARDWARE ARSENAL)
+          ======================================================== */}
+      <section id="the-lab" className="section-wrapper">
+        <div className="container">
+          <div className="section-header-centered">
+            <span className="section-kicker-tag">// HARDWARE ARSENAL &amp; MAINTENANCE TRACKER</span>
+            <h2 className="section-headline">
+              Fasilitas &amp; <span className="text-gradient-lime">Peralatan Canggih</span>
+            </h2>
+            <p className="section-desc-lead">
+              Pantau ketersediaan waktu nyata serta jam operasional mesin presisi tinggi.
+              Sistem secara otomatis mengunci mesin untuk inspeksi berkala saat jam batas tercapai (BR-05).
+            </p>
+          </div>
+
+          {/* Filter Tabs */}
+          <div className="lab-filter-tabs">
+            <button
+              type="button"
+              className={`lab-tab-btn ${activeMachineFilter === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveMachineFilter('all')}
+            >
+              Semua Mesin ({MACHINES_DATA.length})
+            </button>
+            <button
+              type="button"
+              className={`lab-tab-btn ${activeMachineFilter === '3dprint' ? 'active' : ''}`}
+              onClick={() => setActiveMachineFilter('3dprint')}
+            >
+              3D Printing &amp; SLA
+            </button>
+            <button
+              type="button"
+              className={`lab-tab-btn ${activeMachineFilter === 'laser' ? 'active' : ''}`}
+              onClick={() => setActiveMachineFilter('laser')}
+            >
+              Laser Cutting &amp; CNC
+            </button>
+            <button
+              type="button"
+              className={`lab-tab-btn ${activeMachineFilter === 'iot' ? 'active' : ''}`}
+              onClick={() => setActiveMachineFilter('iot')}
+            >
+              Elektronika &amp; Meja IoT
+            </button>
+          </div>
+
+          {/* Machines Catalog Grid */}
+          <div className="machines-catalog-grid">
+            {filteredMachines.map(machine => {
+              const progressPct = Math.round((machine.hoursLogged / machine.hoursLimit) * 100);
+
+              return (
+                <div key={machine.id} className="machine-card-detailed">
+                  <div className="machine-card-header">
+                    <div>
+                      <div className="machine-type-kicker">{machine.levelName}</div>
+                      <h3 className="machine-card-title">{machine.name}</h3>
                     </div>
-                  ) : (
-                    <div className="terminal-response">
-                      {hist.text}
+                    <span className={`machine-status-badge ${
+                      machine.status === 'available' ? 'badge-status-available' : 'badge-status-inuse'
+                    }`}>
+                      {machine.statusLabel}
+                    </span>
+                  </div>
+
+                  <div className="machine-card-body">
+                    <div className="machine-specs-row">
+                      <div className="spec-item">
+                        <span className="spec-k">WORK AREA</span>
+                        <span className="spec-v">{machine.area}</span>
+                      </div>
+                      <div className="spec-item">
+                        <span className="spec-k">SPESIFIKASI</span>
+                        <span className="spec-v">{machine.speed}</span>
+                      </div>
                     </div>
-                  )}
+
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                      <strong style={{ color: 'var(--text-white)' }}>Material:</strong> {machine.materials}
+                    </div>
+
+                    {/* Preventive Maintenance Log */}
+                    <div className="maintenance-tracker-box">
+                      <div className="maintenance-tracker-head">
+                        <span>Jam Kerja Nozzle / Spindle (BR-05)</span>
+                        <span style={{ fontFamily: 'var(--font-code)', color: progressPct > 80 ? 'var(--accent-amber)' : 'var(--accent-lime)' }}>
+                          {machine.hoursLogged} / {machine.hoursLimit} Jam ({progressPct}%)
+                        </span>
+                      </div>
+                      <div className="maintenance-progress-bar-bg">
+                        <div
+                          className={`maintenance-progress-fill ${progressPct > 80 ? 'fill-caution' : 'fill-safe'}`}
+                          style={{ width: `${progressPct}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="machine-card-footer">
+                    <div>
+                      <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', display: 'block' }}>TARIF SEWA DASAR</span>
+                      <span style={{ fontFamily: 'var(--font-code)', fontWeight: 700, color: 'var(--accent-lime)' }}>
+                        Rp {machine.hourlyRate.toLocaleString('id-ID')}
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}> / jam</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="btn-primary-lime"
+                      style={{ padding: '8px 14px', fontSize: '0.8rem' }}
+                      onClick={() => handleOpenBooking(machine)}
+                    >
+                      <span>Pesan Slot</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
                 </div>
-              ))}
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          GERBANG SERTIFIKASI ALAT & MATRIKS K3 (BR-02)
+          ======================================================== */}
+      <section id="k3-safety" className="section-wrapper" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="safety-badging-container">
+            <div className="section-header-centered" style={{ marginBottom: '28px' }}>
+              <span className="section-kicker-tag">// STANDAR PROTOKOL K3 (BR-02)</span>
+              <h2 className="section-headline">
+                Gerbang Sertifikasi Alat &amp; <span className="text-gradient-lime">Matriks K3</span>
+              </h2>
+              <p className="section-desc-lead">
+                Seluruh mesin diklasifikasikan ke dalam 3 level bahaya untuk mencegah insiden downtime
+                dan memastikan keselamatan kerja setiap member.
+              </p>
             </div>
 
-            {/* Badges command buttons for interactive execution */}
-            <div className="terminal-commands-list">
-              <span className="terminal-title" style={{ marginRight: '12px', alignSelf: 'center' }}>COMMAND QUICK BUTTONS:</span>
-              {faqPresets.map((preset, idx) => (
-                <button
-                  key={idx}
-                  className="terminal-cmd-badge"
-                  onClick={() => executeTerminalCommand(preset.cmd)}
-                  title={preset.desc}
-                >
-                  ./{preset.cmd}
-                </button>
-              ))}
+            <div className="safety-matrix-grid">
+              {/* Level 1 */}
+              <div className="safety-card level-green">
+                <span className="safety-level-pill pill-green">
+                  <Shield size={13} /> LEVEL 1 : HIJAU (AMAN)
+                </span>
+                <h3>Meja Bebas &amp; Prototyping</h3>
+                <p className="req-text">
+                  Akses langsung terbuka untuk seluruh anggota terdaftar tanpa perlu lisensi praktikum khusus.
+                </p>
+                <div className="machines-under-level">
+                  <div className="machines-under-level-title">Peralatan Tercover:</div>
+                  <div className="machine-tag-list">
+                    <span className="machine-mini-badge">Hakko Solder Station</span>
+                    <span className="machine-mini-badge">Meja IoT &amp; ESP32</span>
+                    <span className="machine-mini-badge">Rigol Oscilloscope</span>
+                  </div>
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#4ade80', fontFamily: 'var(--font-code)' }}>
+                  STATUS AKUN: AKTIF BEBAS
+                </div>
+              </div>
+
+              {/* Level 2 */}
+              <div className="safety-card level-yellow">
+                <span className="safety-level-pill pill-yellow">
+                  <AlertTriangle size={13} /> LEVEL 2 : KUNING (MODERAT)
+                </span>
+                <h3>Mesin Fabrikasi Ringan</h3>
+                <p className="req-text">
+                  Wajib menyelesaikan <em>Safety Induction Digital</em> dan kuis dasar operasional sebelum slot kalender dapat dibuka.
+                </p>
+                <div className="machines-under-level">
+                  <div className="machines-under-level-title">Peralatan Tercover:</div>
+                  <div className="machine-tag-list">
+                    <span className="machine-mini-badge">Bambu Lab X1-Carbon</span>
+                    <span className="machine-mini-badge">Desktop Vinyl Cutter</span>
+                  </div>
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#fbbf24', fontFamily: 'var(--font-code)' }}>
+                  SYARAT: Kuis Teori K3 Online
+                </div>
+              </div>
+
+              {/* Level 3 */}
+              <div className="safety-card level-red">
+                <span className="safety-level-pill pill-red">
+                  <ShieldAlert size={13} /> LEVEL 3 : MERAH (RISIKO TINGGI)
+                </span>
+                <h3>Peralatan Industri Berat</h3>
+                <p className="req-text">
+                  Wajib sertifikasi penuh dengan demonstrasi tatap muka yang divalidasi langsung oleh Lab Assistant.
+                </p>
+                <div className="machines-under-level">
+                  <div className="machines-under-level-title">Peralatan Tercover:</div>
+                  <div className="machine-tag-list">
+                    <span className="machine-mini-badge">ThunderLaser 100W</span>
+                    <span className="machine-mini-badge">Shapeoko CNC Router</span>
+                    <span className="machine-mini-badge">Elegoo Resin SLA</span>
+                  </div>
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#f87171', fontFamily: 'var(--font-code)' }}>
+                  SYARAT: Ujian Offline Lab Specialist
+                </div>
+              </div>
+            </div>
+
+            {/* Action Bar */}
+            <div className="safety-action-box">
+              <div className="safety-action-text">
+                <h4>Status Sertifikasi Anda: Level {Math.max(...userProfile.badges)} K3 Verified</h4>
+                <p>Anda memenuhi syarat untuk mengoperasikan mesin Level 1 &amp; Level 2. Ingin membuka lisensi Level 3?</p>
+              </div>
               <button
-                className="terminal-cmd-badge"
-                onClick={() => executeTerminalCommand('clear')}
-                style={{ borderColor: 'var(--accent-orange)', color: 'var(--accent-orange)' }}
+                type="button"
+                className="btn-primary-lime"
+                onClick={() => setIsQuizModalOpen(true)}
               >
-                ./clear
+                <Award size={16} />
+                <span>Ikuti Ujian Lencana K3</span>
               </button>
             </div>
           </div>
@@ -1774,138 +786,1363 @@ Kontak : garage@idnmakerspace.id | +62 812-3456-7890`;
       </section>
 
       {/* ========================================================
-         MODAL BLUEPRINT VIEWPOPUP GALLERY
-         ======================================================== */}
-      {modalOpen && selectedGalleryProject && (
-        <div className="modal-overlay" onClick={() => setModalOpen(false)}>
-          <div className="modal-content-panel" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={() => setModalOpen(false)}>
-              <X size={20} />
-            </button>
+          PILIH PAKET KREATIVITASMU (MEMBERSHIP BR-01)
+          ======================================================== */}
+      <section id="pricing" className="section-wrapper">
+        <div className="container">
+          <div className="section-header-centered">
+            <span className="section-kicker-tag">// MODEL KEANGGOTAAN (BR-01)</span>
+            <h2 className="section-headline">
+              Pilih Paket <span className="text-gradient-lime">Kreativitasmu</span>
+            </h2>
+            <p className="section-desc-lead">
+              Mulai dari akses kasual tanpa komitmen bulanan hingga paket korporat berskala tim,
+              lengkap dengan transparansi benefit dan kuota mesin.
+            </p>
 
-            <div style={{ borderBottom: '1px solid rgba(0, 180, 216, 0.3)', paddingBottom: '16px', marginBottom: '24px' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-blue)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                DETAILED BLUEPRINT // SPECIFICATION ARCHIVE
-              </span>
-              <h2 style={{ fontSize: '1.8rem', marginTop: '6px' }}>{selectedGalleryProject.title}</h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Dibuat oleh: <strong>{selectedGalleryProject.maker}</strong></p>
-            </div>
-
-            <div style={{ marginBottom: '24px' }}>
-              <h4 style={{ color: 'var(--text-white)', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>DESKRIPSI PROYEK</h4>
-              <p style={{ fontSize: '0.95rem' }}>{selectedGalleryProject.desc}</p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '24px' }}>
-              <div>
-                <h4 style={{ color: 'var(--text-white)', marginBottom: '12px', fontSize: '0.95rem', borderBottom: '1px dashed var(--border-color)', paddingBottom: '6px' }}>
-                  BILL OF MATERIALS (BOM)
-                </h4>
-                <ul style={{ paddingLeft: '20px', fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {selectedGalleryProject.bom.map((material, i) => (
-                    <li key={i}>{material}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h4 style={{ color: 'var(--text-white)', marginBottom: '12px', fontSize: '0.95rem', borderBottom: '1px dashed var(--border-color)', paddingBottom: '6px' }}>
-                  LANGKAH-LANGKAH MERAKIT DI WORKBENCH
-                </h4>
-                <ol style={{ paddingLeft: '20px', fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {selectedGalleryProject.steps.map((step, i) => (
-                    <li key={i}>{step}</li>
-                  ))}
-                </ol>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '30px', background: 'rgba(0, 180, 216, 0.05)', border: '1px solid rgba(0, 180, 216, 0.2)', padding: '16px', borderRadius: '8px', display: 'flex', justifyItems: 'center', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                Tertarik merakit proyek ini sendiri? Kunjungi garasi kami dan dapatkan semua bahan di atas!
-              </div>
-              <a
-                href="#booking"
-                className="btn-teal"
-                style={{ padding: '8px 16px', fontSize: '0.75rem' }}
-                onClick={() => setModalOpen(false)}
+            <div style={{ marginTop: '18px', display: 'inline-flex', gap: '6px', background: 'rgba(255,255,255,0.04)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+              <button
+                type="button"
+                className={`lab-tab-btn ${pricingCycle === 'monthly' ? 'active' : ''}`}
+                style={{ padding: '6px 14px' }}
+                onClick={() => setPricingCycle('monthly')}
               >
-                Pesan Workbench
-              </a>
+                Langganan Bulanan
+              </button>
+              <button
+                type="button"
+                className={`lab-tab-btn ${pricingCycle === 'payg' ? 'active' : ''}`}
+                style={{ padding: '6px 14px' }}
+                onClick={() => setPricingCycle('payg')}
+              >
+                Pay As You Go (Harian)
+              </button>
+            </div>
+          </div>
+
+          <div className="pricing-tier-grid">
+            {/* Walk-In */}
+            <div className="pricing-card">
+              <h3 className="tier-name">Walk-In</h3>
+              <p className="tier-target">Untuk pembuat lepas &amp; coba-coba</p>
+              <div className="tier-price-row">
+                <span className="tier-price-amount">Rp 0</span>
+                <span className="tier-price-period">/ komitmen</span>
+              </div>
+              <ul className="tier-features-list">
+                <li><Check size={14} /> Tarif sewa Rp 35k - 75k per jam</li>
+                <li><Check size={14} /> Bebas akses Meja Solder &amp; IoT</li>
+                <li><Check size={14} /> Pembayaran instan via QRIS</li>
+                <li><Check size={14} /> Sertifikasi keselamatan online</li>
+                <li style={{ color: 'var(--text-muted)' }}><X size={14} /> Tanpa kuota jam bulanan</li>
+              </ul>
+              <button type="button" className="btn-secondary-clean" onClick={() => handleOpenBooking()}>
+                Pilih Walk-In
+              </button>
+            </div>
+
+            {/* Student Tier */}
+            <div className="pricing-card">
+              <h3 className="tier-name">Student Tier</h3>
+              <p className="tier-target">Khusus mahasiswa &amp; peneliti</p>
+              <div className="tier-price-row">
+                <span className="tier-price-amount">Rp 150k</span>
+                <span className="tier-price-period">/ bulan</span>
+              </div>
+              <ul className="tier-features-list">
+                <li><Check size={14} /> Diskon 40% sewa seluruh mesin</li>
+                <li><Check size={14} /> Kuota 5 jam mesin FDM 3D Printer</li>
+                <li><Check size={14} /> Akses Meja Solder &amp; Osiloskop</li>
+                <li><Check size={14} /> Workshop pembinaan mingguan</li>
+                <li><Check size={14} /> Verifikasi kartu mahasiswa (KTM)</li>
+              </ul>
+              <button type="button" className="btn-outline-cyan" onClick={() => handleOpenBooking()}>
+                Daftar Mahasiswa
+              </button>
+            </div>
+
+            {/* Pro Maker */}
+            <div className="pricing-card featured-tier">
+              <span className="popular-ribbon">POPULER</span>
+              <h3 className="tier-name">Pro Maker</h3>
+              <p className="tier-target">Untuk kreator &amp; hardware startup</p>
+              <div className="tier-price-row">
+                <span className="tier-price-amount" style={{ color: 'var(--accent-lime)' }}>Rp 500k</span>
+                <span className="tier-price-period">/ bulan</span>
+              </div>
+              <ul className="tier-features-list">
+                <li><Check size={14} /> Kuota 20 jam mesin fleksibel</li>
+                <li><Check size={14} /> Antrean prioritas reservasi slot</li>
+                <li><Check size={14} /> Loker penyimpanan komponen</li>
+                <li><Check size={14} /> Diskon 15% bahan konsumabel</li>
+                <li><Check size={14} /> Gratis Workshop Level 3 K3</li>
+              </ul>
+              <button type="button" className="btn-primary-lime" onClick={() => handleOpenBooking()}>
+                Pilih Pro Maker
+              </button>
+            </div>
+
+            {/* Team / Startup */}
+            <div className="pricing-card">
+              <h3 className="tier-name">Team / Startup</h3>
+              <p className="tier-target">Lab tim &amp; R&amp;D korporat</p>
+              <div className="tier-price-row">
+                <span className="tier-price-amount">Rp 1.8M</span>
+                <span className="tier-price-period">/ bulan (5 Akun)</span>
+              </div>
+              <ul className="tier-features-list">
+                <li><Check size={14} /> Kuota bersama 60 jam mesin</li>
+                <li><Check size={14} /> Rak inventaris lab terdedikasi</li>
+                <li><Check size={14} /> Akses pintu fisik RFID 24/7</li>
+                <li><Check size={14} /> B2B sub-contracting dashboard</li>
+                <li><Check size={14} /> Bantuan teknis Fab Specialist</li>
+              </ul>
+              <button type="button" className="btn-secondary-clean" onClick={() => handleOpenBooking()}>
+                Hubungi Kami
+              </button>
+            </div>
+          </div>
+
+          {/* Credits Top-Up Banner */}
+          <div className="credits-banner-strip">
+            <div className="credits-info">
+              <h4>Top Up Saldo Hemat dengan Makerspace Credits</h4>
+              <p>Dapatkan bonus deposit hingga 20% untuk pembelian filamen, akrilik, dan sewa mesin via QRIS / VA BCA, Mandiri, BRI, BNI.</p>
+            </div>
+            <button
+              type="button"
+              className="btn-primary-lime"
+              onClick={() => handleOpenBooking()}
+            >
+              <CreditCard size={15} /> Top Up Saldo Sekarang
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          KALKULATOR KONSUMABEL & BILLING BAHAN (BR-06)
+          ======================================================== */}
+      <section id="materials" className="section-wrapper" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-header-centered">
+            <span className="section-kicker-tag">// BILLING MATERIAL OTOMATIS (BR-06)</span>
+            <h2 className="section-headline">
+              Kalkulator Bahan &amp; <span className="text-gradient-lime">Konsumabel Fabrikasi</span>
+            </h2>
+            <p className="section-desc-lead">
+              Transparansi biaya fabrikasi tanpa kejutan. Hitung estimasi pemakaian filamen 3D, akrilik lembaran,
+              kayu balsa, dan resin SLA yang otomatis didebit dari saldo deposit anggota.
+            </p>
+          </div>
+
+          <div className="calculator-box">
+            <div>
+              <div className="calc-input-group">
+                <label className="calc-label">1. Pilih Jenis Bahan Baku</label>
+                <div className="material-select-chips">
+                  <button
+                    type="button"
+                    className={`material-chip ${calcMaterial === 'pla' ? 'active' : ''}`}
+                    onClick={() => setCalcMaterial('pla')}
+                  >
+                    Filamen PLA+ (Rp 350/gr)
+                  </button>
+                  <button
+                    type="button"
+                    className={`material-chip ${calcMaterial === 'petg' ? 'active' : ''}`}
+                    onClick={() => setCalcMaterial('petg')}
+                  >
+                    Filamen PETG (Rp 450/gr)
+                  </button>
+                  <button
+                    type="button"
+                    className={`material-chip ${calcMaterial === 'acrylic' ? 'active' : ''}`}
+                    onClick={() => setCalcMaterial('acrylic')}
+                  >
+                    Akrilik Bening 3mm (Rp 18/cm²)
+                  </button>
+                  <button
+                    type="button"
+                    className={`material-chip ${calcMaterial === 'balsa' ? 'active' : ''}`}
+                    onClick={() => setCalcMaterial('balsa')}
+                  >
+                    Kayu Balsa 5mm (Rp 12/cm²)
+                  </button>
+                  <button
+                    type="button"
+                    className={`material-chip ${calcMaterial === 'resin' ? 'active' : ''}`}
+                    onClick={() => setCalcMaterial('resin')}
+                  >
+                    Resin SLA 8K (Rp 850/ml)
+                  </button>
+                </div>
+              </div>
+
+              <div className="calc-input-group">
+                <label className="calc-label">
+                  2. Estimasi Jumlah Pemakaian ({calcMaterial === 'acrylic' || calcMaterial === 'balsa' ? 'cm² Luas Area' : calcMaterial === 'resin' ? 'ml Resin' : 'Gram Filamen'})
+                </label>
+                <div className="slider-container">
+                  <input
+                    type="range"
+                    min="10"
+                    max="500"
+                    step="5"
+                    value={calcAmount}
+                    onChange={(e) => setCalcAmount(parseInt(e.target.value))}
+                    className="custom-range-slider"
+                  />
+                  <div className="slider-val-box">
+                    {calcAmount} {calcMaterial === 'acrylic' || calcMaterial === 'balsa' ? 'cm²' : calcMaterial === 'resin' ? 'ml' : 'gr'}
+                  </div>
+                </div>
+              </div>
+
+              <div className="calc-input-group">
+                <label className="calc-label">3. Durasi Sewa Mesin</label>
+                <div className="slider-container">
+                  <input
+                    type="range"
+                    min="1"
+                    max="8"
+                    step="1"
+                    value={calcMachineHours}
+                    onChange={(e) => setCalcMachineHours(parseInt(e.target.value))}
+                    className="custom-range-slider"
+                  />
+                  <div className="slider-val-box">
+                    {calcMachineHours} Jam
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bill Receipt Card */}
+            <div className="calc-receipt-card">
+              <div>
+                <div className="receipt-header">
+                  <h3 className="receipt-title">Simulasi Billing Otomatis</h3>
+                  <span className="receipt-sub">DIHITUNG BERDASARKAN BR-04 &amp; BR-06</span>
+                </div>
+
+                <div className="receipt-items-list">
+                  <div className="receipt-item-row">
+                    <span>Sewa Mesin ({calcMachineHours} Jam x Rp 35k)</span>
+                    <span style={{ fontFamily: 'var(--font-code)', color: 'var(--text-white)' }}>
+                      Rp {currentCalc.machineSubtotal.toLocaleString('id-ID')}
+                    </span>
+                  </div>
+
+                  <div className="receipt-item-row">
+                    <span>Bahan Baku ({calcAmount} unit)</span>
+                    <span style={{ fontFamily: 'var(--font-code)', color: 'var(--text-white)' }}>
+                      Rp {currentCalc.materialSubtotal.toLocaleString('id-ID')}
+                    </span>
+                  </div>
+
+                  <div className="receipt-item-row">
+                    <span>Biaya Pemeliharaan &amp; K3</span>
+                    <span style={{ fontFamily: 'var(--font-code)', color: 'var(--accent-lime)' }}>
+                      Termasuk (Rp 0)
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="receipt-total-row">
+                  <div>
+                    <span className="total-label">Total Debit Saldo</span>
+                    <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                      Dipotong otomatis dari saldo deposit
+                    </span>
+                  </div>
+                  <div className="total-amount-lime">
+                    Rp {currentCalc.totalCost.toLocaleString('id-ID')}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn-primary-lime"
+                  style={{ width: '100%', marginTop: '14px', justifyContent: 'center' }}
+                  onClick={() => handleOpenBooking()}
+                >
+                  <Calendar size={15} /> Pesan Slot dengan Estimasi Ini
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          PROGRAM & WORKSHOPS
+          ======================================================== */}
+      <section id="workshops" className="section-wrapper">
+        <div className="container">
+          <div className="section-header-centered">
+            <span className="section-kicker-tag">// PENDIDIKAN &amp; SERTIFIKASI TEKNIS</span>
+            <h2 className="section-headline">
+              Program &amp; <span className="text-gradient-lime">Workshop Kreatif</span>
+            </h2>
+            <p className="section-desc-lead">
+              Tingkatkan keahlian rekayasa fisik bersama engineer industri berpengalaman.
+              Selesaikan modul untuk membuka lencana K3 permanen di profil digital Anda.
+            </p>
+          </div>
+
+          <div className="workshop-grid">
+            <div className="workshop-card">
+              <div className="workshop-meta-bar">
+                <span>INTENSIF // 6 JAM</span>
+                <span>RP 250.000</span>
+              </div>
+              <h3>Laser Cutting &amp; Vector CAD Masterclass</h3>
+              <p>Optimasi file DXF/SVG, focal lens, pemotongan akrilik presisi tanpa hangus, dan protokol darurat api.</p>
+              <div className="workshop-badge-earned">
+                <Award size={13} /> Dapatkan Badge Level 3 K3
+              </div>
+            </div>
+
+            <div className="workshop-card">
+              <div className="workshop-meta-bar">
+                <span>HANDS-ON // 8 JAM</span>
+                <span>RP 350.000</span>
+              </div>
+              <h3>PCB Design, SMD Soldering &amp; IoT</h3>
+              <p>Skematik KiCAD, etching PCB dua sisi, teknik penyolderan komponen SMD, dan firmware microcontroller.</p>
+              <div className="workshop-badge-earned">
+                <Award size={13} /> Dapatkan Badge IoT Specialist
+              </div>
+            </div>
+
+            <div className="workshop-card">
+              <div className="workshop-meta-bar">
+                <span>PRAKTIK // 4 JAM</span>
+                <span>RP 150.000</span>
+              </div>
+              <h3>High-Speed 3D Printing &amp; Slicer Setup</h3>
+              <p>Optimasi Bambu Studio, parameter infill struktural kuat, multi-color AMS, dan filamen komposit karbon.</p>
+              <div className="workshop-badge-earned">
+                <Award size={13} /> Dapatkan Badge Level 2 K3
+              </div>
+            </div>
+
+            <div className="workshop-card">
+              <div className="workshop-meta-bar">
+                <span>ADVANCED // 10 JAM</span>
+                <span>RP 450.000</span>
+              </div>
+              <h3>Precision CNC Routing &amp; G-Code</h3>
+              <p>Setup coordinate zero, pemilihan bit router, feed rate kayu keras &amp; aluminium, dan pencegahan tool breakage.</p>
+              <div className="workshop-badge-earned">
+                <Award size={13} /> Dapatkan Badge CNC Operator
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          ANTI-GHOSTING & PENJADWALAN PRESISI (BR-03)
+          ======================================================== */}
+      <section className="section-wrapper" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="anti-ghosting-banner">
+            <div>
+              <span className="card-step-badge" style={{ color: 'var(--accent-amber)', background: 'var(--accent-amber-soft)' }}>
+                REGULASI PROTOKOL // BR-03
+              </span>
+              <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-white)', margin: '10px 0' }}>
+                Mekanisme Penjadwalan &amp; <span style={{ color: 'var(--accent-amber)' }}>Anti-Ghosting</span>
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '18px', fontSize: '0.92rem' }}>
+                Untuk mengeliminasi monopoli mesin dan memastikan utilisasi alat optimal (&gt;65%),
+                setiap member wajib memindai QR Code Check-in di terminal Lab Assistant maksimal
+                <strong> 15 menit</strong> setelah jam reservasi dimulai.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.82rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                  <Clock size={15} color="var(--accent-amber)" />
+                  <strong>Interval Slot 30 Menit:</strong> Terstruktur dengan distributed locking anti double-booking.
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                  <AlertTriangle size={15} color="var(--accent-red)" />
+                  <strong>Pembatalan Otomatis:</strong> Telat &gt;15 menit menyebabkan slot dibatalkan dan saldo terkena penalti.
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                  <QrCode size={15} color="var(--accent-lime)" />
+                  <strong>Digital Boarding Pass:</strong> QR Dinamis dikirim instan via WhatsApp dan Email saat booking dikonfirmasi.
+                </div>
+              </div>
+            </div>
+
+            <div className="anti-ghosting-clock-card">
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent-amber)', letterSpacing: '0.08em' }}>
+                LIVE GRACE PERIOD COUNTDOWN
+              </span>
+              <div className="ghosting-timer-digits">14:59</div>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', maxWidth: '280px', margin: '0 auto' }}>
+                Waktu toleransi kedatangan di lokasi sebelum mesin dialihkan otomatis ke antrean walk-in.
+              </p>
+              <button
+                type="button"
+                className="btn-primary-lime"
+                style={{ marginTop: '16px' }}
+                onClick={() => handleOpenBooking()}
+              >
+                Simulasi Booking &amp; QR
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          MULTI-STAKEHOLDER & ROADMAP TAHAP (SECTION 4 & 7 BRD)
+          ======================================================== */}
+      <section className="section-wrapper" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-header-centered">
+            <span className="section-kicker-tag">// SOLUSI STAKEHOLDER &amp; ROADMAP</span>
+            <h2 className="section-headline">
+              Antarmuka Terpadu &amp; <span className="text-gradient-lime">Rencana Rilis</span>
+            </h2>
+            <p className="section-desc-lead">
+              Dirancang untuk seluruh pemangku kepentingan, dari mahasiswa dan pembuat perangkat keras
+              hingga tim manajemen dan mitra industri.
+            </p>
+          </div>
+
+          <div className="stakeholder-tabs-container">
+            <button
+              type="button"
+              className={`stakeholder-tab-pill ${activeStakeholder === 'makers' ? 'active' : ''}`}
+              onClick={() => setActiveStakeholder('makers')}
+            >
+              <Users size={15} /> Makers / Mahasiswa
+            </button>
+            <button
+              type="button"
+              className={`stakeholder-tab-pill ${activeStakeholder === 'assistant' ? 'active' : ''}`}
+              onClick={() => setActiveStakeholder('assistant')}
+            >
+              <Wrench size={15} /> Lab Assistant / Specialist
+            </button>
+            <button
+              type="button"
+              className={`stakeholder-tab-pill ${activeStakeholder === 'mentor' ? 'active' : ''}`}
+              onClick={() => setActiveStakeholder('mentor')}
+            >
+              <Award size={15} /> Instruktur / Mentor
+            </button>
+            <button
+              type="button"
+              className={`stakeholder-tab-pill ${activeStakeholder === 'owner' ? 'active' : ''}`}
+              onClick={() => setActiveStakeholder('owner')}
+            >
+              <TrendingUp size={15} /> Management / Owner
+            </button>
+          </div>
+
+          <div className="stakeholder-detail-card" style={{ marginBottom: '32px' }}>
+            {activeStakeholder === 'makers' && (
+              <>
+                <div className="stakeholder-info-pane">
+                  <span className="card-step-badge">APLIKASI MEMBER // MOBILE &amp; DESKTOP</span>
+                  <h3>Pusat Kreativitas Mahasiswa &amp; Hardware Startup</h3>
+                  <p className="role-desc">
+                    Akses tanpa friksi. Cek ketersediaan mesin secara real-time di smartphone Anda, booking slot 30 menit, dan catat dokumentasi portofolio proyek fisik Anda.
+                  </p>
+                  <ul className="feature-checklist">
+                    <li><CheckCircle2 size={15} /> Reservasi kalender mesin dengan konfirmasi instan</li>
+                    <li><CheckCircle2 size={15} /> Pembayaran instan via QRIS Dinamis &amp; Virtual Account</li>
+                    <li><CheckCircle2 size={15} /> Dompet poin saldo prabayar dengan diskon konsumabel</li>
+                    <li><CheckCircle2 size={15} /> Lencana keselamatan K3 tersimpan permanen di akun</li>
+                  </ul>
+                  <button type="button" className="btn-primary-lime" onClick={() => handleOpenBooking()}>
+                    Mulai Eksperimen Anda
+                  </button>
+                </div>
+
+                <div className="stakeholder-mock-terminal">
+                  <div className="terminal-top-bar">
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                      MEMBER_PORTAL // UI_PREVIEW
+                    </span>
+                    <span style={{ color: 'var(--accent-lime)', fontSize: '0.7rem' }}>ONLINE</span>
+                  </div>
+                  <div className="terminal-body">
+                    <p style={{ color: 'var(--accent-lime)' }}>&gt; session: Active (Fatih Pratama)</p>
+                    <p>&gt; tier: Pro Maker (20 Jam Kuota)</p>
+                    <p>&gt; k3_clearance: Level 1 &amp; Level 2 (Verified)</p>
+                    <p>&gt; upcoming_slot: Tomorrow 14:00 (Bambu Lab X1-C)</p>
+                    <p>&gt; token_status: Grace period 15m active</p>
+                    <p style={{ color: 'var(--accent-cyan)', marginTop: '10px' }}>
+                      [LOG] 120g PLA Filament auto-debited Rp 42.000.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {activeStakeholder === 'assistant' && (
+              <>
+                <div className="stakeholder-info-pane">
+                  <span className="card-step-badge">PORTAL LAPANGAN // TABLET &amp; DESKTOP</span>
+                  <h3>Operasional Lapangan &amp; Validasi K3</h3>
+                  <p className="role-desc">
+                    Alat kerja utama bagi Fab Specialist di garasi. Memverifikasi kedatangan member via scanner QR, memeriksa kalibrasi mesin, dan menimbang sisa bahan.
+                  </p>
+                  <ul className="feature-checklist">
+                    <li><CheckCircle2 size={15} /> Scanner QR Check-in kedatangan (15-min grace period)</li>
+                    <li><CheckCircle2 size={15} /> Integrasi timbangan digital material konsumabel</li>
+                    <li><CheckCircle2 size={15} /> Form inspeksi kalibrasi dan keselamatan harian</li>
+                    <li><CheckCircle2 size={15} /> Pelaporan log insiden &amp; tiket maintenance mesin</li>
+                  </ul>
+                  <button type="button" className="btn-outline-cyan">Buka Dasbor Kasir</button>
+                </div>
+
+                <div className="stakeholder-mock-terminal">
+                  <div className="terminal-top-bar">
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                      FIELD_DESK // SCANNER_MODE
+                    </span>
+                    <span style={{ color: 'var(--accent-cyan)', fontSize: '0.7rem' }}>READY</span>
+                  </div>
+                  <div className="terminal-body">
+                    <p style={{ color: 'var(--accent-cyan)' }}>&gt; station: Lab Assistant Desk 01</p>
+                    <p>&gt; scan_status: Member #IDN-4892 Verified</p>
+                    <p>&gt; checkin_time: 14:04 (Anti-Ghosting Cleared)</p>
+                    <p>&gt; scale_input: 84.50g Filament weighed</p>
+                    <p style={{ color: 'var(--accent-lime)', marginTop: '10px' }}>
+                      [SUCCESS] Bill Rp 29.575 deducted from Member deposit.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {activeStakeholder === 'mentor' && (
+              <>
+                <div className="stakeholder-info-pane">
+                  <span className="card-step-badge">PORTAL MENTOR // MANAJEMEN KURSUS</span>
+                  <h3>Pusat Pelatihan &amp; Pengujian Lencana K3</h3>
+                  <p className="role-desc">
+                    Mendukung instruktur menyelenggarakan kelas intensif perangkat keras, membagikan modul teknis, dan memvalidasi kelulusan ujian praktik peserta.
+                  </p>
+                  <ul className="feature-checklist">
+                    <li><CheckCircle2 size={15} /> Penjadwalan workshop fabrikasi dan hands-on masterclass</li>
+                    <li><CheckCircle2 size={15} /> Penilaian kelulusan ujian lencana keselamatan Level 2 &amp; 3</li>
+                    <li><CheckCircle2 size={15} /> Distribusi modul teknis dan template cutting G-Code</li>
+                    <li><CheckCircle2 size={15} /> Monitoring portofolio inovasi perangkat keras</li>
+                  </ul>
+                  <button type="button" className="btn-primary-lime">Buka Portal Mentor</button>
+                </div>
+
+                <div className="stakeholder-mock-terminal">
+                  <div className="terminal-top-bar">
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                      MENTOR_CONSOLE // GRADING
+                    </span>
+                    <span style={{ color: 'var(--accent-amber)', fontSize: '0.7rem' }}>BATCH_04</span>
+                  </div>
+                  <div className="terminal-body">
+                    <p style={{ color: 'var(--accent-amber)' }}>&gt; class: Laser Cutting &amp; CAD Masterclass</p>
+                    <p>&gt; students: 12 Makers enrolled</p>
+                    <p>&gt; theory_quiz: 100% Passed Safety Rules</p>
+                    <p>&gt; practical: Acrylic 5mm Precision Test (Cleared)</p>
+                    <p style={{ color: 'var(--accent-lime)', marginTop: '10px' }}>
+                      [ISSUED] 12x Level 3 Safety Badges deployed to member IDs.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {activeStakeholder === 'owner' && (
+              <>
+                <div className="stakeholder-info-pane">
+                  <span className="card-step-badge">EXECUTIVE DASHBOARD // ANALYTICS SUITE</span>
+                  <h3>Kendali Finansial &amp; Rasio Utilisasi</h3>
+                  <p className="role-desc">
+                    Menyajikan metrik performa tingkat tinggi bagi manajemen. Pantau pencapaian KPI utilisasi mesin (&gt;65%), pendapatan berulang membership, dan persediaan bahan.
+                  </p>
+                  <ul className="feature-checklist">
+                    <li><CheckCircle2 size={15} /> Real-time machine utilization ratio (&gt;65% target KPI)</li>
+                    <li><CheckCircle2 size={15} /> Laporan break-even operational cost &amp; burn rate</li>
+                    <li><CheckCircle2 size={15} /> Manajemen stok grosir filamen &amp; akrilik</li>
+                    <li><CheckCircle2 size={15} /> Metrik retensi repeat-booking bulanan (&gt;45%)</li>
+                  </ul>
+                  <button type="button" className="btn-outline-cyan">Akses Analytics Suite</button>
+                </div>
+
+                <div className="stakeholder-mock-terminal">
+                  <div className="terminal-top-bar">
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                      EXECUTIVE_BI // METRICS
+                    </span>
+                    <span style={{ color: 'var(--accent-lime)', fontSize: '0.7rem' }}>TARGET_Q4</span>
+                  </div>
+                  <div className="terminal-body">
+                    <p style={{ color: 'var(--accent-lime)' }}>&gt; kpi.machine_utilization: 68.4% [PASS &gt;65%]</p>
+                    <p>&gt; kpi.k3_human_downtime: 0.8% [PASS &lt;2%]</p>
+                    <p>&gt; kpi.monthly_retention: 52.1% [PASS &gt;45%]</p>
+                    <p>&gt; monthly_recurring_revenue: Rp 84.500.000</p>
+                    <p style={{ color: 'var(--accent-cyan)', marginTop: '10px' }}>
+                      [FORECAST] Break-even operational target on track.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* 3-Phase Roadmap Grid */}
+          <div className="roadmap-timeline-grid">
+            <div className="roadmap-card">
+              <span className="roadmap-phase-pill">FASE 1 (MVP)</span>
+              <h3>Dasar Operasional &amp; Kasir</h3>
+              <div className="roadmap-duration">Durasi: Bulan 1 – 2</div>
+              <ul className="roadmap-items">
+                <li>• Autentikasi Pengguna &amp; Profil Dasar (OTP WhatsApp)</li>
+                <li>• Reservasi Kalender Mesin Dasar (Slot 30 Menit)</li>
+                <li>• Integrasi QRIS Manual &amp; Otomatis</li>
+                <li>• Kasir POS Lapangan Sederhana di Lokasi</li>
+              </ul>
+            </div>
+
+            <div className="roadmap-card" style={{ borderColor: 'rgba(163, 255, 18, 0.35)' }}>
+              <span className="roadmap-phase-pill" style={{ background: 'var(--accent-lime-soft)' }}>
+                FASE 2 (SCALE-UP)
+              </span>
+              <h3>Lencana K3 &amp; Otomasi Material</h3>
+              <div className="roadmap-duration">Durasi: Bulan 3 – 4</div>
+              <ul className="roadmap-items">
+                <li>• Modul Lencana K3 (Badging) &amp; Ujian Induction Online</li>
+                <li>• Manajemen Inventaris Material Timbangan Digital</li>
+                <li>• Notifikasi WhatsApp Pengingat Jadwal &amp; Bukti Tagihan</li>
+                <li>• Preventive Maintenance Log Tracker Mesin</li>
+              </ul>
+            </div>
+
+            <div className="roadmap-card">
+              <span className="roadmap-phase-pill">FASE 3 (ECOSYSTEM)</span>
+              <h3>Smart Access &amp; B2B Network</h3>
+              <div className="roadmap-duration">Durasi: Bulan 5 – 6</div>
+              <ul className="roadmap-items">
+                <li>• Akses Pintu Fisik berbasis RFID &amp; Dynamic QR Gate</li>
+                <li>• Modul Galeri Portofolio Proyek Terbuka &amp; Showcase</li>
+                <li>• B2B Sub-contracting Dashboard untuk Klien Korporat</li>
+                <li>• Multi-Branch Sync Antar Cabang IDN Makerspace</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          FAQ ACCORDION (CLEAN, MINIMALIST)
+          ======================================================== */}
+      <section id="faq" className="section-wrapper" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-header-centered">
+            <span className="section-kicker-tag">// FREQUENTLY ASKED QUESTIONS</span>
+            <h2 className="section-headline">
+              Pertanyaan <span className="text-gradient-lime">Umum</span>
+            </h2>
+            <p className="section-desc-lead">
+              Hal-hal penting seputar lisensi keselamatan kerja, pemesanan alat, dan penagihan bahan.
+            </p>
+          </div>
+
+          <div className="faq-accordion-list">
+            <details className="faq-item-card" open>
+              <summary className="faq-question-btn">
+                <span>Bagaimana cara mendapatkan lencana K3 untuk mesin Level 2 &amp; 3?</span>
+              </summary>
+              <div className="faq-answer-pane">
+                Untuk mesin Level 2 (seperti 3D Printer), Anda cukup menyelesaikan modul teori K3 singkat dan kuis daring di platform ini.
+                Untuk mesin Level 3 (Laser Cutter &amp; CNC Router), Anda wajib mengikuti demonstrasi praktikum tatap muka selama 30 menit
+                bersama Lab Assistant kami di garasi sebelum lisensi digital diberikan.
+              </div>
+            </details>
+
+            <details className="faq-item-card">
+              <summary className="faq-question-btn">
+                <span>Apa yang terjadi jika saya terlambat datang saat jadwal booking?</span>
+              </summary>
+              <div className="faq-answer-pane">
+                Sesuai regulasi anti-ghosting (BR-03), kami memberikan toleransi kedatangan maksimal 15 menit sejak jam pemesanan dimulai.
+                Jika lewat 15 menit Anda belum memindai QR Check-in di meja Lab Assistant, sistem otomatis membatalkan pesanan Anda,
+                biaya sewa slot dianggap hangus, dan mesin dialihkan kepada antrean berikutnya.
+              </div>
+            </details>
+
+            <details className="faq-item-card">
+              <summary className="faq-question-btn">
+                <span>Apakah saya boleh membawa material / filamen sendiri dari luar?</span>
+              </summary>
+              <div className="faq-answer-pane">
+                Boleh! Namun seluruh bahan eksternal (terutama lembaran akrilik/kayu untuk laser cutter dan filamen khusus) harus lolos inspeksi
+                Lab Assistant terlebih dahulu untuk mencegah residu gas beracun (misalnya PVC yang dilarang keras di mesin laser).
+              </div>
+            </details>
+
+            <details className="faq-item-card">
+              <summary className="faq-question-btn">
+                <span>Bagaimana cara kerja billing timbangan filamen 3D printing?</span>
+              </summary>
+              <div className="faq-answer-pane">
+                Setelah hasil cetak 3D selesai, Anda membawa benda cetak (beserta support material) ke meja kasir operasional.
+                Lab Assistant akan menaruhnya di timbangan digital yang terhubung ke sistem. Nilai gramasi dikalikan tarif per gram (misal Rp 350/gr)
+                dan otomatis dipotong dari saldo kredit dompet Makerspace Anda atau dibayar langsung via QRIS.
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          FOOTER STRIP (CLEAN & SUBTLE)
+          ======================================================== */}
+      <footer className="footer-strip">
+        <div className="container">
+          <div className="footer-grid">
+            <div>
+              <div className="nav-logo-group" style={{ marginBottom: '12px' }}>
+                <BrandLogo size={28} />
+                <div className="nav-logo-text">
+                  <span className="nav-brand-title" style={{ fontSize: '1.05rem' }}>
+                    IDN <span className="highlight-lime">MAKER SPACE</span>
+                  </span>
+                  <span className="nav-brand-sub">STEM CREATIVE HUB</span>
+                </div>
+              </div>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.5, fontSize: '0.82rem' }}>
+                Laboratorium fabrikasi perangkat keras fisik dan sistem ekosistem digital di Indonesia
+                dengan integrasi standar keselamatan K3, kalender anti-ghosting, dan billing material instan.
+              </p>
+              <div style={{ marginTop: '12px', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
+                OPERASIONAL NORMAL // SLA 99.8%
+              </div>
+            </div>
+
+            <div className="footer-col">
+              <h4>Fasilitas Lab</h4>
+              <ul className="footer-links-list">
+                <li><a href="#the-lab">ThunderLaser CO2 100W</a></li>
+                <li><a href="#the-lab">Bambu Lab X1-Carbon</a></li>
+                <li><a href="#the-lab">Shapeoko CNC Router</a></li>
+                <li><a href="#the-lab">Elegoo Saturn SLA Resin</a></li>
+                <li><a href="#the-lab">Meja Solder &amp; Osiloskop</a></li>
+              </ul>
+            </div>
+
+            <div className="footer-col">
+              <h4>Ekosistem Digital</h4>
+              <ul className="footer-links-list">
+                <li><a href="#k3-safety">Matriks Lisensi K3</a></li>
+                <li><a href="#pricing">Tiering Keanggotaan</a></li>
+                <li><a href="#materials">Kalkulator Material</a></li>
+                <li><a href="#workshops">Jadwal Workshop</a></li>
+                <li><a href="#faq">Pertanyaan Umum</a></li>
+              </ul>
+            </div>
+
+            <div className="footer-col">
+              <h4>Lokasi Garasi</h4>
+              <p style={{ fontSize: '0.8rem', lineHeight: 1.5, color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                <MapPin size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
+                IDN STEM Hub Garasi, Jl. Raya Jonggol - Dayeuh, Bogor, Jawa Barat.
+              </p>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                Operasional: Senin – Sabtu <br />
+                08:00 – 22:00 WIB
+              </p>
+            </div>
+          </div>
+
+          <div className="footer-copyright-bar">
+            <span>© 2026 IDN Makerspace Operations. Sesuai BRD-IDNMS-2026-V1 &amp; Google Stitch Design.</span>
+            <span>ENKRIPSI TLS 1.3 / AES-256 (UU PDP COMPLIANT)</span>
+          </div>
+        </div>
+      </footer>
+
+      {/* ========================================================
+          MODAL: BOOKING WIZARD (BR-01 THROUGH BR-04)
+          ======================================================== */}
+      {isBookingModalOpen && (
+        <div className="modal-backdrop-overlay" onClick={() => setIsBookingModalOpen(false)}>
+          <div className="modal-dialog-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-head">
+              <h3>
+                <Calendar size={18} color="var(--accent-lime)" />
+                Reservasi Mesin Fabrikasi
+              </h3>
+              <button
+                type="button"
+                className="btn-close-modal"
+                onClick={() => setIsBookingModalOpen(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="modal-body-content">
+              {/* Step Indicator */}
+              <div className="modal-step-indicator">
+                <div className={`step-circle ${bookingStep === 1 ? 'active' : bookingStep > 1 ? 'done' : ''}`}>1</div>
+                <div className={`step-circle ${bookingStep === 2 ? 'active' : bookingStep > 2 ? 'done' : ''}`}>2</div>
+                <div className={`step-circle ${bookingStep === 3 ? 'active' : bookingStep > 3 ? 'done' : ''}`}>3</div>
+                <div className={`step-circle ${bookingStep === 4 ? 'active' : bookingStep > 4 ? 'done' : ''}`}>4</div>
+                <div className={`step-circle ${bookingStep === 5 ? 'active' : bookingStep > 5 ? 'done' : ''}`}>5</div>
+                <div className={`step-circle ${bookingStep === 6 ? 'active' : ''}`}>Pass</div>
+              </div>
+
+              {/* Step 1: Mesin & Level K3 */}
+              {bookingStep === 1 && (
+                <div>
+                  <h4 style={{ color: 'var(--text-white)', marginBottom: '6px' }}>Langkah 1: Pilih Mesin Fabrikasi</h4>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
+                    Sistem mengecek prasyarat keselamatan K3 akun Anda secara otomatis.
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '18px' }}>
+                    {MACHINES_DATA.map(m => {
+                      const isSelected = selectedMachine.id === m.id;
+                      const isClearanceMet = m.level <= Math.max(...userProfile.badges);
+
+                      return (
+                        <div
+                          key={m.id}
+                          onClick={() => setSelectedMachine(m)}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '10px 14px',
+                            background: isSelected ? 'var(--accent-lime-soft)' : 'rgba(255,255,255,0.02)',
+                            border: `1px solid ${isSelected ? 'var(--accent-lime)' : 'var(--border-subtle)'}`,
+                            borderRadius: 'var(--radius-md)',
+                            cursor: 'pointer',
+                            transition: 'var(--transition-smooth)'
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontWeight: 700, color: 'var(--text-white)', fontSize: '0.9rem' }}>{m.name}</div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{m.levelName}</div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontFamily: 'var(--font-code)', color: 'var(--accent-lime)', fontWeight: 700, fontSize: '0.88rem' }}>
+                              Rp {m.hourlyRate.toLocaleString('id-ID')}/jam
+                            </div>
+                            <span style={{
+                              fontSize: '0.68rem',
+                              color: isClearanceMet ? '#4ade80' : '#f87171',
+                              fontFamily: 'var(--font-code)'
+                            }}>
+                              {isClearanceMet ? '✓ K3 TERPENUHI' : '✗ BUTUH LISENSI'}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <button
+                      type="button"
+                      className="btn-primary-lime"
+                      onClick={() => setBookingStep(2)}
+                    >
+                      <span>Lanjut Pilih Waktu</span>
+                      <ArrowRight size={15} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Waktu (Slot 30 Menit) */}
+              {bookingStep === 2 && (
+                <div>
+                  <h4 style={{ color: 'var(--text-white)', marginBottom: '6px' }}>Langkah 2: Pilih Tanggal &amp; Slot Waktu (30 Menit)</h4>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
+                    Pemesanan dialokasikan per interval 30 menit dengan locking concurrency (BR-03).
+                  </p>
+
+                  <div style={{ marginBottom: '14px' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                      Tanggal Reservasi:
+                    </label>
+                    <input
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '9px 12px',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: 'var(--radius-sm)',
+                        color: 'var(--text-white)',
+                        fontFamily: 'var(--font-code)',
+                        fontSize: '0.85rem'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '20px' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                      Pilih Slot Waktu Tersedia:
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                      {['09:00 - 09:30', '10:00 - 10:30', '11:00 - 11:30', '13:00 - 13:30', '14:00 - 14:30', '15:30 - 16:00'].map(slot => (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => setSelectedSlot(slot)}
+                          style={{
+                            padding: '9px 8px',
+                            borderRadius: 'var(--radius-sm)',
+                            background: selectedSlot === slot ? 'var(--accent-cyan-soft)' : 'rgba(255,255,255,0.03)',
+                            border: `1px solid ${selectedSlot === slot ? 'var(--accent-cyan)' : 'var(--border-subtle)'}`,
+                            color: selectedSlot === slot ? 'var(--accent-cyan)' : 'var(--text-primary)',
+                            fontFamily: 'var(--font-code)',
+                            fontSize: '0.78rem',
+                            cursor: 'pointer',
+                            transition: 'var(--transition-smooth)'
+                          }}
+                        >
+                          {slot}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <button type="button" className="btn-secondary-clean" onClick={() => setBookingStep(1)}>Kembali</button>
+                    <button type="button" className="btn-primary-lime" onClick={() => setBookingStep(3)}>Lanjut Estimasi Bahan</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Material & Estimasi Konsumabel */}
+              {bookingStep === 3 && (
+                <div>
+                  <h4 style={{ color: 'var(--text-white)', marginBottom: '6px' }}>Langkah 3: Konsumsi Bahan Baku (BR-06)</h4>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
+                    Estimasi berat filamen atau lembaran yang Anda gunakan.
+                  </p>
+
+                  <div style={{ background: 'rgba(10, 12, 16, 0.4)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', marginBottom: '18px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '0.82rem', color: 'var(--text-primary)' }}>Estimasi Bahan (Filamen PLA+)</span>
+                      <span style={{ fontFamily: 'var(--font-code)', color: 'var(--accent-lime)' }}>{estimatedFilament} gram</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="10"
+                      max="300"
+                      step="10"
+                      value={estimatedFilament}
+                      onChange={(e) => setEstimatedFilament(parseInt(e.target.value))}
+                      className="custom-range-slider"
+                      style={{ width: '100%' }}
+                    />
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px' }}>
+                      Tarif per gram: Rp 350. Timbangan aktual dikonfirmasi Lab Assistant di akhir sesi kerja.
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <button type="button" className="btn-secondary-clean" onClick={() => setBookingStep(2)}>Kembali</button>
+                    <button type="button" className="btn-primary-lime" onClick={() => setBookingStep(4)}>Lanjut Ketentuan K3</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Regulasi Anti-Ghosting (BR-03) */}
+              {bookingStep === 4 && (
+                <div>
+                  <h4 style={{ color: 'var(--text-white)', marginBottom: '6px' }}>Langkah 4: Konfirmasi Regulasi Anti-Ghosting</h4>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
+                    Pahami kewajiban check-in agar slot dan saldo Anda tidak dibatalkan otomatis.
+                  </p>
+
+                  <div style={{ background: 'var(--accent-amber-soft)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: 'var(--radius-md)', padding: '14px', marginBottom: '18px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent-amber)', fontWeight: 700, fontSize: '0.88rem', marginBottom: '6px' }}>
+                      <AlertTriangle size={16} /> ATURAN 15 MENIT CHECK-IN (BR-03)
+                    </div>
+                    <ul style={{ fontSize: '0.8rem', color: 'var(--text-primary)', paddingLeft: '18px', lineHeight: 1.5 }}>
+                      <li>Member wajib memindai QR Check-in di lokasi maksimal 15 menit setelah waktu pemesanan dimulai.</li>
+                      <li>Jika terlambat tanpa konfirmasi, slot dibatalkan otomatis oleh sistem.</li>
+                      <li>Biaya booking dikenakan penalti/hangus demi keadilan antrean member lain.</li>
+                    </ul>
+                  </div>
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '22px' }}>
+                    <input
+                      type="checkbox"
+                      checked={agreedAntiGhosting}
+                      onChange={(e) => setAgreedAntiGhosting(e.target.checked)}
+                      style={{ width: '17px', height: '17px', accentColor: 'var(--accent-lime)' }}
+                    />
+                    <span style={{ fontSize: '0.82rem', color: 'var(--text-primary)' }}>
+                      Saya memahami dan menyetujui ketentuan Anti-Ghosting 15 menit.
+                    </span>
+                  </label>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <button type="button" className="btn-secondary-clean" onClick={() => setBookingStep(3)}>Kembali</button>
+                    <button
+                      type="button"
+                      className="btn-primary-lime"
+                      disabled={!agreedAntiGhosting}
+                      style={{ opacity: agreedAntiGhosting ? 1 : 0.5, cursor: agreedAntiGhosting ? 'pointer' : 'not-allowed' }}
+                      onClick={() => setBookingStep(5)}
+                    >
+                      Lanjut Pembayaran
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 5: Pembayaran (BR-04) */}
+              {bookingStep === 5 && (
+                <div>
+                  <h4 style={{ color: 'var(--text-white)', marginBottom: '6px' }}>Langkah 5: Pembayaran Multi-Channel &amp; Top-Up</h4>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
+                    Pilih metode pembayaran instan via QRIS Dinamis, Virtual Account Bank, atau Saldo Poin.
+                  </p>
+
+                  <div style={{ background: 'rgba(10, 12, 16, 0.4)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '14px', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>Mesin:</span>
+                      <strong style={{ color: 'var(--text-white)', fontSize: '0.88rem' }}>{selectedMachine.name}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>Jadwal:</span>
+                      <strong style={{ color: 'var(--text-white)', fontSize: '0.88rem' }}>{selectedDate}, {selectedSlot}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>Total Tagihan:</span>
+                      <strong style={{ color: 'var(--accent-lime)', fontFamily: 'var(--font-code)', fontSize: '1.05rem' }}>
+                        Rp {(selectedMachine.hourlyRate + estimatedFilament * 350).toLocaleString('id-ID')}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '20px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('qris')}
+                      style={{
+                        padding: '10px',
+                        borderRadius: 'var(--radius-sm)',
+                        background: paymentMethod === 'qris' ? 'var(--accent-lime-soft)' : 'rgba(255,255,255,0.02)',
+                        border: `1px solid ${paymentMethod === 'qris' ? 'var(--accent-lime)' : 'var(--border-subtle)'}`,
+                        color: paymentMethod === 'qris' ? 'var(--accent-lime)' : 'var(--text-primary)',
+                        fontFamily: 'var(--font-heading)',
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <QrCode size={16} style={{ display: 'block', margin: '0 auto 4px' }} />
+                      QRIS Dinamis
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('va')}
+                      style={{
+                        padding: '10px',
+                        borderRadius: 'var(--radius-sm)',
+                        background: paymentMethod === 'va' ? 'var(--accent-cyan-soft)' : 'rgba(255,255,255,0.02)',
+                        border: `1px solid ${paymentMethod === 'va' ? 'var(--accent-cyan)' : 'var(--border-subtle)'}`,
+                        color: paymentMethod === 'va' ? 'var(--accent-cyan)' : 'var(--text-primary)',
+                        fontFamily: 'var(--font-heading)',
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <CreditCard size={16} style={{ display: 'block', margin: '0 auto 4px' }} />
+                      Virtual Account
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('credits')}
+                      style={{
+                        padding: '10px',
+                        borderRadius: 'var(--radius-sm)',
+                        background: paymentMethod === 'credits' ? 'var(--accent-amber-soft)' : 'rgba(255,255,255,0.02)',
+                        border: `1px solid ${paymentMethod === 'credits' ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
+                        color: paymentMethod === 'credits' ? 'var(--accent-amber)' : 'var(--text-primary)',
+                        fontFamily: 'var(--font-heading)',
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Zap size={16} style={{ display: 'block', margin: '0 auto 4px' }} />
+                      Saldo (175k)
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <button type="button" className="btn-secondary-clean" onClick={() => setBookingStep(4)}>Kembali</button>
+                    <button type="button" className="btn-primary-lime" onClick={handleFinishBooking}>
+                      Konfirmasi &amp; Terbitkan Pass
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 6: Boarding Pass & QR Check-in Simulator */}
+              {bookingStep === 6 && generatedTicket && (
+                <div>
+                  <div className="qr-ticket-result">
+                    <span className="card-step-badge" style={{ color: isCheckedIn ? '#4ade80' : 'var(--accent-lime)' }}>
+                      {isCheckedIn ? 'CHECKED IN & MACHINE UNLOCKED' : 'BOARDING PASS AKTIF // 15-MIN TIMER'}
+                    </span>
+
+                    <h3 style={{ color: 'var(--text-white)', margin: '8px 0 2px', fontFamily: 'var(--font-heading)', fontSize: '1.1rem' }}>
+                      {generatedTicket.machine}
+                    </h3>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                      TIKET: {generatedTicket.id} | {generatedTicket.date} ({generatedTicket.slot})
+                    </div>
+
+                    <div className="qr-placeholder-box">
+                      <svg width="130" height="130" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="140" height="140" fill="white" />
+                        <rect x="10" y="10" width="40" height="40" fill="black" />
+                        <rect x="18" y="18" width="24" height="24" fill="white" />
+                        <rect x="24" y="24" width="12" height="12" fill="black" />
+                        <rect x="90" y="10" width="40" height="40" fill="black" />
+                        <rect x="98" y="18" width="24" height="24" fill="white" />
+                        <rect x="104" y="24" width="12" height="12" fill="black" />
+                        <rect x="10" y="90" width="40" height="40" fill="black" />
+                        <rect x="18" y="98" width="24" height="24" fill="white" />
+                        <rect x="24" y="104" width="12" height="12" fill="black" />
+                        <rect x="60" y="20" width="20" height="10" fill="black" />
+                        <rect x="60" y="40" width="10" height="20" fill="black" />
+                        <rect x="80" y="70" width="20" height="20" fill="black" />
+                        <rect x="60" y="90" width="20" height="20" fill="black" />
+                        <rect x="90" y="100" width="30" height="10" fill="black" />
+                        <rect x="110" y="60" width="20" height="20" fill="black" />
+                        <rect x="40" y="70" width="10" height="10" fill="black" />
+                      </svg>
+                    </div>
+
+                    <div style={{ fontFamily: 'var(--font-code)', fontSize: '0.78rem', color: isCheckedIn ? '#4ade80' : 'var(--accent-amber)', marginBottom: '14px' }}>
+                      {isCheckedIn
+                        ? '✓ QR Telah Diverifikasi di Lab Assistant Desk'
+                        : 'Sisa Grace Period Check-in: 14:42'}
+                    </div>
+
+                    {!isCheckedIn ? (
+                      <button
+                        type="button"
+                        className="btn-primary-lime"
+                        style={{ width: '100%', justifyContent: 'center' }}
+                        onClick={() => setIsCheckedIn(true)}
+                      >
+                        <QrCode size={15} /> Simulasikan Scan QR di Meja Lab Assistant
+                      </button>
+                    ) : (
+                      <div style={{ background: 'var(--accent-green-soft)', border: '1px solid #22c55e', padding: '10px', borderRadius: 'var(--radius-sm)', color: '#4ade80', fontSize: '0.82rem' }}>
+                        Mesin Aktif! Sesi kerja dimulai. Bukti potong tagihan digital telah dikirim via WhatsApp.
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '14px' }}>
+                    <button
+                      type="button"
+                      className="btn-secondary-clean"
+                      onClick={() => setIsBookingModalOpen(false)}
+                    >
+                      Tutup Pass
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
 
       {/* ========================================================
-         FOOTER SECTION (TECH SPECS, COORDINATES & SAFETIES)
-         ======================================================== */}
-      <footer className="footer-section">
-        <div className="container">
-          <div className="footer-grid">
-            <div className="footer-logo-desc">
-              <div className="nav-logo" style={{ marginBottom: '16px' }}>
-                <BrandLogo size={36} />
-                <span>IDN <span className="text-gradient-orange">MAKER SPACE</span></span>
-              </div>
-              <p style={{ fontSize: '0.85rem', maxWidth: '400px' }}>
-                Laboratorium eksperimental modern berbasis STEM (Science, Technology, Engineering, Math) dengan atmosfer garasi engineering yang inklusif untuk seluruh elemen publik.
-              </p>
+          MODAL: K3 SAFETY INDUCTION & QUIZ
+          ======================================================== */}
+      {isQuizModalOpen && (
+        <div className="modal-backdrop-overlay" onClick={() => setIsQuizModalOpen(false)}>
+          <div className="modal-dialog-box k3-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-head">
+              <h3>
+                <ShieldCheck size={18} color="var(--accent-cyan)" />
+                Ujian Sertifikasi Keselamatan K3 Digital (BR-02)
+              </h3>
+              <button
+                type="button"
+                className="btn-close-modal"
+                onClick={() => setIsQuizModalOpen(false)}
+              >
+                <X size={18} />
+              </button>
             </div>
 
-            <div>
-              <div className="footer-title">Navigasi</div>
-              <ul className="footer-links">
-                <li><a href="#workbench" className="footer-link">Simulasi Workbench</a></li>
-                <li><a href="#toolbox" className="footer-link">STEM Toolbox</a></li>
-                <li><a href="#sandbox" className="footer-link">Code Sandbox</a></li>
-                <li><a href="#booking" className="footer-link">Sewa Space</a></li>
-              </ul>
-            </div>
+            <div className="modal-body-content">
+              {!quizSubmitted ? (
+                <form onSubmit={handleQuizSubmit}>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '18px' }}>
+                    Jawab 3 pertanyaan induksi keselamatan kerja ini untuk membuka lencana Level 2 &amp; 3 di profil Anda.
+                  </p>
 
-            <div>
-              <div className="footer-title">Keamanan Lab</div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', borderRadius: '6px', background: 'rgba(0, 245, 212, 0.08)', border: '1px solid rgba(0, 245, 212, 0.2)', color: 'var(--accent-teal)', boxShadow: '0 0 8px rgba(0, 245, 212, 0.05)' }}>
-                    <Shield size={14} />
+                  <div style={{ marginBottom: '14px' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--text-white)', fontSize: '0.88rem', marginBottom: '6px' }}>
+                      1. Kapan pemindai QR Check-in wajib dilakukan saat sesi reservasi mesin dimulai?
+                    </div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                      <input
+                        type="radio"
+                        name="q1"
+                        value="a"
+                        onChange={() => setQuizAnswers({ ...quizAnswers, q1: 'a' })}
+                        required
+                      /> Maksimal 60 menit setelah mulai.
+                    </label>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                      <input
+                        type="radio"
+                        name="q1"
+                        value="b"
+                        onChange={() => setQuizAnswers({ ...quizAnswers, q1: 'b' })}
+                      /> Maksimal 15 menit setelah waktu pemesanan (aturan anti-ghosting BR-03).
+                    </label>
                   </div>
-                  <span>ANSI Z87.1 Goggles Enforced</span>
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', borderRadius: '6px', background: 'rgba(255, 93, 34, 0.08)', border: '1px solid rgba(255, 93, 34, 0.2)', color: 'var(--accent-orange)', boxShadow: '0 0 8px rgba(255, 93, 34, 0.05)' }}>
-                    <Wind size={14} />
-                  </div>
-                  <span>Laser Exhaust Ventilated</span>
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', borderRadius: '6px', background: 'rgba(0, 180, 216, 0.08)', border: '1px solid rgba(0, 180, 216, 0.2)', color: 'var(--accent-blue)', boxShadow: '0 0 8px rgba(0, 180, 216, 0.05)' }}>
-                    <Zap size={14} />
-                  </div>
-                  <span>220V ESD Safe Protection</span>
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', borderRadius: '6px', background: 'rgba(255, 215, 0, 0.08)', border: '1px solid rgba(255, 215, 0, 0.2)', color: 'var(--accent-amber)', boxShadow: '0 0 8px rgba(255, 215, 0, 0.05)' }}>
-                    <Coffee size={14} />
-                  </div>
-                  <span>Free Espresso Refill</span>
-                </li>
-              </ul>
-            </div>
-          </div>
 
-          <div className="footer-meta-row">
-            <div>
-              IDN MAKER SPACE CORPORATION © 2026 // BSD CITY, TANGERANG, INDONESIA
-            </div>
-            <div>
-              LAT_COORD: -6.3024 // LNG_COORD: 106.6522 // GRID_ACTIVE
+                  <div style={{ marginBottom: '14px' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--text-white)', fontSize: '0.88rem', marginBottom: '6px' }}>
+                      2. Material apa yang DILARANG KERAS dipotong menggunakan mesin Laser Cutter CO2 karena bahaya gas klorin beracun?
+                    </div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                      <input
+                        type="radio"
+                        name="q2"
+                        value="a"
+                        onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'a' })}
+                        required
+                      /> Kayu Balsa 3mm
+                    </label>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                      <input
+                        type="radio"
+                        name="q2"
+                        value="b"
+                        onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'b' })}
+                      /> Lembaran Akrilik Cast Acrylic
+                    </label>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                      <input
+                        type="radio"
+                        name="q2"
+                        value="c"
+                        onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'c' })}
+                      /> PVC / Vinyl / Polivinil Klorida
+                    </label>
+                  </div>
+
+                  <div style={{ marginBottom: '22px' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--text-white)', fontSize: '0.88rem', marginBottom: '6px' }}>
+                      3. Apa langkah pertama jika terjadi api terbuka atau alarm overheating pada laser nozzle?
+                    </div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                      <input
+                        type="radio"
+                        name="q3"
+                        value="a"
+                        onChange={() => setQuizAnswers({ ...quizAnswers, q3: 'a' })}
+                        required
+                      /> Tekan Emergency Stop (E-Stop) merah &amp; panggil Lab Assistant segera.
+                    </label>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                      <input
+                        type="radio"
+                        name="q3"
+                        value="b"
+                        onChange={() => setQuizAnswers({ ...quizAnswers, q3: 'b' })}
+                      /> Siram air langsung ke dalam panel elektronik mesin.
+                    </label>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                    <button type="button" className="btn-secondary-clean" onClick={() => setIsQuizModalOpen(false)}>
+                      Batal
+                    </button>
+                    <button type="submit" className="btn-primary-lime">
+                      Kirim Jawaban Kuis K3
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '14px 0' }}>
+                  {quizScore === 3 ? (
+                    <>
+                      <div style={{ width: '54px', height: '54px', background: 'var(--accent-lime-soft)', border: '1px solid var(--accent-lime)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', color: 'var(--accent-lime)' }}>
+                        <Award size={28} />
+                      </div>
+                      <h3 style={{ color: 'var(--text-white)', fontSize: '1.25rem', marginBottom: '6px' }}>
+                        Selamat! Skor Sempurna (3/3)
+                      </h3>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '18px' }}>
+                        Lencana keselamatan digital <strong>Level 3 Verified</strong> telah diterbitkan dan ditautkan ke akun Anda.
+                      </p>
+                      <button
+                        type="button"
+                        className="btn-primary-lime"
+                        onClick={() => {
+                          setIsQuizModalOpen(false);
+                          setQuizSubmitted(false);
+                        }}
+                      >
+                        Selesai &amp; Buka Booking
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ width: '54px', height: '54px', background: 'var(--accent-red-soft)', border: '1px solid var(--accent-red)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', color: 'var(--accent-red)' }}>
+                        <AlertTriangle size={28} />
+                      </div>
+                      <h3 style={{ color: 'var(--text-white)', fontSize: '1.25rem', marginBottom: '6px' }}>
+                        Skor Anda: {quizScore}/3
+                      </h3>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '18px' }}>
+                        Untuk menjamin keselamatan kerja, Anda membutuhkan skor 3/3 untuk lisensi mesin berisiko tinggi.
+                      </p>
+                      <button
+                        type="button"
+                        className="btn-secondary-clean"
+                        onClick={() => setQuizSubmitted(false)}
+                      >
+                        Ulangi Kuis
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </footer>
-    </>
+      )}
+    </div>
   );
 }
-
-export default App;

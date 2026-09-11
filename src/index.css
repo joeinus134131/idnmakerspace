@@ -7,7 +7,13 @@
   --border-color: #242c3b;
   --border-glow: rgba(0, 245, 212, 0.2);
   
-  /* Accent Colors - Safety Neon, Cyber Blue, Terminal Green, Circuit Amber */
+  /* Accent Colors - Industrial Digitalism (Neon Lime, Electric Cyan, Safety Amber, Circuit Orange) */
+  --accent-lime: #a3ff12;
+  --accent-lime-glow: rgba(163, 255, 18, 0.25);
+  
+  --accent-cyan: #00e5ff;
+  --accent-cyan-glow: rgba(0, 229, 255, 0.25);
+  
   --accent-orange: #ff5d22;
   --accent-orange-glow: rgba(255, 93, 34, 0.25);
   
@@ -19,6 +25,9 @@
   
   --accent-amber: #ffb703;
   --accent-amber-glow: rgba(255, 183, 3, 0.25);
+
+  --accent-red: #ef233c;
+  --accent-red-glow: rgba(239, 35, 60, 0.25);
   
   --text-primary: #e2e8f0;
   --text-secondary: #94a3b8;
@@ -29,6 +38,7 @@
   --font-base: 'Outfit', system-ui, -apple-system, sans-serif;
   --font-heading: 'Space Grotesk', system-ui, -apple-system, sans-serif;
   --font-mono: 'Share Tech Mono', ui-monospace, monospace;
+  --font-code: 'JetBrains Mono', 'Share Tech Mono', monospace;
   
   /* Transitions */
   --transition-fast: 0.15s ease;
