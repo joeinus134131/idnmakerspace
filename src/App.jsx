@@ -6,7 +6,6 @@ import {
   Wrench,
   Gauge,
   Printer,
-  Activity,
   Shield,
   ShieldCheck,
   ShieldAlert,
@@ -27,52 +26,42 @@ import {
   ChevronRight,
   Play,
   Pause,
+  MessageCircle,
+  AtSign,
+  Send,
+  Camera,
 } from 'lucide-react';
 import './App.css';
-
-const BrandLogo = ({ size = 32 }) => (
-  <span className="brand-raster-mark" style={{ width: size, height: size }} aria-label="IDN Makerspace">M</span>
-);
 
 // Hero Showcase Slider Data (Atmospheric Makerspace Zones)
 const HERO_SLIDES = [
   {
     id: '3dprint',
-    tag: 'ZONA 01 // FABRIKASI 3D PRINTING',
+    tag: '3D Printing',
     title: 'Precision 3D Rapid Prototyping',
     subtitle: 'Bambu Lab Multi-Color & Engineering Filaments',
     desc: 'Cetak prototipe fisik presisi tinggi dengan Bambu Lab FDM & Resin SLA 8K, didukung pelacak jam operasional nozzle otomatis.',
-    image: '/images/slide-3dprint.jpg',
+    image: '/images/slide-3dprint.webp',
     statBadge: 'Toleransi ±0.08mm',
     kpi: '3 Unit Ready'
   },
   {
-    id: 'laser',
-    tag: 'ZONA 02 // SUBTRACTIVE CUTTING',
-    title: 'Laser Cutting & Precision CNC',
-    subtitle: 'High Precision Sheet Cutting & Engraving',
-    desc: 'Pemotongan lembaran akrilik, kayu balsa, dan engraving presisi tinggi dengan proteksi ventilasi gas dan emergency stop.',
-    image: '/images/slide-laser.jpg',
-    statBadge: 'Tebal s/d 12mm',
-    kpi: 'Siap Pakai'
-  },
-  {
     id: 'iot',
-    tag: 'ZONA 03 // ELEKTRONIKA & IOT',
+    tag: 'Elektronika & IoT',
     title: 'Electronics Workbench & Testing',
     subtitle: 'Hakko Soldering & Digital Oscilloscope',
     desc: 'Meja solder suhu presisi, catu daya variabel, osiloskop digital, dan uji mikrokontroler. Akses bebas Level 1 K3.',
-    image: '/images/slide-iot.jpg',
+    image: '/images/slide-iot.webp',
     statBadge: 'Akses Bebas Lv.1',
     kpi: 'Meja Bebas'
   },
   {
     id: 'community',
-    tag: 'ZONA 04 // STEM INNOVATION HUB',
+    tag: 'Belajar & Berkarya',
     title: 'Kolaborasi & Inkubasi Hardware',
     subtitle: 'Komunitas & Riset Rekayasa',
     desc: 'Ruang interaksi antar mahasiswa, pembuat lepas, dan mentor industri untuk memvalidasi prototipe produk jadi.',
-    image: '/images/slide-community.jpg',
+    image: '/images/slide-community.webp',
     statBadge: '250+ Anggota',
     kpi: 'Workshop Mingguan'
   }
@@ -89,7 +78,7 @@ const MACHINES_DATA = [
     status: 'available',
     statusLabel: 'Tersedia',
     hoursLogged: 42, hoursLimit: 300,
-    area: '180 x 180 x 180 mm', speed: 'Cetak PLA', materials: 'PLA', hourlyRate: 25000,
+    area: '180 x 180 x 180 mm', speed: 'FDM · hingga 500 mm/s', materials: 'PLA, PETG & TPU; ABS/ASA tidak didukung', hourlyRate: 25000,
     icon: Printer
   },
   {
@@ -130,7 +119,11 @@ const MACHINES_DATA = [
   }
 ];
 
+const WHATSAPP_NUMBER = '6283802436288';
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+
 export default function App() {
+  const [scrollProgress, setScrollProgress] = useState(0);
   // Hero Slider State
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isSliderPaused, setIsSliderPaused] = useState(false);
@@ -155,33 +148,37 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
 
+  // Let the page feel responsive to the reader without introducing a heavy animation library.
+  useEffect(() => {
+    const updateProgress = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0);
+    };
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      }),
+      { threshold: 0.14 }
+    );
+
+    document.querySelectorAll('.scroll-reveal').forEach((element) => revealObserver.observe(element));
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+
+    return () => {
+      revealObserver.disconnect();
+      window.removeEventListener('scroll', updateProgress);
+      window.removeEventListener('resize', updateProgress);
+    };
+  }, []);
+
   const formatGraceTime = (sec) => {
     const m = Math.floor(sec / 60).toString().padStart(2, '0');
     const s = (sec % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   };
-
-  // Live Telemetry Stream
-  const [telemetry, setTelemetry] = useState({
-    roomTemp: 24.6,
-    humidity: 52,
-    powerDraw: 2.85,
-    activeMakers: 18,
-    activeMachines: 6
-  });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTelemetry({
-        roomTemp: parseFloat((24.2 + Math.random() * 0.8).toFixed(1)),
-        humidity: Math.floor(51 + Math.random() * 3),
-        powerDraw: parseFloat((2.6 + Math.random() * 0.5).toFixed(2)),
-        activeMakers: Math.floor(16 + Math.random() * 5),
-        activeMachines: Math.floor(5 + Math.random() * 2)
-      });
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
 
   // User Profile / Safety Clearance State
   const [userProfile, setUserProfile] = useState({
@@ -213,9 +210,7 @@ export default function App() {
   const [selectedSlot, setSelectedSlot] = useState('14:00 - 14:30');
   const [estimatedFilament, setEstimatedFilament] = useState(60);
   const [agreedAntiGhosting, setAgreedAntiGhosting] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('qris');
   const [generatedTicket, setGeneratedTicket] = useState(null);
-  const [isCheckedIn, setIsCheckedIn] = useState(false);
 
   // K3 Induction Quiz Modal State
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
@@ -257,22 +252,31 @@ export default function App() {
       setSelectedMachine(machine);
     }
     setBookingStep(1);
-    setIsCheckedIn(false);
     setGeneratedTicket(null);
     setIsBookingModalOpen(true);
   };
 
-  // Complete Booking & Generate Pass
+  const openWhatsApp = (message) => {
+    window.open(`${WHATSAPP_URL}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+  };
+
+  // Kirim permintaan ke admin. Reservasi dan pembayaran baru sah setelah dikonfirmasi via WhatsApp.
   const handleFinishBooking = () => {
-    const ticketId = `IDN-TKT-${Math.floor(100000 + Math.random() * 900000)}`;
+    const requestId = `IDN-REQ-${Math.floor(100000 + Math.random() * 900000)}`;
+    const total = selectedMachine.hourlyRate + estimatedFilament * 350;
     setGeneratedTicket({
-      id: ticketId,
+      id: requestId,
       machine: selectedMachine.name,
       slot: selectedSlot,
       date: selectedDate,
-      cost: selectedMachine.hourlyRate + estimatedFilament * 350
+      cost: total
     });
     setBookingStep(6);
+    openWhatsApp(`Halo IDN Makerspace, saya ingin mengajukan reservasi.\n\nKode permintaan: ${requestId}\nMesin: ${selectedMachine.name}\nTanggal: ${selectedDate}\nSlot: ${selectedSlot}\nEstimasi bahan PLA+: ${estimatedFilament} gram\nEstimasi total: Rp ${total.toLocaleString('id-ID')}\n\nMohon konfirmasi ketersediaan slot dan instruksi pembayaran. Terima kasih.`);
+  };
+
+  const handleTopUpWhatsApp = () => {
+    openWhatsApp('Halo IDN Makerspace, saya ingin top up saldo / menanyakan metode pembayaran. Mohon kirim instruksi pembayarannya. Terima kasih.');
   };
 
   // Handle Quiz Submission
@@ -302,6 +306,9 @@ export default function App() {
         <div className="ambient-orb ambient-orb-cyan"></div>
         <div className="ambient-orb ambient-orb-purple"></div>
       </div>
+      <div className="scroll-progress" aria-hidden="true">
+        <span style={{ transform: `scaleX(${scrollProgress / 100})` }} />
+      </div>
 
       {/* ========================================================
           HEADER NAVIGATION (CLEAN, FOCUSED)
@@ -309,7 +316,6 @@ export default function App() {
       <header className="header-nav">
         <div className="container nav-container">
           <a href="#" className="nav-logo-group">
-            <BrandLogo size={32} />
             <div className="nav-logo-text">
               <span className="nav-brand-title">
                 IDN <span className="highlight-lime">MAKER SPACE</span>
@@ -321,9 +327,8 @@ export default function App() {
           <nav>
             <ul className="nav-links">
               <li><a href="#the-lab" className="nav-link">Fasilitas Mesin</a></li>
-              <li><a href="#k3-safety" className="nav-link">Sistem K3</a></li>
-              <li><a href="#pricing" className="nav-link">Keanggotaan</a></li>
-              <li><a href="#materials" className="nav-link">Kalkulator Bahan</a></li>
+              <li><a href="#showcase" className="nav-link">Karya Maker</a></li>
+              <li><a href="#pricing" className="nav-link">Paket &amp; Biaya</a></li>
               <li><a href="#workshops" className="nav-link">Workshop</a></li>
               <li><a href="#faq" className="nav-link">FAQ</a></li>
             </ul>
@@ -386,8 +391,8 @@ export default function App() {
             </h1>
 
             <p className="hero-subtitle">
-              Satu ekosistem terpadu laboratorium fabrikasi fisik (3D Printing, Laser Cutting, IoT)
-              dengan sertifikasi K3 digital, reservasi presisi anti-ghosting, dan billing material instan.
+              Satu ekosistem terpadu laboratorium fabrikasi fisik (3D Printing, Elektronika, IoT)
+              dengan sertifikasi K3 digital, pengajuan reservasi terarah, dan estimasi biaya bahan yang transparan.
             </p>
 
             <div className="hero-actions-row">
@@ -420,7 +425,7 @@ export default function App() {
                 <Check size={14} color="var(--accent-lime)" /> Standar K3 Terakreditasi
               </span>
               <span className="hero-check-item">
-                <Check size={14} color="var(--accent-lime)" /> QRIS &amp; Virtual Account
+                <Check size={14} color="var(--accent-lime)" /> Konfirmasi Pesan via WhatsApp
               </span>
               <span className="hero-check-item">
                 <Check size={14} color="var(--accent-lime)" /> Timbangan Digital Bahan
@@ -428,7 +433,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Clean Telemetry Widget with Live Equalizer */}
+          {/* Status Lab: informasi yang benar-benar membantu sebelum booking */}
           <div>
             <div className="telemetry-console-card">
               <div className="console-header-bar">
@@ -437,20 +442,10 @@ export default function App() {
                   <span className="dot-yellow"></span>
                   <span className="dot-green"></span>
                 </div>
-                <span className="console-tag-title">LIVE TELEMETRY // JONGGOL HUB</span>
+                <span className="console-tag-title">Status Lab Hari Ini</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div className="oscilloscope-bars">
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                  </div>
                   <span style={{ fontFamily: 'var(--font-code)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
-                    ONLINE
+                    BUKA
                   </span>
                 </div>
               </div>
@@ -458,40 +453,40 @@ export default function App() {
               <div className="telemetry-content-padding">
                 <div className="telemetry-status-row">
                   <div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>ZONA AKTIF TERPILIH</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>LAYANAN TERSEDIA</span>
                     <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--text-white)' }}>
-                      {HERO_SLIDES[currentSlide].title}
+                      6 dari 7 alat siap digunakan
                     </span>
                   </div>
                   <span className="status-badge-active">
-                    <span className="pulse-dot"></span> {HERO_SLIDES[currentSlide].kpi}
+                    <span className="pulse-dot"></span> UPDATE LANGSUNG
                   </span>
                 </div>
 
                 <div className="telemetry-metrics-grid">
                   <div className="telemetry-metric-item">
-                    <div className="metric-label-mono"><Gauge size={13} /> Suhu Lab</div>
-                    <div className="metric-value-dynamic">{telemetry.roomTemp}<span className="metric-unit">°C</span></div>
+                    <div className="metric-label-mono"><Printer size={13} /> 3D Printer</div>
+                    <div className="metric-value-dynamic">1<span className="metric-unit"> tersedia</span></div>
                   </div>
 
                   <div className="telemetry-metric-item">
-                    <div className="metric-label-mono"><Activity size={13} /> Kelembaban</div>
-                    <div className="metric-value-dynamic">{telemetry.humidity}<span className="metric-unit">% RH</span></div>
+                    <div className="metric-label-mono"><Zap size={13} /> Elektronika</div>
+                    <div className="metric-value-dynamic">5<span className="metric-unit"> alat</span></div>
                   </div>
 
                   <div className="telemetry-metric-item">
-                    <div className="metric-label-mono"><Zap size={13} /> Beban Daya</div>
-                    <div className="metric-value-dynamic">{telemetry.powerDraw}<span className="metric-unit">kW</span></div>
+                    <div className="metric-label-mono"><Gauge size={13} /> Pengukuran</div>
+                    <div className="metric-value-dynamic">1<span className="metric-unit"> sedang dipakai</span></div>
                   </div>
 
                   <div className="telemetry-metric-item">
-                    <div className="metric-label-mono"><Users size={13} /> Makers On-Site</div>
-                    <div className="metric-value-dynamic">{telemetry.activeMakers}<span className="metric-unit">Orang</span></div>
+                    <div className="metric-label-mono"><Clock size={13} /> Jam Lab</div>
+                    <div className="metric-value-dynamic">08–17<span className="metric-unit"> WIB</span></div>
                   </div>
                 </div>
 
                 <div className="console-alert-notice">
-                  <strong>PEMBERITAHUAN K3:</strong> Check-in QR diwajibkan maksimal 15 menit setelah waktu pemesanan dimulai untuk menghindari pembatalan otomatis (BR-03 Anti-Ghosting).
+                  Pilih alat di katalog untuk melihat tarif dan meminta slot penggunaan.
                 </div>
               </div>
             </div>
@@ -509,7 +504,7 @@ export default function App() {
                   className={`slider-tab-btn ${idx === currentSlide ? 'active' : ''}`}
                   onClick={() => setCurrentSlide(idx)}
                 >
-                  <span className="slider-tab-tag">0{idx + 1} // SHOWCASE</span>
+                  <span className="slider-tab-tag">Pilihan {idx + 1}</span>
                   <span>{slide.title.split(' ')[0]} {slide.title.split(' ')[1]}</span>
                   {idx === currentSlide && <span className="slider-progress-bar"></span>}
                 </button>
@@ -547,9 +542,64 @@ export default function App() {
       </section>
 
       {/* ========================================================
+          PROJECT SHOWCASE & COMMUNITY SOCIAL PROOF
+          ======================================================== */}
+      <section id="showcase" className="section-wrapper section-band-cyan scroll-reveal">
+        <div className="container">
+          <div className="showcase-heading-row">
+            <div>
+              <span className="showcase-kicker"><Camera size={14} /> DIBUAT DI IDN MAKERSPACE</span>
+              <h2 className="section-headline">Dari Ide Menjadi <span className="text-gradient-lime">Karya Nyata</span></h2>
+              <p className="section-desc-lead showcase-desc">
+                Lihat kualitas hasil dan suasana kolaborasi sebelum kamu memesan alat. Setiap proyek dimulai dari meja yang sama.
+              </p>
+            </div>
+            <div className="showcase-proof">
+              <strong>250+</strong>
+              <span>maker telah belajar &amp; berkarya bersama</span>
+            </div>
+          </div>
+
+          <div className="showcase-grid">
+            <article className="showcase-card showcase-card-featured">
+              <img src="/images/slide-3dprint.webp" alt="Proses dan hasil prototipe 3D printing di IDN Makerspace" />
+              <div className="showcase-card-overlay">
+                <span>3D PRINTING</span>
+                <h3>Prototipe presisi, siap diuji</h3>
+                <p>PLA, PETG, dan TPU dengan pendampingan Lab Assistant.</p>
+              </div>
+            </article>
+            <article className="showcase-card">
+              <img src="/images/slide-iot.webp" alt="Aktivitas perakitan elektronik dan IoT di makerspace" />
+              <div className="showcase-card-overlay">
+                <span>ELEKTRONIKA &amp; IOT</span>
+                <h3>Rakit, ukur, iterasi</h3>
+              </div>
+            </article>
+            <article className="showcase-card">
+              <img src="/images/slide-community.webp" alt="Komunitas maker sedang berkolaborasi di IDN Makerspace" />
+              <div className="showcase-card-overlay">
+                <span>COMMUNITY LAB</span>
+                <h3>Belajar bersama, tumbuh bersama</h3>
+              </div>
+            </article>
+          </div>
+
+          <div id="community" className="community-invite-panel">
+            <div>
+              <span className="showcase-kicker"><Users size={14} /> KOMUNITAS MAKER</span>
+              <h3>Punya ide, butuh teman diskusi?</h3>
+              <p>Member Pro Maker mendapat akses ke sesi sharing, project review, dan kanal komunitas bersama mentor.</p>
+            </div>
+            <a href="#pricing" className="btn-primary-lime"><Users size={16} /> Lihat akses komunitas</a>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
           KPI STRATEGIC BANNER (CLEAN, INTEGRATED)
           ======================================================== */}
-      <section className="stats-banner-strip">
+      <div className="stats-banner-strip scroll-reveal secondary-landing-content">
         <div className="container">
           <div className="stats-card-container">
             <div className="stats-grid-quad">
@@ -579,15 +629,14 @@ export default function App() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* ========================================================
           4 ALUR OPERASIONAL TERINTEGRASI (THE CORE ECOSYSTEM)
           ======================================================== */}
-      <section id="ecosystem" className="section-wrapper">
+      <section id="ecosystem" className="section-wrapper section-band-cyan scroll-reveal secondary-landing-content">
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// ARSITEKTUR EKOSISTEM DIGITAL</span>
             <h2 className="section-headline">
               Sistem Ekosistem Fabrikasi &amp; <span className="text-gradient-lime">K3 Terintegrasi</span>
             </h2>
@@ -604,7 +653,6 @@ export default function App() {
               <p>
                 Pilih akses harian atau membership ringan sesuai kebutuhanmu saat ini.
               </p>
-              <div className="card-footer-tag">BR-01 // OTP WhatsApp &amp; Email</div>
             </div>
 
             <div className="ecosystem-card">
@@ -614,7 +662,6 @@ export default function App() {
               <p>
                 Panduan penggunaan alat dasar dan pendampingan untuk 3D printing.
               </p>
-              <div className="card-footer-tag">BR-02 // Safety Induction Matrix</div>
             </div>
 
             <div className="ecosystem-card">
@@ -624,7 +671,6 @@ export default function App() {
               <p>
                 Pesan slot, datang tepat waktu, dan mulai berkarya.
               </p>
-              <div className="card-footer-tag">BR-03 // 15-Min Grace Period</div>
             </div>
 
             <div className="ecosystem-card">
@@ -634,7 +680,6 @@ export default function App() {
               <p>
                 Bahan cetak 3D dihitung sesuai pemakaian.
               </p>
-              <div className="card-footer-tag">BR-04 &amp; BR-06 // Auto-Debit &amp; WA Invoice</div>
             </div>
           </div>
         </div>
@@ -643,10 +688,9 @@ export default function App() {
       {/* ========================================================
           FASILITAS MESIN (THE LAB & HARDWARE ARSENAL)
           ======================================================== */}
-      <section id="the-lab" className="section-wrapper">
+      <section id="the-lab" className="section-wrapper section-band-deep scroll-reveal">
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// HARDWARE ARSENAL &amp; MAINTENANCE TRACKER</span>
             <h2 className="section-headline">
               Fasilitas &amp; <span className="text-gradient-lime">Peralatan Canggih</span>
             </h2>
@@ -761,11 +805,10 @@ export default function App() {
       {/* ========================================================
           GERBANG SERTIFIKASI ALAT & MATRIKS K3 (BR-02)
           ======================================================== */}
-      <section id="k3-safety" className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section id="k3-safety" className="section-wrapper section-band-deep scroll-reveal lab-safety-panel" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="safety-badging-container">
             <div className="section-header-centered" style={{ marginBottom: '28px' }}>
-              <span className="section-kicker-tag">// STANDAR PROTOKOL K3 (BR-02)</span>
               <h2 className="section-headline">
                 Gerbang Sertifikasi Alat &amp; <span className="text-gradient-lime">Matriks K3</span>
               </h2>
@@ -864,10 +907,9 @@ export default function App() {
       {/* ========================================================
           PILIH PAKET KREATIVITASMU (MEMBERSHIP BR-01)
           ======================================================== */}
-      <section id="pricing" className="section-wrapper">
+      <section id="pricing" className="section-wrapper section-band-lime scroll-reveal experience-group-start">
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// MODEL KEANGGOTAAN (BR-01)</span>
             <h2 className="section-headline">
               Pilih Paket <span className="text-gradient-lime">Kreativitasmu</span>
             </h2>
@@ -907,7 +949,7 @@ export default function App() {
               <ul className="tier-features-list">
                 <li><Check size={14} /> Tarif sewa Rp 35k - 75k per jam</li>
                 <li><Check size={14} /> Bebas akses Meja Solder &amp; IoT</li>
-                <li><Check size={14} /> Pembayaran instan via QRIS</li>
+                <li><Check size={14} /> Pembayaran dikonfirmasi via WhatsApp</li>
                 <li><Check size={14} /> Sertifikasi keselamatan online</li>
                 <li style={{ color: 'var(--text-muted)' }}><X size={14} /> Tanpa kuota jam bulanan</li>
               </ul>
@@ -982,12 +1024,12 @@ export default function App() {
           <div className="credits-banner-strip">
             <div className="credits-info">
               <h4>Top Up Saldo Hemat dengan Makerspace Credits</h4>
-              <p>Dapatkan bonus deposit hingga 20% untuk pembelian filamen, akrilik, dan sewa mesin via QRIS / VA BCA, Mandiri, BRI, BNI.</p>
+              <p>Ajukan top up untuk pembelian filamen, akrilik, dan sewa mesin. Instruksi pembayaran serta konfirmasi dikirim langsung oleh admin via WhatsApp.</p>
             </div>
             <button
               type="button"
               className="btn-primary-lime"
-              onClick={() => handleOpenBooking()}
+              onClick={handleTopUpWhatsApp}
             >
               <CreditCard size={15} /> Top Up Saldo Sekarang
             </button>
@@ -998,16 +1040,15 @@ export default function App() {
       {/* ========================================================
           KALKULATOR KONSUMABEL & BILLING BAHAN (BR-06)
           ======================================================== */}
-      <section id="materials" className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section id="materials" className="section-wrapper section-band-deep scroll-reveal experience-group-end" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// BILLING MATERIAL OTOMATIS (BR-06)</span>
             <h2 className="section-headline">
               Kalkulator Bahan &amp; <span className="text-gradient-lime">Konsumabel Fabrikasi</span>
             </h2>
             <p className="section-desc-lead">
               Transparansi biaya fabrikasi tanpa kejutan. Hitung estimasi pemakaian filamen 3D, akrilik lembaran,
-              kayu balsa, dan resin SLA yang otomatis didebit dari saldo deposit anggota.
+              kayu balsa, dan resin SLA sebelum meminta konfirmasi admin.
             </p>
           </div>
 
@@ -1097,8 +1138,8 @@ export default function App() {
             <div className="calc-receipt-card">
               <div>
                 <div className="receipt-header">
-                  <h3 className="receipt-title">Simulasi Billing Otomatis</h3>
-                  <span className="receipt-sub">DIHITUNG BERDASARKAN BR-04 &amp; BR-06</span>
+                  <h3 className="receipt-title">Simulasi Estimasi Biaya</h3>
+                  <span className="receipt-sub">KONFIRMASI AKHIR OLEH ADMIN</span>
                 </div>
 
                 <div className="receipt-items-list">
@@ -1128,9 +1169,9 @@ export default function App() {
               <div>
                 <div className="receipt-total-row">
                   <div>
-                    <span className="total-label">Total Debit Saldo</span>
+                    <span className="total-label">Total Estimasi</span>
                     <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                      Dipotong otomatis dari saldo deposit
+                      Belum ditagihkan; admin akan mengonfirmasi via WhatsApp
                     </span>
                   </div>
                   <div className="total-amount-lime">
@@ -1142,9 +1183,9 @@ export default function App() {
                   type="button"
                   className="btn-primary-lime"
                   style={{ width: '100%', marginTop: '14px', justifyContent: 'center' }}
-                  onClick={() => handleOpenBooking()}
+                  onClick={() => openWhatsApp(`Halo IDN Makerspace, saya ingin menanyakan estimasi biaya.\n\nEstimasi sewa: ${calcMachineHours} jam\nEstimasi bahan: ${calcAmount} unit\nTotal estimasi: Rp ${currentCalc.totalCost.toLocaleString('id-ID')}\n\nMohon konfirmasi.`)}
                 >
-                  <Calendar size={15} /> Pesan Slot dengan Estimasi Ini
+                  <MessageCircle size={15} /> Konfirmasi Estimasi via WhatsApp
                 </button>
               </div>
             </div>
@@ -1155,10 +1196,9 @@ export default function App() {
       {/* ========================================================
           PROGRAM & WORKSHOPS
           ======================================================== */}
-      <section id="workshops" className="section-wrapper">
+      <section id="workshops" className="section-wrapper section-band-cyan scroll-reveal">
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// PENDIDIKAN &amp; SERTIFIKASI TEKNIS</span>
             <h2 className="section-headline">
               Program &amp; <span className="text-gradient-lime">Workshop Kreatif</span>
             </h2>
@@ -1170,7 +1210,7 @@ export default function App() {
           <div className="workshop-grid">
             <div className="workshop-card">
               <div className="workshop-meta-bar">
-                <span>HANDS-ON // 6 JAM</span>
+                <span>Praktik langsung · 6 jam</span>
                 <span>RP 150.000</span>
               </div>
               <h3>IoT untuk Pemula</h3>
@@ -1182,7 +1222,7 @@ export default function App() {
 
             <div className="workshop-card">
               <div className="workshop-meta-bar">
-                <span>PRAKTIK // 4 JAM</span>
+                <span>Praktik · 4 jam</span>
                 <span>RP 100.000</span>
               </div>
               <h3>Elektronika Dasar</h3>
@@ -1194,7 +1234,7 @@ export default function App() {
 
             <div className="workshop-card">
               <div className="workshop-meta-bar">
-                <span>INTENSIF // 6 JAM</span>
+                <span>Intensif · 6 jam</span>
                 <span>RP 150.000</span>
               </div>
               <h3>Pemrograman Web Dasar</h3>
@@ -1206,7 +1246,7 @@ export default function App() {
 
             <div className="workshop-card" style={{ display: 'none' }}>
               <div className="workshop-meta-bar">
-                <span>ADVANCED // 10 JAM</span>
+                <span>Lanjutan · 10 jam</span>
                 <span>RP 450.000</span>
               </div>
               <h3>Precision CNC Routing &amp; G-Code</h3>
@@ -1222,12 +1262,12 @@ export default function App() {
       {/* ========================================================
           ANTI-GHOSTING & PENJADWALAN PRESISI (BR-03)
           ======================================================== */}
-      <section className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section className="section-wrapper section-band-amber scroll-reveal secondary-landing-content" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="anti-ghosting-banner">
             <div>
               <span className="card-step-badge" style={{ color: 'var(--accent-amber)', background: 'var(--accent-amber-soft)' }}>
-                REGULASI PROTOKOL // BR-03
+                Aturan Booking
               </span>
               <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-white)', margin: '10px 0' }}>
                 Mekanisme Penjadwalan &amp; <span style={{ color: 'var(--accent-amber)' }}>Anti-Ghosting</span>
@@ -1249,7 +1289,7 @@ export default function App() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
                   <QrCode size={15} color="var(--accent-lime)" />
-                  <strong>Digital Boarding Pass:</strong> QR Dinamis dikirim instan via WhatsApp dan Email saat booking dikonfirmasi.
+                  <strong>Konfirmasi Admin:</strong> Detail booking dan instruksi check-in dikirim via WhatsApp setelah slot disetujui.
                 </div>
               </div>
             </div>
@@ -1278,10 +1318,9 @@ export default function App() {
       {/* ========================================================
           MULTI-STAKEHOLDER & ROADMAP TAHAP (SECTION 4 & 7 BRD)
           ======================================================== */}
-      <section className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section className="section-wrapper section-band-deep scroll-reveal secondary-landing-content" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// SOLUSI STAKEHOLDER &amp; ROADMAP</span>
             <h2 className="section-headline">
               Antarmuka Terpadu &amp; <span className="text-gradient-lime">Rencana Rilis</span>
             </h2>
@@ -1332,9 +1371,9 @@ export default function App() {
                     Akses tanpa friksi. Cek ketersediaan mesin secara real-time di smartphone Anda, booking slot 30 menit, dan catat dokumentasi portofolio proyek fisik Anda.
                   </p>
                   <ul className="feature-checklist">
-                    <li><CheckCircle2 size={15} /> Reservasi kalender mesin dengan konfirmasi instan</li>
-                    <li><CheckCircle2 size={15} /> Pembayaran instan via QRIS Dinamis &amp; Virtual Account</li>
-                    <li><CheckCircle2 size={15} /> Dompet poin saldo prabayar dengan diskon konsumabel</li>
+                    <li><CheckCircle2 size={15} /> Ajukan reservasi mesin melalui WhatsApp admin</li>
+                    <li><CheckCircle2 size={15} /> Instruksi dan konfirmasi pembayaran via WhatsApp</li>
+                    <li><CheckCircle2 size={15} /> Estimasi biaya bahan yang transparan sebelum pesan</li>
                     <li><CheckCircle2 size={15} /> Lencana keselamatan K3 tersimpan permanen di akun</li>
                   </ul>
                   <button type="button" className="btn-primary-lime" onClick={() => handleOpenBooking()}>
@@ -1425,7 +1464,7 @@ export default function App() {
                     <span style={{ color: 'var(--accent-amber)', fontSize: '0.7rem' }}>BATCH_04</span>
                   </div>
                   <div className="terminal-body">
-                    <p style={{ color: 'var(--accent-amber)' }}>&gt; class: Laser Cutting &amp; CAD Masterclass</p>
+                    <p style={{ color: 'var(--accent-amber)' }}>&gt; class: 3D Printing &amp; CAD Masterclass</p>
                     <p>&gt; students: 12 Makers enrolled</p>
                     <p>&gt; theory_quiz: 100% Passed Safety Rules</p>
                     <p>&gt; practical: Acrylic 5mm Precision Test (Cleared)</p>
@@ -1521,10 +1560,9 @@ export default function App() {
       {/* ========================================================
           FAQ ACCORDION (CLEAN, MINIMALIST)
           ======================================================== */}
-      <section id="faq" className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section id="faq" className="section-wrapper section-band-cyan scroll-reveal" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// FREQUENTLY ASKED QUESTIONS</span>
             <h2 className="section-headline">
               Pertanyaan <span className="text-gradient-lime">Umum</span>
             </h2>
@@ -1540,8 +1578,7 @@ export default function App() {
               </summary>
               <div className="faq-answer-pane">
                 Untuk mesin Level 2 (seperti 3D Printer), Anda cukup menyelesaikan modul teori K3 singkat dan kuis daring di platform ini.
-                Untuk mesin Level 3 (Laser Cutter &amp; CNC Router), Anda wajib mengikuti demonstrasi praktikum tatap muka selama 30 menit
-                bersama Lab Assistant kami di garasi sebelum lisensi digital diberikan.
+                Peralatan lanjutan akan memiliki panduan dan pendampingan tersendiri saat sudah tersedia di workshop.
               </div>
             </details>
 
@@ -1558,11 +1595,32 @@ export default function App() {
 
             <details className="faq-item-card">
               <summary className="faq-question-btn">
+                <span>Bagaimana jika 3D print gagal karena masalah mesin?</span>
+              </summary>
+              <div className="faq-answer-pane">
+                Hentikan proses dan panggil Lab Assistant agar penyebabnya dicatat. Jika kegagalan terverifikasi berasal dari mesin atau setup yang ditangani tim,
+                biaya material yang gagal tidak ditagihkan dan satu kali cetak ulang dijadwalkan tanpa biaya sewa tambahan. Bila kegagalan berasal dari file,
+                parameter yang disetujui pengguna, atau material eksternal, bahan yang sudah terpakai tetap menjadi tanggungan pengguna.
+              </div>
+            </details>
+
+            <details className="faq-item-card">
+              <summary className="faq-question-btn">
+                <span>Apakah booking dapat dibatalkan atau dijadwalkan ulang?</span>
+              </summary>
+              <div className="faq-answer-pane">
+                Bisa. Pembatalan atau reschedule minimal 2 jam sebelum slot dimulai mengembalikan saldo sewa 100%. Pada rentang 1–2 jam, 50% saldo sewa
+                dikembalikan sebagai kredit Makerspace. Kurang dari 1 jam, biaya sewa slot tetap berlaku. Bahan tidak pernah dibebankan sebelum proses produksi dimulai.
+              </div>
+            </details>
+
+            <details className="faq-item-card">
+              <summary className="faq-question-btn">
                 <span>Apakah saya boleh membawa material / filamen sendiri dari luar?</span>
               </summary>
               <div className="faq-answer-pane">
-                Boleh! Namun seluruh bahan eksternal (terutama lembaran akrilik/kayu untuk laser cutter dan filamen khusus) harus lolos inspeksi
-                Lab Assistant terlebih dahulu untuk mencegah residu gas beracun (misalnya PVC yang dilarang keras di mesin laser).
+                Boleh! Namun seluruh bahan eksternal, terutama filamen khusus dan komponen elektronik, perlu diperiksa
+                Lab Assistant terlebih dahulu agar sesuai dengan spesifikasi alat yang digunakan.
               </div>
             </details>
 
@@ -1573,7 +1631,7 @@ export default function App() {
               <div className="faq-answer-pane">
                 Setelah hasil cetak 3D selesai, Anda membawa benda cetak (beserta support material) ke meja kasir operasional.
                 Lab Assistant akan menaruhnya di timbangan digital yang terhubung ke sistem. Nilai gramasi dikalikan tarif per gram (misal Rp 350/gr)
-                dan otomatis dipotong dari saldo kredit dompet Makerspace Anda atau dibayar langsung via QRIS.
+                lalu mengonfirmasi total akhir dan instruksi pembayaran melalui WhatsApp sebelum pembayaran dilakukan.
               </div>
             </details>
           </div>
@@ -1588,7 +1646,6 @@ export default function App() {
           <div className="footer-grid">
             <div>
               <div className="nav-logo-group" style={{ marginBottom: '12px' }}>
-                <BrandLogo size={28} />
                 <div className="nav-logo-text">
                   <span className="nav-brand-title" style={{ fontSize: '1.05rem' }}>
                     IDN <span className="highlight-lime">MAKER SPACE</span>
@@ -1600,7 +1657,7 @@ export default function App() {
                 Ruang belajar dan membuat untuk 3D printing, elektronika, IoT, dan pemrograman web.
               </p>
               <div style={{ marginTop: '12px', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
-                STATUS LAB // BUKA HARI INI
+                Status Lab: Buka Hari Ini
               </div>
             </div>
 
@@ -1626,10 +1683,19 @@ export default function App() {
             </div>
 
             <div className="footer-col">
+              <h4>Terhubung</h4>
+              <div className="footer-social-links">
+                <a href={`${WHATSAPP_URL}?text=${encodeURIComponent('Halo IDN Makerspace, saya ingin bertanya.')}`} target="_blank" rel="noreferrer" aria-label="WhatsApp admin IDN Makerspace"><MessageCircle size={17} /> WhatsApp Admin</a>
+                <a href="#community" aria-label="Instagram IDN Makerspace" title="Tautan Instagram resmi"><AtSign size={17} /> Instagram</a>
+                <a href="#community" aria-label="Discord atau Telegram IDN Makerspace" title="Minta invite kanal komunitas"><Send size={17} /> Komunitas</a>
+              </div>
+            </div>
+
+            <div className="footer-col">
               <h4>Lokasi &amp; Jam</h4>
               <p style={{ fontSize: '0.8rem', lineHeight: 1.5, color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 <MapPin size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                IDN Makerspace, Jl. Raya Jonggol - Dayeuh, Bogor, Jawa Barat.
+                IDN Makerspace, Jl. Gotong Royong No. 21A, Cipete Utara, Kebayoran Baru.
               </p>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                 Senin – Sabtu <br />
@@ -1744,7 +1810,7 @@ export default function App() {
                 <div>
                   <h4 style={{ color: 'var(--text-white)', marginBottom: '6px' }}>Langkah 2: Pilih Tanggal &amp; Slot Waktu (30 Menit)</h4>
                   <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
-                    Pemesanan dialokasikan per interval 30 menit dengan locking concurrency (BR-03).
+                    Slot akan dicek dan dikonfirmasi terlebih dahulu oleh admin via WhatsApp. Pilihan waktu ini belum mengunci mesin.
                   </p>
 
                   <div style={{ marginBottom: '14px' }}>
@@ -1878,18 +1944,18 @@ export default function App() {
                       style={{ opacity: agreedAntiGhosting ? 1 : 0.5, cursor: agreedAntiGhosting ? 'pointer' : 'not-allowed' }}
                       onClick={() => setBookingStep(5)}
                     >
-                      Lanjut Pembayaran
+                      Lanjut Konfirmasi Admin
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* Step 5: Pembayaran (BR-04) */}
+              {/* Step 5: Konfirmasi manual via WhatsApp */}
               {bookingStep === 5 && (
                 <div>
-                  <h4 style={{ color: 'var(--text-white)', marginBottom: '6px' }}>Langkah 5: Pembayaran Multi-Channel &amp; Top-Up</h4>
+                  <h4 style={{ color: 'var(--text-white)', marginBottom: '6px' }}>Langkah 5: Kirim Permintaan ke Admin</h4>
                   <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
-                    Pilih metode pembayaran instan via QRIS Dinamis, Virtual Account Bank, atau Saldo Poin.
+                    Tekan tombol di bawah untuk mengirim detail reservasi ke WhatsApp admin. Ketersediaan slot, instruksi pembayaran, dan status booking dikonfirmasi manual oleh admin.
                   </p>
 
                   <div style={{ background: 'rgba(10, 12, 16, 0.4)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '14px', marginBottom: '16px' }}>
@@ -1909,111 +1975,37 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '20px' }}>
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod('qris')}
-                      style={{
-                        padding: '10px',
-                        borderRadius: 'var(--radius-sm)',
-                        background: paymentMethod === 'qris' ? 'var(--accent-lime-soft)' : 'rgba(255,255,255,0.02)',
-                        border: `1px solid ${paymentMethod === 'qris' ? 'var(--accent-lime)' : 'var(--border-subtle)'}`,
-                        color: paymentMethod === 'qris' ? 'var(--accent-lime)' : 'var(--text-primary)',
-                        fontFamily: 'var(--font-heading)',
-                        fontSize: '0.78rem',
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <QrCode size={16} style={{ display: 'block', margin: '0 auto 4px' }} />
-                      QRIS Dinamis
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod('va')}
-                      style={{
-                        padding: '10px',
-                        borderRadius: 'var(--radius-sm)',
-                        background: paymentMethod === 'va' ? 'var(--accent-cyan-soft)' : 'rgba(255,255,255,0.02)',
-                        border: `1px solid ${paymentMethod === 'va' ? 'var(--accent-cyan)' : 'var(--border-subtle)'}`,
-                        color: paymentMethod === 'va' ? 'var(--accent-cyan)' : 'var(--text-primary)',
-                        fontFamily: 'var(--font-heading)',
-                        fontSize: '0.78rem',
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <CreditCard size={16} style={{ display: 'block', margin: '0 auto 4px' }} />
-                      Virtual Account
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod('credits')}
-                      style={{
-                        padding: '10px',
-                        borderRadius: 'var(--radius-sm)',
-                        background: paymentMethod === 'credits' ? 'var(--accent-amber-soft)' : 'rgba(255,255,255,0.02)',
-                        border: `1px solid ${paymentMethod === 'credits' ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
-                        color: paymentMethod === 'credits' ? 'var(--accent-amber)' : 'var(--text-primary)',
-                        fontFamily: 'var(--font-heading)',
-                        fontSize: '0.78rem',
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <Zap size={16} style={{ display: 'block', margin: '0 auto 4px' }} />
-                      Saldo (175k)
-                    </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '9px', padding: '12px 14px', marginBottom: '20px', borderRadius: 'var(--radius-md)', background: 'var(--accent-cyan-soft)', border: '1px solid rgba(0, 210, 238, 0.22)', color: 'var(--text-primary)', fontSize: '0.8rem' }}>
+                    <MessageCircle size={17} color="var(--accent-cyan)" /> Tidak ada pembayaran otomatis atau saldo yang dipotong dari situs ini.
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <button type="button" className="btn-secondary-clean" onClick={() => setBookingStep(4)}>Kembali</button>
                     <button type="button" className="btn-primary-lime" onClick={handleFinishBooking}>
-                      Konfirmasi &amp; Terbitkan Pass
+                      <MessageCircle size={15} /> Kirim ke WhatsApp Admin
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* Step 6: Boarding Pass & QR Check-in Simulator */}
+              {/* Step 6: Permintaan dikirim, menunggu persetujuan admin */}
               {bookingStep === 6 && generatedTicket && (
                 <div>
                   <div className="qr-ticket-result">
-                    <span className="card-step-badge" style={{ color: isCheckedIn ? '#4ade80' : 'var(--accent-lime)' }}>
-                      {isCheckedIn ? 'CHECKED IN & MACHINE UNLOCKED' : 'BOARDING PASS AKTIF // 15-MIN TIMER'}
-                    </span>
+                    <span className="card-step-badge" style={{ color: 'var(--accent-cyan)' }}>PERMINTAAN TERKIRIM // MENUNGGU ADMIN</span>
 
                     <h3 style={{ color: 'var(--text-white)', margin: '8px 0 2px', fontFamily: 'var(--font-heading)', fontSize: '1.1rem' }}>
                       {generatedTicket.machine}
                     </h3>
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                      TIKET: {generatedTicket.id} | {generatedTicket.date} ({generatedTicket.slot})
+                      KODE: {generatedTicket.id} | {generatedTicket.date} ({generatedTicket.slot})
                     </div>
-
-                    <div className="qr-placeholder-box qr-raster-pattern" aria-label="Kode QR booking" />
-
-                    <div style={{ fontFamily: 'var(--font-code)', fontSize: '0.78rem', color: isCheckedIn ? '#4ade80' : 'var(--accent-amber)', marginBottom: '14px' }}>
-                      {isCheckedIn
-                        ? '✓ QR Telah Diverifikasi di Lab Assistant Desk'
-                        : 'Sisa Grace Period Check-in: 14:42'}
-                    </div>
-
-                    {!isCheckedIn ? (
-                      <button
-                        type="button"
-                        className="btn-primary-lime"
-                        style={{ width: '100%', justifyContent: 'center' }}
-                        onClick={() => setIsCheckedIn(true)}
-                      >
-                        <QrCode size={15} /> Simulasikan Scan QR di Meja Lab Assistant
-                      </button>
-                    ) : (
-                      <div style={{ background: 'var(--accent-green-soft)', border: '1px solid #22c55e', padding: '10px', borderRadius: 'var(--radius-sm)', color: '#4ade80', fontSize: '0.82rem' }}>
-                        Mesin Aktif! Sesi kerja dimulai. Bukti potong tagihan digital telah dikirim via WhatsApp.
-                      </div>
-                    )}
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.84rem', maxWidth: '400px', margin: '0 auto 16px' }}>
+                      Pesan WhatsApp Anda sudah disiapkan. Booking baru aktif setelah admin mengonfirmasi ketersediaan dan pembayaran.
+                    </p>
+                    <a href={`${WHATSAPP_URL}?text=${encodeURIComponent(`Halo IDN Makerspace, saya ingin menindaklanjuti permintaan ${generatedTicket.id}.`)}`} target="_blank" rel="noreferrer" className="btn-primary-lime" style={{ width: '100%', justifyContent: 'center' }}>
+                      <MessageCircle size={15} /> Buka WhatsApp Admin
+                    </a>
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '14px' }}>
@@ -2084,7 +2076,7 @@ export default function App() {
 
                   <div style={{ marginBottom: '14px' }}>
                     <div style={{ fontWeight: 600, color: 'var(--text-white)', fontSize: '0.88rem', marginBottom: '6px' }}>
-                      2. Material apa yang DILARANG KERAS dipotong menggunakan mesin Laser Cutter CO2 karena bahaya gas klorin beracun?
+                      2. Apa yang perlu dipastikan sebelum memulai cetak 3D?
                     </div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                       <input
@@ -2093,7 +2085,7 @@ export default function App() {
                         value="a"
                         onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'a' })}
                         required
-                      /> Kayu Balsa 3mm
+                      /> Menyalakan mesin tanpa mengecek material.
                     </label>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                       <input
@@ -2101,7 +2093,7 @@ export default function App() {
                         name="q2"
                         value="b"
                         onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'b' })}
-                      /> Lembaran Akrilik Cast Acrylic
+                      /> Mengabaikan panduan dari Lab Assistant.
                     </label>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                       <input
@@ -2109,13 +2101,13 @@ export default function App() {
                         name="q2"
                         value="c"
                         onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'c' })}
-                      /> PVC / Vinyl / Polivinil Klorida
+                      /> Material sesuai spesifikasi sudah terpasang dan area kerja siap.
                     </label>
                   </div>
 
                   <div style={{ marginBottom: '22px' }}>
                     <div style={{ fontWeight: 600, color: 'var(--text-white)', fontSize: '0.88rem', marginBottom: '6px' }}>
-                      3. Apa langkah pertama jika terjadi api terbuka atau alarm overheating pada laser nozzle?
+                      3. Apa langkah pertama jika terjadi api terbuka atau alarm overheating pada mesin?
                     </div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                       <input
