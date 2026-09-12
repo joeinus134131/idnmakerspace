@@ -2276,6 +2276,16 @@ body {
   .machine-card-footer { flex-direction: column; }
 }
 
+/* Start the FAQ as a distinct chapter instead of letting its heading sit on
+   the boundary of the section before it. */
+#faq { padding-top: 65px !important; }
+#faq .section-header-centered { margin-bottom: 44px; }
+
+@media (max-width: 768px) {
+  #faq { padding-top: 46px !important; }
+  #faq .section-header-centered { margin-bottom: 28px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {

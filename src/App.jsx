@@ -29,10 +29,6 @@ import {
 } from 'lucide-react';
 import './App.css';
 
-const BrandLogo = ({ size = 32 }) => (
-  <span className="brand-raster-mark" style={{ width: size, height: size }} aria-label="IDN Makerspace">M</span>
-);
-
 // Hero Showcase Slider Data (Atmospheric Makerspace Zones)
 const HERO_SLIDES = [
   {
@@ -41,19 +37,9 @@ const HERO_SLIDES = [
     title: 'Precision 3D Rapid Prototyping',
     subtitle: 'Bambu Lab Multi-Color & Engineering Filaments',
     desc: 'Cetak prototipe fisik presisi tinggi dengan Bambu Lab FDM & Resin SLA 8K, didukung pelacak jam operasional nozzle otomatis.',
-    image: '/images/slide-3dprint.jpg',
+    image: '/images/slide-3dprint.webp',
     statBadge: 'Toleransi ±0.08mm',
     kpi: '3 Unit Ready'
-  },
-  {
-    id: 'laser',
-    tag: 'Proyek Elektronika',
-    title: 'Laser Cutting & Precision CNC',
-    subtitle: 'High Precision Sheet Cutting & Engraving',
-    desc: 'Pemotongan lembaran akrilik, kayu balsa, dan engraving presisi tinggi dengan proteksi ventilasi gas dan emergency stop.',
-    image: '/images/slide-laser.jpg',
-    statBadge: 'Tebal s/d 12mm',
-    kpi: 'Siap Pakai'
   },
   {
     id: 'iot',
@@ -61,7 +47,7 @@ const HERO_SLIDES = [
     title: 'Electronics Workbench & Testing',
     subtitle: 'Hakko Soldering & Digital Oscilloscope',
     desc: 'Meja solder suhu presisi, catu daya variabel, osiloskop digital, dan uji mikrokontroler. Akses bebas Level 1 K3.',
-    image: '/images/slide-iot.jpg',
+    image: '/images/slide-iot.webp',
     statBadge: 'Akses Bebas Lv.1',
     kpi: 'Meja Bebas'
   },
@@ -71,7 +57,7 @@ const HERO_SLIDES = [
     title: 'Kolaborasi & Inkubasi Hardware',
     subtitle: 'Komunitas & Riset Rekayasa',
     desc: 'Ruang interaksi antar mahasiswa, pembuat lepas, dan mentor industri untuk memvalidasi prototipe produk jadi.',
-    image: '/images/slide-community.jpg',
+    image: '/images/slide-community.webp',
     statBadge: '250+ Anggota',
     kpi: 'Workshop Mingguan'
   }
@@ -316,7 +302,6 @@ export default function App() {
       <header className="header-nav">
         <div className="container nav-container">
           <a href="#" className="nav-logo-group">
-            <BrandLogo size={32} />
             <div className="nav-logo-text">
               <span className="nav-brand-title">
                 IDN <span className="highlight-lime">MAKER SPACE</span>
@@ -391,7 +376,7 @@ export default function App() {
             </h1>
 
             <p className="hero-subtitle">
-              Satu ekosistem terpadu laboratorium fabrikasi fisik (3D Printing, Laser Cutting, IoT)
+              Satu ekosistem terpadu laboratorium fabrikasi fisik (3D Printing, Elektronika, IoT)
               dengan sertifikasi K3 digital, reservasi presisi anti-ghosting, dan billing material instan.
             </p>
 
@@ -1409,7 +1394,7 @@ export default function App() {
                     <span style={{ color: 'var(--accent-amber)', fontSize: '0.7rem' }}>BATCH_04</span>
                   </div>
                   <div className="terminal-body">
-                    <p style={{ color: 'var(--accent-amber)' }}>&gt; class: Laser Cutting &amp; CAD Masterclass</p>
+                    <p style={{ color: 'var(--accent-amber)' }}>&gt; class: 3D Printing &amp; CAD Masterclass</p>
                     <p>&gt; students: 12 Makers enrolled</p>
                     <p>&gt; theory_quiz: 100% Passed Safety Rules</p>
                     <p>&gt; practical: Acrylic 5mm Precision Test (Cleared)</p>
@@ -1523,8 +1508,7 @@ export default function App() {
               </summary>
               <div className="faq-answer-pane">
                 Untuk mesin Level 2 (seperti 3D Printer), Anda cukup menyelesaikan modul teori K3 singkat dan kuis daring di platform ini.
-                Untuk mesin Level 3 (Laser Cutter &amp; CNC Router), Anda wajib mengikuti demonstrasi praktikum tatap muka selama 30 menit
-                bersama Lab Assistant kami di garasi sebelum lisensi digital diberikan.
+                Peralatan lanjutan akan memiliki panduan dan pendampingan tersendiri saat sudah tersedia di workshop.
               </div>
             </details>
 
@@ -1544,8 +1528,8 @@ export default function App() {
                 <span>Apakah saya boleh membawa material / filamen sendiri dari luar?</span>
               </summary>
               <div className="faq-answer-pane">
-                Boleh! Namun seluruh bahan eksternal (terutama lembaran akrilik/kayu untuk laser cutter dan filamen khusus) harus lolos inspeksi
-                Lab Assistant terlebih dahulu untuk mencegah residu gas beracun (misalnya PVC yang dilarang keras di mesin laser).
+                Boleh! Namun seluruh bahan eksternal, terutama filamen khusus dan komponen elektronik, perlu diperiksa
+                Lab Assistant terlebih dahulu agar sesuai dengan spesifikasi alat yang digunakan.
               </div>
             </details>
 
@@ -1571,7 +1555,6 @@ export default function App() {
           <div className="footer-grid">
             <div>
               <div className="nav-logo-group" style={{ marginBottom: '12px' }}>
-                <BrandLogo size={28} />
                 <div className="nav-logo-text">
                   <span className="nav-brand-title" style={{ fontSize: '1.05rem' }}>
                     IDN <span className="highlight-lime">MAKER SPACE</span>
@@ -1612,7 +1595,7 @@ export default function App() {
               <h4>Lokasi &amp; Jam</h4>
               <p style={{ fontSize: '0.8rem', lineHeight: 1.5, color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 <MapPin size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                IDN Makerspace, Jl. Raya Jonggol - Dayeuh, Bogor, Jawa Barat.
+                IDN Makerspace, Jl. Gotong Royong No. 21A, Cipete Utara, Kebayoran Baru.
               </p>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                 Senin – Sabtu <br />
@@ -2067,7 +2050,7 @@ export default function App() {
 
                   <div style={{ marginBottom: '14px' }}>
                     <div style={{ fontWeight: 600, color: 'var(--text-white)', fontSize: '0.88rem', marginBottom: '6px' }}>
-                      2. Material apa yang DILARANG KERAS dipotong menggunakan mesin Laser Cutter CO2 karena bahaya gas klorin beracun?
+                      2. Apa yang perlu dipastikan sebelum memulai cetak 3D?
                     </div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                       <input
@@ -2076,7 +2059,7 @@ export default function App() {
                         value="a"
                         onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'a' })}
                         required
-                      /> Kayu Balsa 3mm
+                      /> Menyalakan mesin tanpa mengecek material.
                     </label>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                       <input
@@ -2084,7 +2067,7 @@ export default function App() {
                         name="q2"
                         value="b"
                         onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'b' })}
-                      /> Lembaran Akrilik Cast Acrylic
+                      /> Mengabaikan panduan dari Lab Assistant.
                     </label>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                       <input
@@ -2092,13 +2075,13 @@ export default function App() {
                         name="q2"
                         value="c"
                         onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'c' })}
-                      /> PVC / Vinyl / Polivinil Klorida
+                      /> Material sesuai spesifikasi sudah terpasang dan area kerja siap.
                     </label>
                   </div>
 
                   <div style={{ marginBottom: '22px' }}>
                     <div style={{ fontWeight: 600, color: 'var(--text-white)', fontSize: '0.88rem', marginBottom: '6px' }}>
-                      3. Apa langkah pertama jika terjadi api terbuka atau alarm overheating pada laser nozzle?
+                      3. Apa langkah pertama jika terjadi api terbuka atau alarm overheating pada mesin?
                     </div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                       <input
