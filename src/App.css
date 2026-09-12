@@ -849,6 +849,89 @@ body {
   border-color: rgba(245, 158, 11, 0.14);
 }
 
+/* ===========================================================================
+   PROJECT SHOWCASE & COMMUNITY
+   =========================================================================== */
+.showcase-heading-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+.showcase-heading-row .section-headline { margin-bottom: 10px; }
+.showcase-desc { max-width: 650px; }
+
+.showcase-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+.showcase-proof {
+  min-width: 170px;
+  padding: 14px 18px;
+  border-left: 2px solid var(--accent-lime);
+  background: rgba(163, 255, 18, 0.05);
+}
+
+.showcase-proof strong {
+  display: block;
+  color: var(--accent-lime);
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+.showcase-proof span { color: var(--text-secondary); font-size: 0.75rem; line-height: 1.35; display: block; margin-top: 5px; }
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr 1fr;
+  gap: 16px;
+}
+
+.showcase-card {
+  min-height: 330px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface-card);
+  box-shadow: var(--shadow-card);
+}
+
+.showcase-card-featured { min-height: 390px; }
+.showcase-card img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; transition: transform 0.5s ease; }
+.showcase-card:hover img { transform: scale(1.055); }
+.showcase-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 27%, rgba(5, 7, 10, 0.92) 100%); }
+.showcase-card-overlay { position: absolute; z-index: 1; inset: auto 0 0; padding: 22px; }
+.showcase-card-overlay span { color: var(--accent-lime); font-family: var(--font-mono); letter-spacing: 0.1em; font-size: 0.67rem; }
+.showcase-card-overlay h3 { margin-top: 5px; font-size: 1.1rem; }
+.showcase-card-overlay p { margin-top: 5px; font-size: 0.78rem; line-height: 1.4; }
+
+.community-invite-panel {
+  margin-top: 18px;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border: 1px solid rgba(163, 255, 18, 0.22);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(100deg, rgba(163, 255, 18, 0.1), rgba(0, 210, 238, 0.06));
+}
+
+.community-invite-panel .showcase-kicker { margin-bottom: 4px; color: var(--accent-lime); }
+.community-invite-panel h3 { font-size: 1.15rem; }
+.community-invite-panel p { margin-top: 3px; max-width: 720px; font-size: 0.83rem; }
+
 .section-header-centered {
   text-align: center;
   max-width: 720px;
@@ -2082,7 +2165,7 @@ body {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
   gap: 36px;
   margin-bottom: 36px;
 }
@@ -2124,6 +2207,10 @@ body {
 .footer-links-list a:hover {
   color: var(--accent-lime);
 }
+
+.footer-social-links { display: flex; flex-direction: column; gap: 9px; }
+.footer-social-links a { display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 0.8rem; }
+.footer-social-links a:hover { color: var(--accent-lime); }
 
 .footer-copyright-bar {
   border-top: 1px solid var(--border-subtle);
@@ -2261,6 +2348,20 @@ body {
   .credits-banner-strip { gap: 14px; align-items: stretch; }
   .machine-card-footer .btn-primary-lime,
   .credits-banner-strip .btn-primary-lime { justify-content: center; }
+}
+
+@media (max-width: 900px) {
+  .showcase-heading-row { align-items: flex-start; flex-direction: column; gap: 16px; }
+  .showcase-grid { grid-template-columns: 1fr 1fr; }
+  .showcase-card-featured { grid-column: span 2; }
+  .community-invite-panel { align-items: flex-start; flex-direction: column; }
+}
+
+@media (max-width: 560px) {
+  .showcase-grid { grid-template-columns: 1fr; }
+  .showcase-card, .showcase-card-featured { min-height: 290px; grid-column: auto; }
+  .community-invite-panel { padding: 20px; }
+  .community-invite-panel .btn-primary-lime { width: 100%; justify-content: center; }
 }
 
 @media (max-width: 430px) {
