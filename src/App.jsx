@@ -6,7 +6,6 @@ import {
   Wrench,
   Gauge,
   Printer,
-  Activity,
   Shield,
   ShieldCheck,
   ShieldAlert,
@@ -160,28 +159,6 @@ export default function App() {
     const s = (sec % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   };
-
-  // Live Telemetry Stream
-  const [telemetry, setTelemetry] = useState({
-    roomTemp: 24.6,
-    humidity: 52,
-    powerDraw: 2.85,
-    activeMakers: 18,
-    activeMachines: 6
-  });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTelemetry({
-        roomTemp: parseFloat((24.2 + Math.random() * 0.8).toFixed(1)),
-        humidity: Math.floor(51 + Math.random() * 3),
-        powerDraw: parseFloat((2.6 + Math.random() * 0.5).toFixed(2)),
-        activeMakers: Math.floor(16 + Math.random() * 5),
-        activeMachines: Math.floor(5 + Math.random() * 2)
-      });
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
 
   // User Profile / Safety Clearance State
   const [userProfile, setUserProfile] = useState({
@@ -428,7 +405,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Clean Telemetry Widget with Live Equalizer */}
+          {/* Status Lab: informasi yang benar-benar membantu sebelum booking */}
           <div>
             <div className="telemetry-console-card">
               <div className="console-header-bar">
@@ -437,20 +414,10 @@ export default function App() {
                   <span className="dot-yellow"></span>
                   <span className="dot-green"></span>
                 </div>
-                <span className="console-tag-title">LIVE TELEMETRY // JONGGOL HUB</span>
+                <span className="console-tag-title">STATUS LAB // HARI INI</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div className="oscilloscope-bars">
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                    <span className="eq-bar"></span>
-                  </div>
                   <span style={{ fontFamily: 'var(--font-code)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
-                    ONLINE
+                    BUKA
                   </span>
                 </div>
               </div>
@@ -458,40 +425,40 @@ export default function App() {
               <div className="telemetry-content-padding">
                 <div className="telemetry-status-row">
                   <div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>ZONA AKTIF TERPILIH</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>LAYANAN TERSEDIA</span>
                     <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--text-white)' }}>
-                      {HERO_SLIDES[currentSlide].title}
+                      6 dari 7 alat siap digunakan
                     </span>
                   </div>
                   <span className="status-badge-active">
-                    <span className="pulse-dot"></span> {HERO_SLIDES[currentSlide].kpi}
+                    <span className="pulse-dot"></span> UPDATE LANGSUNG
                   </span>
                 </div>
 
                 <div className="telemetry-metrics-grid">
                   <div className="telemetry-metric-item">
-                    <div className="metric-label-mono"><Gauge size={13} /> Suhu Lab</div>
-                    <div className="metric-value-dynamic">{telemetry.roomTemp}<span className="metric-unit">°C</span></div>
+                    <div className="metric-label-mono"><Printer size={13} /> 3D Printer</div>
+                    <div className="metric-value-dynamic">1<span className="metric-unit"> tersedia</span></div>
                   </div>
 
                   <div className="telemetry-metric-item">
-                    <div className="metric-label-mono"><Activity size={13} /> Kelembaban</div>
-                    <div className="metric-value-dynamic">{telemetry.humidity}<span className="metric-unit">% RH</span></div>
+                    <div className="metric-label-mono"><Zap size={13} /> Elektronika</div>
+                    <div className="metric-value-dynamic">5<span className="metric-unit"> alat</span></div>
                   </div>
 
                   <div className="telemetry-metric-item">
-                    <div className="metric-label-mono"><Zap size={13} /> Beban Daya</div>
-                    <div className="metric-value-dynamic">{telemetry.powerDraw}<span className="metric-unit">kW</span></div>
+                    <div className="metric-label-mono"><Gauge size={13} /> Pengukuran</div>
+                    <div className="metric-value-dynamic">1<span className="metric-unit"> sedang dipakai</span></div>
                   </div>
 
                   <div className="telemetry-metric-item">
-                    <div className="metric-label-mono"><Users size={13} /> Makers On-Site</div>
-                    <div className="metric-value-dynamic">{telemetry.activeMakers}<span className="metric-unit">Orang</span></div>
+                    <div className="metric-label-mono"><Clock size={13} /> Jam Lab</div>
+                    <div className="metric-value-dynamic">08–17<span className="metric-unit"> WIB</span></div>
                   </div>
                 </div>
 
                 <div className="console-alert-notice">
-                  <strong>PEMBERITAHUAN K3:</strong> Check-in QR diwajibkan maksimal 15 menit setelah waktu pemesanan dimulai untuk menghindari pembatalan otomatis (BR-03 Anti-Ghosting).
+                  Pilih alat di katalog untuk melihat tarif dan meminta slot penggunaan.
                 </div>
               </div>
             </div>
