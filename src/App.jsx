@@ -37,7 +37,7 @@ const BrandLogo = ({ size = 32 }) => (
 const HERO_SLIDES = [
   {
     id: '3dprint',
-    tag: 'ZONA 01 // FABRIKASI 3D PRINTING',
+    tag: '3D Printing',
     title: 'Precision 3D Rapid Prototyping',
     subtitle: 'Bambu Lab Multi-Color & Engineering Filaments',
     desc: 'Cetak prototipe fisik presisi tinggi dengan Bambu Lab FDM & Resin SLA 8K, didukung pelacak jam operasional nozzle otomatis.',
@@ -47,7 +47,7 @@ const HERO_SLIDES = [
   },
   {
     id: 'laser',
-    tag: 'ZONA 02 // SUBTRACTIVE CUTTING',
+    tag: 'Proyek Elektronika',
     title: 'Laser Cutting & Precision CNC',
     subtitle: 'High Precision Sheet Cutting & Engraving',
     desc: 'Pemotongan lembaran akrilik, kayu balsa, dan engraving presisi tinggi dengan proteksi ventilasi gas dan emergency stop.',
@@ -57,7 +57,7 @@ const HERO_SLIDES = [
   },
   {
     id: 'iot',
-    tag: 'ZONA 03 // ELEKTRONIKA & IOT',
+    tag: 'Elektronika & IoT',
     title: 'Electronics Workbench & Testing',
     subtitle: 'Hakko Soldering & Digital Oscilloscope',
     desc: 'Meja solder suhu presisi, catu daya variabel, osiloskop digital, dan uji mikrokontroler. Akses bebas Level 1 K3.',
@@ -67,7 +67,7 @@ const HERO_SLIDES = [
   },
   {
     id: 'community',
-    tag: 'ZONA 04 // STEM INNOVATION HUB',
+    tag: 'Belajar & Berkarya',
     title: 'Kolaborasi & Inkubasi Hardware',
     subtitle: 'Komunitas & Riset Rekayasa',
     desc: 'Ruang interaksi antar mahasiswa, pembuat lepas, dan mentor industri untuk memvalidasi prototipe produk jadi.',
@@ -130,6 +130,7 @@ const MACHINES_DATA = [
 ];
 
 export default function App() {
+  const [scrollProgress, setScrollProgress] = useState(0);
   // Hero Slider State
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isSliderPaused, setIsSliderPaused] = useState(false);
@@ -152,6 +153,32 @@ export default function App() {
       setGraceSeconds(prev => (prev > 0 ? prev - 1 : 14 * 60 + 59));
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Let the page feel responsive to the reader without introducing a heavy animation library.
+  useEffect(() => {
+    const updateProgress = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0);
+    };
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      }),
+      { threshold: 0.14 }
+    );
+
+    document.querySelectorAll('.scroll-reveal').forEach((element) => revealObserver.observe(element));
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+
+    return () => {
+      revealObserver.disconnect();
+      window.removeEventListener('scroll', updateProgress);
+      window.removeEventListener('resize', updateProgress);
+    };
   }, []);
 
   const formatGraceTime = (sec) => {
@@ -279,6 +306,9 @@ export default function App() {
         <div className="ambient-orb ambient-orb-cyan"></div>
         <div className="ambient-orb ambient-orb-purple"></div>
       </div>
+      <div className="scroll-progress" aria-hidden="true">
+        <span style={{ transform: `scaleX(${scrollProgress / 100})` }} />
+      </div>
 
       {/* ========================================================
           HEADER NAVIGATION (CLEAN, FOCUSED)
@@ -298,9 +328,7 @@ export default function App() {
           <nav>
             <ul className="nav-links">
               <li><a href="#the-lab" className="nav-link">Fasilitas Mesin</a></li>
-              <li><a href="#k3-safety" className="nav-link">Sistem K3</a></li>
-              <li><a href="#pricing" className="nav-link">Keanggotaan</a></li>
-              <li><a href="#materials" className="nav-link">Kalkulator Bahan</a></li>
+              <li><a href="#pricing" className="nav-link">Paket &amp; Biaya</a></li>
               <li><a href="#workshops" className="nav-link">Workshop</a></li>
               <li><a href="#faq" className="nav-link">FAQ</a></li>
             </ul>
@@ -414,7 +442,7 @@ export default function App() {
                   <span className="dot-yellow"></span>
                   <span className="dot-green"></span>
                 </div>
-                <span className="console-tag-title">STATUS LAB // HARI INI</span>
+                <span className="console-tag-title">Status Lab Hari Ini</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ fontFamily: 'var(--font-code)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
                     BUKA
@@ -476,7 +504,7 @@ export default function App() {
                   className={`slider-tab-btn ${idx === currentSlide ? 'active' : ''}`}
                   onClick={() => setCurrentSlide(idx)}
                 >
-                  <span className="slider-tab-tag">0{idx + 1} // SHOWCASE</span>
+                  <span className="slider-tab-tag">Pilihan {idx + 1}</span>
                   <span>{slide.title.split(' ')[0]} {slide.title.split(' ')[1]}</span>
                   {idx === currentSlide && <span className="slider-progress-bar"></span>}
                 </button>
@@ -516,7 +544,7 @@ export default function App() {
       {/* ========================================================
           KPI STRATEGIC BANNER (CLEAN, INTEGRATED)
           ======================================================== */}
-      <section className="stats-banner-strip">
+      <div className="stats-banner-strip scroll-reveal secondary-landing-content">
         <div className="container">
           <div className="stats-card-container">
             <div className="stats-grid-quad">
@@ -546,15 +574,14 @@ export default function App() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* ========================================================
           4 ALUR OPERASIONAL TERINTEGRASI (THE CORE ECOSYSTEM)
           ======================================================== */}
-      <section id="ecosystem" className="section-wrapper">
+      <section id="ecosystem" className="section-wrapper section-band-cyan scroll-reveal secondary-landing-content">
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// ARSITEKTUR EKOSISTEM DIGITAL</span>
             <h2 className="section-headline">
               Sistem Ekosistem Fabrikasi &amp; <span className="text-gradient-lime">K3 Terintegrasi</span>
             </h2>
@@ -571,7 +598,6 @@ export default function App() {
               <p>
                 Pilih akses harian atau membership ringan sesuai kebutuhanmu saat ini.
               </p>
-              <div className="card-footer-tag">BR-01 // OTP WhatsApp &amp; Email</div>
             </div>
 
             <div className="ecosystem-card">
@@ -581,7 +607,6 @@ export default function App() {
               <p>
                 Panduan penggunaan alat dasar dan pendampingan untuk 3D printing.
               </p>
-              <div className="card-footer-tag">BR-02 // Safety Induction Matrix</div>
             </div>
 
             <div className="ecosystem-card">
@@ -591,7 +616,6 @@ export default function App() {
               <p>
                 Pesan slot, datang tepat waktu, dan mulai berkarya.
               </p>
-              <div className="card-footer-tag">BR-03 // 15-Min Grace Period</div>
             </div>
 
             <div className="ecosystem-card">
@@ -601,7 +625,6 @@ export default function App() {
               <p>
                 Bahan cetak 3D dihitung sesuai pemakaian.
               </p>
-              <div className="card-footer-tag">BR-04 &amp; BR-06 // Auto-Debit &amp; WA Invoice</div>
             </div>
           </div>
         </div>
@@ -610,10 +633,9 @@ export default function App() {
       {/* ========================================================
           FASILITAS MESIN (THE LAB & HARDWARE ARSENAL)
           ======================================================== */}
-      <section id="the-lab" className="section-wrapper">
+      <section id="the-lab" className="section-wrapper section-band-deep scroll-reveal">
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// HARDWARE ARSENAL &amp; MAINTENANCE TRACKER</span>
             <h2 className="section-headline">
               Fasilitas &amp; <span className="text-gradient-lime">Peralatan Canggih</span>
             </h2>
@@ -728,11 +750,10 @@ export default function App() {
       {/* ========================================================
           GERBANG SERTIFIKASI ALAT & MATRIKS K3 (BR-02)
           ======================================================== */}
-      <section id="k3-safety" className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section id="k3-safety" className="section-wrapper section-band-deep scroll-reveal lab-safety-panel" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="safety-badging-container">
             <div className="section-header-centered" style={{ marginBottom: '28px' }}>
-              <span className="section-kicker-tag">// STANDAR PROTOKOL K3 (BR-02)</span>
               <h2 className="section-headline">
                 Gerbang Sertifikasi Alat &amp; <span className="text-gradient-lime">Matriks K3</span>
               </h2>
@@ -831,10 +852,9 @@ export default function App() {
       {/* ========================================================
           PILIH PAKET KREATIVITASMU (MEMBERSHIP BR-01)
           ======================================================== */}
-      <section id="pricing" className="section-wrapper">
+      <section id="pricing" className="section-wrapper section-band-lime scroll-reveal experience-group-start">
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// MODEL KEANGGOTAAN (BR-01)</span>
             <h2 className="section-headline">
               Pilih Paket <span className="text-gradient-lime">Kreativitasmu</span>
             </h2>
@@ -965,10 +985,9 @@ export default function App() {
       {/* ========================================================
           KALKULATOR KONSUMABEL & BILLING BAHAN (BR-06)
           ======================================================== */}
-      <section id="materials" className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section id="materials" className="section-wrapper section-band-deep scroll-reveal experience-group-end" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// BILLING MATERIAL OTOMATIS (BR-06)</span>
             <h2 className="section-headline">
               Kalkulator Bahan &amp; <span className="text-gradient-lime">Konsumabel Fabrikasi</span>
             </h2>
@@ -1122,10 +1141,9 @@ export default function App() {
       {/* ========================================================
           PROGRAM & WORKSHOPS
           ======================================================== */}
-      <section id="workshops" className="section-wrapper">
+      <section id="workshops" className="section-wrapper section-band-cyan scroll-reveal">
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// PENDIDIKAN &amp; SERTIFIKASI TEKNIS</span>
             <h2 className="section-headline">
               Program &amp; <span className="text-gradient-lime">Workshop Kreatif</span>
             </h2>
@@ -1137,7 +1155,7 @@ export default function App() {
           <div className="workshop-grid">
             <div className="workshop-card">
               <div className="workshop-meta-bar">
-                <span>HANDS-ON // 6 JAM</span>
+                <span>Praktik langsung · 6 jam</span>
                 <span>RP 150.000</span>
               </div>
               <h3>IoT untuk Pemula</h3>
@@ -1149,7 +1167,7 @@ export default function App() {
 
             <div className="workshop-card">
               <div className="workshop-meta-bar">
-                <span>PRAKTIK // 4 JAM</span>
+                <span>Praktik · 4 jam</span>
                 <span>RP 100.000</span>
               </div>
               <h3>Elektronika Dasar</h3>
@@ -1161,7 +1179,7 @@ export default function App() {
 
             <div className="workshop-card">
               <div className="workshop-meta-bar">
-                <span>INTENSIF // 6 JAM</span>
+                <span>Intensif · 6 jam</span>
                 <span>RP 150.000</span>
               </div>
               <h3>Pemrograman Web Dasar</h3>
@@ -1173,7 +1191,7 @@ export default function App() {
 
             <div className="workshop-card" style={{ display: 'none' }}>
               <div className="workshop-meta-bar">
-                <span>ADVANCED // 10 JAM</span>
+                <span>Lanjutan · 10 jam</span>
                 <span>RP 450.000</span>
               </div>
               <h3>Precision CNC Routing &amp; G-Code</h3>
@@ -1189,12 +1207,12 @@ export default function App() {
       {/* ========================================================
           ANTI-GHOSTING & PENJADWALAN PRESISI (BR-03)
           ======================================================== */}
-      <section className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section className="section-wrapper section-band-amber scroll-reveal secondary-landing-content" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="anti-ghosting-banner">
             <div>
               <span className="card-step-badge" style={{ color: 'var(--accent-amber)', background: 'var(--accent-amber-soft)' }}>
-                REGULASI PROTOKOL // BR-03
+                Aturan Booking
               </span>
               <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-white)', margin: '10px 0' }}>
                 Mekanisme Penjadwalan &amp; <span style={{ color: 'var(--accent-amber)' }}>Anti-Ghosting</span>
@@ -1245,10 +1263,9 @@ export default function App() {
       {/* ========================================================
           MULTI-STAKEHOLDER & ROADMAP TAHAP (SECTION 4 & 7 BRD)
           ======================================================== */}
-      <section className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section className="section-wrapper section-band-deep scroll-reveal secondary-landing-content" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// SOLUSI STAKEHOLDER &amp; ROADMAP</span>
             <h2 className="section-headline">
               Antarmuka Terpadu &amp; <span className="text-gradient-lime">Rencana Rilis</span>
             </h2>
@@ -1488,10 +1505,9 @@ export default function App() {
       {/* ========================================================
           FAQ ACCORDION (CLEAN, MINIMALIST)
           ======================================================== */}
-      <section id="faq" className="section-wrapper" style={{ paddingTop: 0 }}>
+      <section id="faq" className="section-wrapper section-band-cyan scroll-reveal" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="section-header-centered">
-            <span className="section-kicker-tag">// FREQUENTLY ASKED QUESTIONS</span>
             <h2 className="section-headline">
               Pertanyaan <span className="text-gradient-lime">Umum</span>
             </h2>
@@ -1567,7 +1583,7 @@ export default function App() {
                 Ruang belajar dan membuat untuk 3D printing, elektronika, IoT, dan pemrograman web.
               </p>
               <div style={{ marginTop: '12px', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--accent-lime)' }}>
-                STATUS LAB // BUKA HARI INI
+                Status Lab: Buka Hari Ini
               </div>
             </div>
 
