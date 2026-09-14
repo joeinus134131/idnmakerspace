@@ -1,0 +1,17 @@
+{
+  "name": "IDN Makerspace",
+  "short_name": "IDN Makerspace",
+  "description": "Lab Fabrikasi, 3D Printing & Prototyping Hardware di Jakarta Selatan",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#b4f437",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
