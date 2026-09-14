@@ -27,7 +27,6 @@ import {
   Play,
   Pause,
   MessageCircle,
-  AtSign,
   Send,
   Camera,
 } from 'lucide-react';
@@ -121,6 +120,48 @@ const MACHINES_DATA = [
 
 const WHATSAPP_NUMBER = '6283802436288';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+const INSTAGRAM_URL = 'https://www.instagram.com/idnmakerspace';
+const TIKTOK_URL = 'https://www.tiktok.com/@idn_makerspace';
+
+function InstagramIcon({ size = 17, ...props }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+function TikTokIcon({ size = 17, ...props }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+    </svg>
+  );
+}
 
 export default function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -1686,8 +1727,9 @@ export default function App() {
               <h4>Terhubung</h4>
               <div className="footer-social-links">
                 <a href={`${WHATSAPP_URL}?text=${encodeURIComponent('Halo IDN Makerspace, saya ingin bertanya.')}`} target="_blank" rel="noreferrer" aria-label="WhatsApp admin IDN Makerspace"><MessageCircle size={17} /> WhatsApp Admin</a>
-                <a href="#community" aria-label="Instagram IDN Makerspace" title="Tautan Instagram resmi"><AtSign size={17} /> Instagram</a>
-                <a href="#community" aria-label="Discord atau Telegram IDN Makerspace" title="Minta invite kanal komunitas"><Send size={17} /> Komunitas</a>
+                <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" aria-label="Instagram IDN Makerspace (@idnmakerspace)" title="Instagram @idnmakerspace"><InstagramIcon size={17} /> Instagram (@idnmakerspace)</a>
+                <a href={TIKTOK_URL} target="_blank" rel="noreferrer" aria-label="TikTok IDN Makerspace (@idn_makerspace)" title="TikTok @idn_makerspace"><TikTokIcon size={17} /> TikTok (@idn_makerspace)</a>
+                <a href="#community" aria-label="Kanal Komunitas IDN Makerspace" title="Minta invite kanal komunitas"><Send size={17} /> Komunitas</a>
               </div>
             </div>
 
