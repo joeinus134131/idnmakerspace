@@ -1380,12 +1380,66 @@ body {
 .fill-danger { background: var(--accent-red); }
 
 .machine-card-footer {
-  padding: 12px 18px;
+  padding: 16px 18px;
   border-top: 1px solid var(--border-subtle);
-  background: rgba(10, 12, 16, 0.25);
+  background: rgba(10, 12, 16, 0.35);
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.machine-footer-price-row {
+  display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.machine-footer-price-row .price-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.machine-footer-price-row .price-val-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.machine-footer-price-row .price-amount {
+  font-family: var(--font-code);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent-lime);
+}
+
+.machine-footer-price-row .price-unit {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+}
+
+.machine-footer-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.machine-footer-actions .btn-view-eye {
+  width: 100%;
+  justify-content: center;
+  padding: 9px 12px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.machine-footer-actions .btn-primary-lime {
+  width: 100%;
+  justify-content: center;
+  padding: 9px 14px;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 /* ==========================================================================
@@ -2395,4 +2449,95 @@ body {
     transition-duration: 0.01ms !important;
   }
   .scroll-reveal { opacity: 1; transform: none; filter: none; }
+}
+
+/* ==========================================================================
+   FITUR VIEW MATA: PREVIEW FOTO ALAT ASLI & MODAL
+   ========================================================================== */
+.btn-view-eye {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 210, 238, 0.08);
+  border: 1px solid rgba(0, 210, 238, 0.3);
+  color: var(--accent-cyan);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-view-eye:hover {
+  background: rgba(0, 210, 238, 0.18);
+  border-color: var(--accent-cyan);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.tool-preview-modal {
+  max-width: 600px;
+  border-color: rgba(0, 210, 238, 0.35);
+}
+
+.tool-preview-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.tool-preview-img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  display: block;
+  background: #090d16;
+}
+
+.tool-source-tag {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(9, 13, 22, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(163, 255, 18, 0.3);
+  color: var(--accent-lime);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tool-preview-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.preview-spec-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+
+.preview-spec-box .spec-k {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.preview-spec-box .spec-v {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-white);
 }
