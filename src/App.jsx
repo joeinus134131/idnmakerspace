@@ -29,6 +29,7 @@ import {
   MessageCircle,
   Send,
   Camera,
+  ExternalLink,
 } from 'lucide-react';
 import './App.css';
 
@@ -1737,12 +1738,28 @@ export default function App() {
               <h4>Lokasi &amp; Jam</h4>
               <p style={{ fontSize: '0.8rem', lineHeight: 1.5, color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 <MapPin size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                IDN Makerspace, Jl. Gotong Royong No. 21A, Cipete Utara, Kebayoran Baru.
+                IDN Makerspace, Jl. Gotong Royong No. 21A, Cipete Utara, Kebayoran Baru, Jakarta Selatan 12150.
               </p>
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
                 Senin – Sabtu <br />
                 08:00 – 17:00 WIB
               </p>
+              <a
+                href="https://maps.google.com/?q=IDN+Makerspace,+Jl.+Gotong+Royong+No.+21A,+Cipete+Utara,+Kebayoran+Baru,+Jakarta+Selatan"
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontSize: '0.75rem',
+                  color: 'var(--accent-lime)',
+                  textDecoration: 'none',
+                  fontWeight: 600,
+                }}
+              >
+                Buka di Google Maps <ExternalLink size={12} />
+              </a>
             </div>
           </div>
 
