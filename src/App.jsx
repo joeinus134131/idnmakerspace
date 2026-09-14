@@ -61,7 +61,7 @@ const HERO_SLIDES = [
     title: 'Kolaborasi & Inkubasi Hardware',
     subtitle: 'Komunitas & Riset Rekayasa',
     desc: 'Ruang interaksi antar mahasiswa, pembuat lepas, dan mentor industri untuk memvalidasi prototipe produk jadi.',
-    image: '/images/slide-community.webp',
+    image: '/images/og-image.jpg',
     statBadge: '250+ Anggota',
     kpi: 'Workshop Mingguan'
   }
@@ -248,7 +248,8 @@ export default function App() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [bookingStep, setBookingStep] = useState(1);
   const [selectedMachine, setSelectedMachine] = useState(MACHINES_DATA[0]);
-  const [selectedDate, setSelectedDate] = useState('2026-09-12');
+  const todayDateStr = new Date().toISOString().split('T')[0];
+  const [selectedDate, setSelectedDate] = useState(todayDateStr);
   const [selectedSlot, setSelectedSlot] = useState('14:00 - 14:30');
   const [estimatedFilament, setEstimatedFilament] = useState(60);
   const [agreedAntiGhosting, setAgreedAntiGhosting] = useState(false);
@@ -319,6 +320,14 @@ export default function App() {
 
   const handleTopUpWhatsApp = () => {
     openWhatsApp('Halo IDN Makerspace, saya ingin top up saldo / menanyakan metode pembayaran. Mohon kirim instruksi pembayarannya. Terima kasih.');
+  };
+
+  const handleMembershipWhatsApp = (tierName, priceNote) => {
+    openWhatsApp(`Halo IDN Makerspace, saya tertarik bergabung dengan paket ${tierName} (${priceNote}). Mohon informasi pendaftaran dan aktivasi benefit member. Terima kasih!`);
+  };
+
+  const handleWorkshopWhatsApp = (workshopTitle, fee) => {
+    openWhatsApp(`Halo IDN Makerspace, saya ingin mendaftar workshop "${workshopTitle}" (${fee}). Mohon informasi jadwal kelas terdekat dan instruksi pembayarannya. Terima kasih!`);
   };
 
   // Handle Quiz Submission
@@ -619,7 +628,7 @@ export default function App() {
               </div>
             </article>
             <article className="showcase-card">
-              <img src="/images/slide-community.webp" alt="Komunitas maker sedang berkolaborasi di IDN Makerspace" />
+              <img src="/images/og-image.jpg" alt="Komunitas maker sedang berkolaborasi di IDN Makerspace" />
               <div className="showcase-card-overlay">
                 <span>COMMUNITY LAB</span>
                 <h3>Belajar bersama, tumbuh bersama</h3>
@@ -1015,7 +1024,7 @@ export default function App() {
                 <li><Check size={14} /> Pendampingan dasar</li>
                 <li><Check size={14} /> Verifikasi kartu mahasiswa (KTM)</li>
               </ul>
-              <button type="button" className="btn-outline-cyan" onClick={() => handleOpenBooking()}>
+              <button type="button" className="btn-outline-cyan" onClick={() => handleMembershipWhatsApp('Student Tier', 'Rp 49.000 / bulan')}>
                 Daftar Mahasiswa
               </button>
             </div>
@@ -1036,7 +1045,7 @@ export default function App() {
                 <li><Check size={14} /> Akses komunitas makers</li>
                 <li><Check size={14} /> Update roadmap fasilitas</li>
               </ul>
-              <button type="button" className="btn-primary-lime" onClick={() => handleOpenBooking()}>
+              <button type="button" className="btn-primary-lime" onClick={() => handleMembershipWhatsApp('Pro Maker', 'Rp 99.000 / bulan')}>
                 Pilih Pro Maker
               </button>
             </div>
@@ -1056,7 +1065,7 @@ export default function App() {
                 <li><Check size={14} /> Penawaran sesuai kebutuhan</li>
                 <li><Check size={14} /> Fasilitas lanjutan masih roadmap</li>
               </ul>
-              <button type="button" className="btn-secondary-clean" onClick={() => handleOpenBooking()}>
+              <button type="button" className="btn-secondary-clean" onClick={() => handleMembershipWhatsApp('Team / Startup', 'Konsultasi Tim')}>
                 Hubungi Kami
               </button>
             </div>
@@ -1225,7 +1234,16 @@ export default function App() {
                   type="button"
                   className="btn-primary-lime"
                   style={{ width: '100%', marginTop: '14px', justifyContent: 'center' }}
-                  onClick={() => openWhatsApp(`Halo IDN Makerspace, saya ingin menanyakan estimasi biaya.\n\nEstimasi sewa: ${calcMachineHours} jam\nEstimasi bahan: ${calcAmount} unit\nTotal estimasi: Rp ${currentCalc.totalCost.toLocaleString('id-ID')}\n\nMohon konfirmasi.`)}
+                  onClick={() => {
+                    const matMeta = {
+                      pla: { name: 'Filamen PLA+', unit: 'gram' },
+                      petg: { name: 'Filamen PETG', unit: 'gram' },
+                      acrylic: { name: 'Akrilik Bening 3mm', unit: 'cm²' },
+                      balsa: { name: 'Kayu Balsa 5mm', unit: 'cm²' },
+                      resin: { name: 'Resin SLA 8K', unit: 'ml' }
+                    }[calcMaterial] || { name: calcMaterial, unit: 'unit' };
+                    openWhatsApp(`Halo IDN Makerspace, saya ingin menanyakan estimasi biaya kalkulator website.\n\nBahan baku: ${matMeta.name} (${calcAmount} ${matMeta.unit})\nDurasi sewa mesin: ${calcMachineHours} jam\nEstimasi total: Rp ${currentCalc.totalCost.toLocaleString('id-ID')}\n\nMohon konfirmasi ketersediaan alat dan bahan. Terima kasih.`);
+                  }}
                 >
                   <MessageCircle size={15} /> Konfirmasi Estimasi via WhatsApp
                 </button>
@@ -1260,6 +1278,14 @@ export default function App() {
               <div className="workshop-badge-earned">
                 <Award size={13} /> Dapatkan Badge IoT Dasar
               </div>
+              <button
+                type="button"
+                className="btn-outline-cyan"
+                style={{ width: '100%', marginTop: '14px', justifyContent: 'center', fontSize: '0.8rem', padding: '8px 14px' }}
+                onClick={() => handleWorkshopWhatsApp('IoT untuk Pemula', 'Rp 150.000')}
+              >
+                Daftar Workshop IoT
+              </button>
             </div>
 
             <div className="workshop-card">
@@ -1272,6 +1298,14 @@ export default function App() {
               <div className="workshop-badge-earned">
                 <Award size={13} /> Dapatkan Badge Elektronika Dasar
               </div>
+              <button
+                type="button"
+                className="btn-outline-cyan"
+                style={{ width: '100%', marginTop: '14px', justifyContent: 'center', fontSize: '0.8rem', padding: '8px 14px' }}
+                onClick={() => handleWorkshopWhatsApp('Elektronika Dasar', 'Rp 100.000')}
+              >
+                Daftar Workshop Elektronika
+              </button>
             </div>
 
             <div className="workshop-card">
@@ -1284,6 +1318,14 @@ export default function App() {
               <div className="workshop-badge-earned">
                 <Award size={13} /> Dapatkan Badge Web Dasar
               </div>
+              <button
+                type="button"
+                className="btn-outline-cyan"
+                style={{ width: '100%', marginTop: '14px', justifyContent: 'center', fontSize: '0.8rem', padding: '8px 14px' }}
+                onClick={() => handleWorkshopWhatsApp('Pemrograman Web Dasar', 'Rp 150.000')}
+              >
+                Daftar Workshop Web
+              </button>
             </div>
 
             <div className="workshop-card" style={{ display: 'none' }}>
@@ -1879,6 +1921,7 @@ export default function App() {
                     <input
                       type="date"
                       value={selectedDate}
+                      min={todayDateStr}
                       onChange={(e) => setSelectedDate(e.target.value)}
                       style={{
                         width: '100%',
