@@ -30,6 +30,7 @@ import {
   Send,
   Camera,
   ExternalLink,
+  Eye,
 } from 'lucide-react';
 import './App.css';
 
@@ -79,43 +80,57 @@ const MACHINES_DATA = [
     statusLabel: 'Tersedia',
     hoursLogged: 42, hoursLimit: 300,
     area: '180 x 180 x 180 mm', speed: 'FDM · hingga 500 mm/s', materials: 'PLA, PETG & TPU; ABS/ASA tidak didukung', hourlyRate: 25000,
-    icon: Printer
+    icon: Printer,
+    image: '/images/tools/bambu-a1-mini.jpg',
+    imageCaption: 'Foto Asli Unit 3D Printer Bambu Lab A1 mini - Cetak FDM Presisi Tinggi'
   },
   {
-    id: 'power-supply-sunshine-pro', name: 'Power Supply Sunshine Pro', category: 'iot', level: 1,
+    id: 'power-supply-sunshine-pro', name: 'Sunshine Power Supply P2 Pro', category: 'iot', level: 1,
     levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
-    hoursLogged: 18, hoursLimit: 500, area: 'Meja Elektronika', speed: 'Catu daya variabel', materials: 'Rangkaian elektronik', hourlyRate: 10000,
-    icon: Zap
+    hoursLogged: 18, hoursLimit: 500, area: 'Meja Elektronika', speed: 'Catu daya variabel 30V/5A', materials: 'Rangkaian elektronik', hourlyRate: 10000,
+    icon: Zap,
+    image: '/images/tools/power-supply-sunshine.jpg',
+    imageCaption: 'Foto Asli Unit Sunshine Power Supply P2 Pro - Catu Daya Variabel DC Presisi'
   },
   {
     id: 'solder-digital', name: 'Solder Digital', category: 'iot', level: 1,
     levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
     hoursLogged: 67, hoursLimit: 600, area: 'Meja Elektronika', speed: 'Suhu terkontrol', materials: 'Komponen elektronik', hourlyRate: 10000,
-    icon: Boxes
+    icon: Boxes,
+    image: '/images/tools/solder-digital.jpg',
+    imageCaption: 'Foto Asli Workstation Solder Digital - Suhu Presisi & Stand Holder'
   },
   {
     id: 'timbangan-digital', name: 'Timbangan Digital', category: 'iot', level: 1,
     levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
     hoursLogged: 12, hoursLimit: 1000, area: 'Meja Persiapan', speed: 'Pengukuran bahan', materials: 'Filamen & komponen', hourlyRate: 0,
-    icon: Gauge
+    icon: Gauge,
+    image: '/images/tools/timbangan-digital.jpg',
+    imageCaption: 'Foto Asli Timbangan Digital Presisi - Akurasi Gramasi Filamen & Benda Cetak'
   },
   {
     id: 'multimeter-unit', name: 'Multimeter UNI-T', category: 'iot', level: 1,
     levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
     hoursLogged: 23, hoursLimit: 800, area: 'Meja Elektronika', speed: 'Ukur tegangan & arus', materials: 'Proyek elektronik', hourlyRate: 10000,
-    icon: Cpu
+    icon: Cpu,
+    image: '/images/tools/multimeter-unit.jpg',
+    imageCaption: 'Foto Asli Multimeter Digital UNI-T - Probe Pengukur Tegangan, Arus & Hambatan'
   },
   {
     id: 'toolkit-elektronika', name: 'Perkakas Elektronika', category: 'iot', level: 1,
     levelName: 'Level 1 : Akses Dasar', status: 'available', statusLabel: 'Tersedia',
     hoursLogged: 31, hoursLimit: 1000, area: 'Meja Elektronika', speed: 'Toolkit perakitan', materials: 'Komponen elektronik', hourlyRate: 0,
-    icon: Wrench
+    icon: Wrench,
+    image: '/images/tools/toolkit-elektronika.jpg',
+    imageCaption: 'Foto Asli Toolkit Perkakas Presisi - Tang Potong, Pinset ESD & Obeng Mekanik'
   },
   {
     id: 'jangka-sorong-digital', name: 'Jangka Sorong Digital', category: 'iot', level: 1,
     levelName: 'Level 1 : Akses Dasar', status: 'inuse', statusLabel: 'Sedang Dipakai',
     hoursLogged: 8, hoursLimit: 500, area: 'Meja Persiapan', speed: 'Pengukuran presisi', materials: 'Komponen & prototipe', hourlyRate: 5000,
-    icon: Gauge
+    icon: Gauge,
+    image: '/images/tools/jangka-sorong-digital.jpg',
+    imageCaption: 'Foto Asli Jangka Sorong Digital - Kaliper Stainless Steel Akurasi 0.01 mm'
   }
 ];
 
@@ -123,6 +138,7 @@ const WHATSAPP_NUMBER = '6283802436288';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 const INSTAGRAM_URL = 'https://www.instagram.com/idnmakerspace';
 const TIKTOK_URL = 'https://www.tiktok.com/@idn_makerspace';
+const YOUTUBE_URL = 'https://www.youtube.com/@idnmakerspace';
 
 function InstagramIcon({ size = 17, ...props }) {
   return (
@@ -160,6 +176,26 @@ function TikTokIcon({ size = 17, ...props }) {
       {...props}
     >
       <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+    </svg>
+  );
+}
+
+function YouTubeIcon({ size = 17, ...props }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+      <polygon points="10 15 15 12 10 9 10 15" fill="currentColor" />
     </svg>
   );
 }
@@ -260,6 +296,9 @@ export default function App() {
   const [quizScore, setQuizScore] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+
+  // Machine Real Image Preview (Eye View Modal)
+  const [selectedToolPreview, setSelectedToolPreview] = useState(null);
 
   // Filtered Machines
   const filteredMachines = MACHINES_DATA.filter(m => {
@@ -828,23 +867,37 @@ export default function App() {
                   </div>
 
                   <div className="machine-card-footer">
-                    <div>
-                      <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', display: 'block' }}>TARIF SEWA DASAR</span>
-                      <span style={{ fontFamily: 'var(--font-code)', fontWeight: 700, color: 'var(--accent-lime)' }}>
-                        Rp {machine.hourlyRate.toLocaleString('id-ID')}
-                      </span>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}> / jam</span>
+                    <div className="machine-footer-price-row">
+                      <span className="price-kicker">TARIF SEWA DASAR</span>
+                      <div className="price-val-wrap">
+                        <span className="price-amount">
+                          Rp {machine.hourlyRate.toLocaleString('id-ID')}
+                        </span>
+                        <span className="price-unit"> / jam</span>
+                      </div>
                     </div>
 
-                    <button
-                      type="button"
-                      className="btn-primary-lime"
-                      style={{ padding: '8px 14px', fontSize: '0.8rem' }}
-                      onClick={() => handleOpenBooking(machine)}
-                    >
-                      <span>Pesan Slot</span>
-                      <ArrowRight size={14} />
-                    </button>
+                    <div className="machine-footer-actions">
+                      <button
+                        type="button"
+                        className="btn-view-eye"
+                        title={`Lihat foto asli ${machine.name}`}
+                        aria-label={`Lihat foto asli ${machine.name}`}
+                        onClick={() => setSelectedToolPreview(machine)}
+                      >
+                        <Eye size={15} />
+                        <span>Lihat Foto</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="btn-primary-lime"
+                        onClick={() => handleOpenBooking(machine)}
+                      >
+                        <span>Pesan Slot</span>
+                        <ArrowRight size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -1749,9 +1802,11 @@ export default function App() {
               <h4>Fasilitas Lab</h4>
               <ul className="footer-links-list">
                 <li><a href="#the-lab">Bambu Lab A1 mini</a></li>
+                <li><a href="#the-lab">Sunshine Power Supply P2 Pro</a></li>
                 <li><a href="#the-lab">Solder Digital</a></li>
-                <li><a href="#the-lab">Power Supply Sunshine Pro</a></li>
                 <li><a href="#the-lab">Multimeter UNI-T</a></li>
+                <li><a href="#the-lab">Timbangan Digital</a></li>
+                <li><a href="#the-lab">Jangka Sorong Digital</a></li>
                 <li><a href="#the-lab">Perkakas Elektronika</a></li>
               </ul>
             </div>
@@ -1772,6 +1827,7 @@ export default function App() {
                 <a href={`${WHATSAPP_URL}?text=${encodeURIComponent('Halo IDN Makerspace, saya ingin bertanya.')}`} target="_blank" rel="noreferrer" aria-label="WhatsApp admin IDN Makerspace"><MessageCircle size={17} /> WhatsApp Admin</a>
                 <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" aria-label="Instagram IDN Makerspace (@idnmakerspace)" title="Instagram @idnmakerspace"><InstagramIcon size={17} /> Instagram (@idnmakerspace)</a>
                 <a href={TIKTOK_URL} target="_blank" rel="noreferrer" aria-label="TikTok IDN Makerspace (@idn_makerspace)" title="TikTok @idn_makerspace"><TikTokIcon size={17} /> TikTok (@idn_makerspace)</a>
+                <a href={YOUTUBE_URL} target="_blank" rel="noreferrer" aria-label="YouTube IDN Makerspace (@idnmakerspace)" title="YouTube @idnmakerspace"><YouTubeIcon size={17} /> YouTube (@idnmakerspace)</a>
                 <a href="#community" aria-label="Kanal Komunitas IDN Makerspace" title="Minta invite kanal komunitas"><Send size={17} /> Komunitas</a>
               </div>
             </div>
@@ -1811,6 +1867,95 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* ========================================================
+          MODAL: PREVIEW FOTO ALAT ASLI (VIEW MATA)
+          ======================================================== */}
+      {selectedToolPreview && (
+        <div className="modal-backdrop-overlay" onClick={() => setSelectedToolPreview(null)}>
+          <div className="modal-dialog-box tool-preview-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-head">
+              <h3>
+                <Eye size={18} color="var(--accent-lime)" />
+                Foto Fisik Alat: {selectedToolPreview.name}
+              </h3>
+              <button
+                type="button"
+                className="btn-close-modal"
+                onClick={() => setSelectedToolPreview(null)}
+                aria-label="Tutup preview foto"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div style={{ padding: '20px' }}>
+              <div className="tool-preview-image-wrapper">
+                <img
+                  src={selectedToolPreview.image}
+                  alt={selectedToolPreview.name}
+                  className="tool-preview-img"
+                />
+                <div className="tool-source-tag">
+                  <span>Foto Alat Fisik Nyata (Bukan AI Generated)</span>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '14px' }}>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-white)', fontWeight: 600, marginBottom: '6px' }}>
+                  {selectedToolPreview.imageCaption}
+                </p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  Unit fisik operasional di workstation IDN Makerspace Cipete. Dilengkapi kalibrasi rutin dan pengawasan Lab Assistant.
+                </p>
+              </div>
+
+              <div className="tool-preview-specs-grid" style={{ marginTop: '16px' }}>
+                <div className="preview-spec-box">
+                  <span className="spec-k">WORK AREA</span>
+                  <span className="spec-v">{selectedToolPreview.area}</span>
+                </div>
+                <div className="preview-spec-box">
+                  <span className="spec-k">SPESIFIKASI</span>
+                  <span className="spec-v">{selectedToolPreview.speed}</span>
+                </div>
+                <div className="preview-spec-box">
+                  <span className="spec-k">MATERIAL</span>
+                  <span className="spec-v">{selectedToolPreview.materials}</span>
+                </div>
+                <div className="preview-spec-box">
+                  <span className="spec-k">TARIF SEWA</span>
+                  <span className="spec-v" style={{ color: 'var(--accent-lime)' }}>
+                    Rp {selectedToolPreview.hourlyRate.toLocaleString('id-ID')} / jam
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '22px', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  className="btn-secondary-clean"
+                  onClick={() => setSelectedToolPreview(null)}
+                >
+                  Tutup
+                </button>
+                <button
+                  type="button"
+                  className="btn-primary-lime"
+                  onClick={() => {
+                    const machine = selectedToolPreview;
+                    setSelectedToolPreview(null);
+                    handleOpenBooking(machine);
+                  }}
+                >
+                  <span>Pesan Slot Alat Ini</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ========================================================
           MODAL: BOOKING WIZARD (BR-01 THROUGH BR-04)
