@@ -2,7 +2,7 @@
 
 > A digital front door for a collaborative STEM creative hub—helping makers discover equipment, estimate fabrication costs, and request reservations with confidence.
 
-[Live demo](https://idnmakerspace.vercel.app) · [Request a reservation](https://wa.me/6283802436288)
+[Live demo](https://idnmakerspace.vercel.app) · [Discord Community](https://discord.gg/vwmCHN78H) · [GitHub Lab](https://github.com/idnmakerspace-lab) · [Request a reservation](https://wa.me/6283802436288)
 
 ## Overview
 
@@ -111,9 +111,14 @@ git push origin feat/your-change
 
 Please keep the language welcoming, accurate to the current operation, and accessible for first-time makers.
 
-## Contact
-
-For reservations, payment confirmation, or questions, contact [IDN Makerspace via WhatsApp](https://wa.me/6283802436288).
+## Community & Contact
+ 
+- Reservations & Admin inquiries: [IDN Makerspace via WhatsApp](https://wa.me/6283802436288)
+- Discord Community: [Join our Discord server](https://discord.gg/vwmCHN78H)
+- GitHub Organization: [github.com/idnmakerspace-lab](https://github.com/idnmakerspace-lab)
+- Instagram: [@idnmakerspace](https://www.instagram.com/idnmakerspace)
+- TikTok: [@idn_makerspace](https://www.tiktok.com/@idn_makerspace)
+- YouTube: [@idnmakerspace](https://www.youtube.com/@idnmakerspace)
 
 ---
 
