@@ -931,6 +931,13 @@ body {
 .community-invite-panel .showcase-kicker { margin-bottom: 4px; color: var(--accent-lime); }
 .community-invite-panel h3 { font-size: 1.15rem; }
 .community-invite-panel p { margin-top: 3px; max-width: 720px; font-size: 0.83rem; }
+.community-invite-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
 
 .section-header-centered {
   text-align: center;
@@ -2409,13 +2416,16 @@ body {
   .showcase-grid { grid-template-columns: 1fr 1fr; }
   .showcase-card-featured { grid-column: span 2; }
   .community-invite-panel { align-items: flex-start; flex-direction: column; }
+  .community-invite-actions { width: 100%; }
 }
 
 @media (max-width: 560px) {
   .showcase-grid { grid-template-columns: 1fr; }
   .showcase-card, .showcase-card-featured { min-height: 290px; grid-column: auto; }
   .community-invite-panel { padding: 20px; }
-  .community-invite-panel .btn-primary-lime { width: 100%; justify-content: center; }
+  .community-invite-actions { width: 100%; flex-direction: column; }
+  .community-invite-actions .btn-primary-lime,
+  .community-invite-actions .btn-secondary-clean { width: 100%; justify-content: center; }
 }
 
 @media (max-width: 430px) {
