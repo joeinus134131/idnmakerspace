@@ -1,4 +1,24 @@
 User-agent: *
 Allow: /
 
+# Generative Engine Optimization (AI Crawlers)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Sitemaps & Structured Knowledge
 Sitemap: https://idnmakerspace.com/sitemap.xml

@@ -510,6 +510,7 @@ export default function App() {
             <h1 className="hero-main-title">
               WHERE IDEAS <br />
               <span className="text-gradient-lime">TAKE SHAPE.</span>
+              <span className="sr-only"> — IDN Makerspace: Lab Fabrikasi Hardware, 3D Printing Bambu Lab &amp; Prototyping Jakarta Selatan</span>
             </h1>
 
             <p className="hero-subtitle">
