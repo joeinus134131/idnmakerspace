@@ -1,11 +1,11 @@
 {
   "name": "IDN Makerspace",
   "short_name": "IDN Makerspace",
-  "description": "Lab Fabrikasi, 3D Printing & Prototyping Hardware di Jakarta Selatan",
+  "description": "Electronics makerspace untuk engineer muda di Lampung",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#090d16",
-  "theme_color": "#b4f437",
+  "background_color": "#f8f5ed",
+  "theme_color": "#0d8f7d",
   "icons": [
     {
       "src": "/favicon.svg",

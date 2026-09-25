@@ -21,4 +21,4 @@ User-agent: Applebot-Extended
 Allow: /
 
 # Sitemaps & Structured Knowledge
-Sitemap: https://idnmakerspace.com/sitemap.xml
+Sitemap: https://idnmakerspace.id/sitemap.xml
