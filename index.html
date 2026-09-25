@@ -43,9 +43,14 @@
     <meta name="twitter:image" content="https://idnmakerspace.com/images/og-image.jpg" />
     <meta name="twitter:image:alt" content="Komunitas Maker dan Fasilitas IDN Makerspace Jakarta" />
 
-    <!-- Favicon & PWA Manifest -->
+    <!-- Favicon, PWA & LLMs.txt -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="help" href="/llms.txt" type="text/markdown" title="LLMs.txt" />
+
+    <!-- Search Engine Verification (GSC & Bing Webmaster - Masukkan kode verifikasi jika sudah mendaftar) -->
+    <!-- <meta name="google-site-verification" content="MASUKKAN_KODE_GSC_DISINI" /> -->
+    <!-- <meta name="msvalidate.01" content="MASUKKAN_KODE_BING_DISINI" /> -->
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -97,6 +102,68 @@
               "closes": "17:00"
             }
           ],
+          "areaServed": [
+            {
+              "@type": "AdministrativeArea",
+              "name": "Jakarta Selatan"
+            },
+            {
+              "@type": "AdministrativeArea",
+              "name": "DKI Jakarta"
+            },
+            {
+              "@type": "AdministrativeArea",
+              "name": "Jabodetabek"
+            }
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Katalog Layanan & Fasilitas IDN Makerspace",
+            "itemListElement": [
+              {
+                "@type": "OfferCatalog",
+                "name": "3D Printing & Prototyping",
+                "itemListElement": [
+                  {
+                    "@type": "Offer",
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "Jasa Cetak 3D Printing Bambu Lab Presisi",
+                      "description": "Layanan cetak 3D FDM multi-warna kecepatan tinggi dengan Bambu Lab X1-Carbon dan P1S untuk material PLA, PETG, TPU, ABS."
+                    }
+                  }
+                ]
+              },
+              {
+                "@type": "OfferCatalog",
+                "name": "Workstation Elektronika & IoT",
+                "itemListElement": [
+                  {
+                    "@type": "Offer",
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "Sewa Meja Solder Digital & Workstation Elektronika",
+                      "description": "Workstation elektronika lengkap dengan solder termoregulasi digital, catu daya DC, multimeter, dan fume extractor."
+                    }
+                  }
+                ]
+              },
+              {
+                "@type": "OfferCatalog",
+                "name": "Pelatihan K3 & Workshop Maker",
+                "itemListElement": [
+                  {
+                    "@type": "Offer",
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "Sertifikasi K3 Mesin & Laboratorium Prototyping",
+                      "description": "Modul teori keselamatan kerja dan kuis sertifikasi K3 mandiri untuk lisensi penggunaan mesin workshop."
+                    }
+                  }
+                ]
+              }
+            ]
+          },
           "sameAs": [
             "https://discord.gg/vwmCHN78H",
             "https://github.com/idnmakerspace-lab",

@@ -1,0 +1,41 @@
+# IDN Makerspace
+
+> Lab fabrikasi fisik, cetak 3D printing presisi Bambu Lab, workstation elektronika, dan prototyping IoT hardware di Cipete, Jakarta Selatan.
+
+## Informasi Bisnis & Lokasi
+- **Nama Bisnis**: IDN Makerspace (IDN STEM Creative Hub)
+- **Website**: https://idnmakerspace.com/
+- **Alamat**: Jl. Gotong Royong No. 21A, Cipete Utara, Kec. Kebayoran Baru, Jakarta Selatan, DKI Jakarta 12150
+- **Wilayah Layanan**: Jakarta Selatan, Jakarta, Depok, Tangerang, Bekasi (Jabodetabek) & Seluruh Indonesia (layanan pengiriman hasil cetak)
+- **Koordinat Geo**: Latitude -6.2558, Longitude 106.8062
+- **WhatsApp / Telepon**: +62 838-0243-6288
+- **Jam Operasional**: Senin – Sabtu: 08:00 – 17:00 WIB (Minggu: Libur)
+- **Metode Pembayaran**: QRIS, Transfer Bank, Tunai
+- **Kisaran Biaya**: Rp 15.000 – Rp 350.000
+
+## Layanan Utama
+- **3D Printing Rapid Prototyping**: Cetak 3D FDM presisi tinggi menggunakan armada mesin Bambu Lab (X1-Carbon & P1S) dengan dukungan multi-warna AMS. Material: PLA, PETG, TPU, ABS, Carbon Fiber.
+- **Workstation Elektronika & Solder Digital**: Meja kerja soldering iron digital termoregulasi, desoldering pump, solder fume extractor, catu daya DC terkalibrasi, multimeter digital, dan oscilloscope.
+- **IoT & Embedded Systems Lab**: Fasilitas pengujian mikrokontroler (ESP32, STM32, Arduino, Raspberry Pi) dan perakitan sensor hardware.
+- **Sertifikasi K3 Mesin & Workshop Digital**: Pelatihan dasar safety operation dan sertifikasi K3 mandiri untuk lisensi penggunaan mesin Level 2 di workshop.
+
+## Daftar Mesin & Spesifikasi
+- **Bambu Lab X1-Carbon Combo**: Volume cetak 256 × 256 × 256 mm, Dual auto bed leveling, AI LiDAR first layer inspection, chamber camera, kecepatan cetak hingga 500 mm/s, support filament engineering.
+- **Bambu Lab P1S Combo**: Volume cetak 256 × 256 × 256 mm, Enclosed chamber, didukung 4-color Bambu Lab AMS switching system.
+- **Workstation Solder Digital**: Soldering Station ESD-safe dengan pengatur suhu digital presisi, magnifying lamp, flux station, dan hot air rework gun.
+- **Timbangan Digital Presisi**: Penimbangan berat material cetak riil (termasuk support material) pasca cetak untuk kalkulasi billing transparan per gram.
+
+## Kebijakan & Regulasi
+- **Sistem Billing**: Kombinasi durasi sewa mesin/workstation + berat filamen riil per gram.
+- **Anti-Ghosting (BR-03)**: Toleransi kedatangan maksimal 15 menit dari jam booking sebelum slot dialihkan ke antrean berikutnya.
+- **Garansi Cetak Gagal (BR-04)**: Bebas biaya bahan gagal dan garansi 1x cetak ulang gratis jika kegagalan terverifikasi dari mesin atau teknisi lab.
+- **Material Eksternal**: Pengunjung diperbolehkan membawa filamen atau komponen sendiri setelah dicek oleh Lab Assistant.
+
+## Tautan Resmi
+- Website: https://idnmakerspace.com/
+- Sitemap: https://idnmakerspace.com/sitemap.xml
+- Instagram: https://www.instagram.com/idnmakerspace
+- GitHub: https://github.com/idnmakerspace-lab
+- Discord Komunitas: https://discord.gg/vwmCHN78H
+- TikTok: https://www.tiktok.com/@idn_makerspace
+- YouTube: https://www.youtube.com/@idnmakerspace
