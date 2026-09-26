@@ -21,5 +21,8 @@
 Harga di website adalah rentang perencanaan dan dikonfirmasi sebelum pembayaran. Ketersediaan alat, workshop, membership, dan jadwal operasional mengikuti lokasi yang dipilih. Booking dan pembayaran tahap awal dibantu admin melalui WhatsApp.
 
 ## Tautan
-- Instagram: https://www.instagram.com/idnmakerspace
+- Discord: https://discord.gg/vwmCHN78H
 - GitHub: https://github.com/idnmakerspace-lab
+- Instagram: https://www.instagram.com/idnmakerspace
+- TikTok: https://www.tiktok.com/@idn_makerspace
+- YouTube: https://www.youtube.com/@idnmakerspace

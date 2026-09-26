@@ -8,9 +8,9 @@
   "theme_color": "#0d8f7d",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/images/idn-makerspace-logo.webp",
+      "sizes": "1024x1024",
+      "type": "image/webp",
       "purpose": "any maskable"
     }
   ]
