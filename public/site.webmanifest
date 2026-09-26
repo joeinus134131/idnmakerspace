@@ -1,7 +1,7 @@
 {
   "name": "IDN Makerspace",
   "short_name": "IDN Makerspace",
-  "description": "Electronics makerspace untuk engineer muda di Lampung",
+  "description": "Ruang kolaborasi untuk belajar, membuat, dan mengembangkan proyek engineering",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8f5ed",

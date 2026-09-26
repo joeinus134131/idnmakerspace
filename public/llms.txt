@@ -1,12 +1,12 @@
 # IDN Maker Space
 
-> Electronics makerspace di Lampung untuk mahasiswa, engineer muda, dan maker yang ingin belajar melalui proyek nyata.
+> Ruang kolaborasi untuk mahasiswa, engineer, creator, dan maker yang ingin belajar melalui proyek nyata.
 
 ## Informasi
-- Website: https://idnmakerspace.id/
-- Area: ITERA, Lampung Selatan, Lampung
+- Website: https://idnmakerspace.com/
+- Area layanan: Indonesia; informasi lokasi tersedia melalui WhatsApp
 - WhatsApp: +62 838-0243-6288
-- Rencana jam buka: Senin–Sabtu 09.00–22.00; Minggu 10.00–18.00
+- Jam operasional: dapat berbeda di setiap lokasi
 - Paket: Drop-in, Basic, Pro, workshop, learning path, dan institusi
 
 ## Fokus
