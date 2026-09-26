@@ -1,33 +1,31 @@
 # IDN Makerspace
 
-> A digital front door for a collaborative STEM creative hub—helping makers discover equipment, estimate fabrication costs, and request reservations with confidence.
+> Website publik IDN Maker Space untuk memperkenalkan fasilitas, learning path, workshop, membership, komunitas, prototyping, dan software development.
 
 [Live demo](https://idnmakerspace.vercel.app) · [Discord Community](https://discord.gg/vwmCHN78H) · [GitHub Lab](https://github.com/idnmakerspace-lab) · [Request a reservation](https://wa.me/6283802436288)
 
 ## Overview
 
-IDN Makerspace is a responsive landing experience for a physical makerspace focused on 3D printing, electronics, IoT, and creative technology. It brings the practical information a maker needs before arriving—available tools, usage requirements, material estimates, workshops, and operational policies—into one clear flow.
+IDN Maker Space adalah landing page responsif untuk ekosistem maker lintas kota. Halaman ini mempertemukan kebutuhan hardware dan software dalam satu alur informasi yang ringkas, dengan WhatsApp sebagai jalur konfirmasi manusia pada fase MVP.
 
 The current MVP intentionally uses a human-in-the-loop reservation and payment workflow. Every request is sent to the Makerspace admin through WhatsApp, where availability, final pricing, payment instructions, and booking status are confirmed manually.
 
 ## Highlights
 
-- Equipment catalogue with availability, usage tier, operating-hour log, material compatibility, and hourly rates.
-- Project showcase and community section that communicates the atmosphere and capabilities of the lab.
-- K3 safety-learning flow and equipment access tiers.
-- Material-cost calculator for PLA, PETG, acrylic, balsa, and SLA resin.
-- Guided booking flow that prepares a complete WhatsApp reservation message for the admin.
-- WhatsApp-first contact, membership, top-up, and estimate-confirmation flows.
-- Clear FAQ coverage for failed prints, cancellation/rescheduling, external materials, and material billing.
-- Mobile-first responsive layout with a dark industrial visual system.
+- Landing page untuk lokasi, fasilitas, learning path, workshop, membership, dan komunitas.
+- Layanan prototyping, software development, academy, serta dukungan tim dan inovasi.
+- Ringkasan katalog/reservasi alat, safety badging, billing material, dan kesiapan multi-location.
+- CTA WhatsApp kontekstual untuk membership, kunjungan, workshop, fasilitas, dan konsultasi software.
+- Animasi scroll berbasis Intersection Observer dengan dukungan `prefers-reduced-motion`.
+- Aset raster WebP, metadata sosial, JSON-LD organisasi dan layanan, serta layout responsif.
 
 ## Current operational flow
 
 ```text
-Visitor chooses equipment → selects a slot and material estimate
-→ sends the prepared request via WhatsApp
-→ admin confirms availability and payment instructions
-→ reservation becomes active after manual confirmation
+Visitor memilih kebutuhan → membuka CTA yang relevan
+→ mengirim permintaan melalui WhatsApp
+→ admin mengonfirmasi cakupan, jadwal, ketersediaan, dan biaya
+→ layanan atau kunjungan berjalan setelah konfirmasi manual
 ```
 
 No payment, stored balance, QR check-in, or reservation is automatically processed by the website at this stage. This prevents the interface from promising automation that the operation has not yet implemented.
