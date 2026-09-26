@@ -1,10 +1,12 @@
 # IDN Maker Space
 
-> Ruang kolaborasi untuk mahasiswa, engineer, creator, dan maker yang ingin belajar melalui proyek nyata.
+> Platform makerspace multi-city untuk mahasiswa, engineer, creator, dan maker yang ingin belajar melalui proyek nyata.
 
 ## Informasi
 - Website: https://idnmakerspace.com/
-- Area layanan: Indonesia; informasi lokasi tersedia melalui WhatsApp
+- Lokasi aktif: Jakarta, Cipete
+- Lokasi berikutnya: Lampung, kawasan ITERA (coming soon)
+- Area layanan: Indonesia
 - WhatsApp: +62 838-0243-6288
 - Jam operasional: dapat berbeda di setiap lokasi
 - Paket: Drop-in, Basic, Pro, workshop, learning path, dan institusi
@@ -16,7 +18,7 @@
 - Industrial Automation dan PLC
 - 3D Printing dan rapid prototyping
 
-Harga di website adalah rentang perencanaan dan dikonfirmasi sebelum pembayaran. Booking dan pembayaran tahap awal dibantu admin melalui WhatsApp.
+Harga di website adalah rentang perencanaan dan dikonfirmasi sebelum pembayaran. Ketersediaan alat, workshop, membership, dan jadwal operasional mengikuti lokasi yang dipilih. Booking dan pembayaran tahap awal dibantu admin melalui WhatsApp.
 
 ## Tautan
 - Instagram: https://www.instagram.com/idnmakerspace

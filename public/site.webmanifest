@@ -1,7 +1,7 @@
 {
   "name": "IDN Makerspace",
   "short_name": "IDN Makerspace",
-  "description": "Ruang kolaborasi untuk belajar, membuat, dan mengembangkan proyek engineering",
+  "description": "Platform makerspace multi-city untuk belajar, membuat, dan mengembangkan proyek engineering",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8f5ed",
